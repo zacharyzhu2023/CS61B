@@ -25,15 +25,16 @@ public class Tester {
     public void maxTest() {
         // Change call to max to make this call yours.
         hw0 maxTester = new hw0();
-        assertEquals(14, max(new int[] { 0, -5, 2, 14, 10 }));
-        assertEquals(0, max(new int[] {0}));
-        assertEquals(12, max(new int[] {2, 5, 10, -11, 12}));
+        assertEquals(14, maxTester.max(new int[] { 0, -5, 2, 14, 10 }));
+        assertEquals(0, maxTester.max(new int[] {0}));
+        assertEquals(12, maxTester.max(new int[] {2, 5, 10, -11, 12}));
 
     }
 
     @Test
     public void threeSumTest() {
         // Change call to threeSum to make this call yours.
+        hw0
         assertTrue(threeSum(new int[] { -6, 3, 10, 200 }));
         assertTrue(threeSum(new int[] { -10, 10, 5 }));
         assertFalse(threeSum(new int[] { -5, -6, -7, -8 }));
