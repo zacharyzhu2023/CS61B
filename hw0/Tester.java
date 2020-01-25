@@ -34,11 +34,11 @@ public class Tester {
     @Test
     public void threeSumTest() {
         // Change call to threeSum to make this call yours.
-        hw0
-        assertTrue(threeSum(new int[] { -6, 3, 10, 200 }));
-        assertTrue(threeSum(new int[] { -10, 10, 5 }));
-        assertFalse(threeSum(new int[] { -5, -6, -7, -8 }));
-        assertTrue(threeSum(new int[] { 0, 6, 1 }));
+        hw0 threeSumTestTester = new hw0();
+        assertTrue(threeSumTestTester.threeSum(new int[] { -6, 3, 10, 200 }));
+        assertTrue(threeSumTestTester.threeSum(new int[] { -10, 10, 5 }));
+        assertFalse(threeSumTestTester.threeSum(new int[] { -5, -6, -7, -8 }));
+        assertTrue(threeSumTestTester.threeSum(new int[] { 0, 6, 1 }));
 
     }
 
