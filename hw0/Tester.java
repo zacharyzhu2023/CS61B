@@ -23,7 +23,7 @@ public class Tester {
 
     @Test
     public void maxTest() {
-        // Change call to max to make this call yours.
+
         hw0 maxTester = new hw0();
         assertEquals(14, maxTester.max(new int[] { 0, -5, 2, 14, 10 }));
         assertEquals(0, maxTester.max(new int[] {0}));
@@ -33,7 +33,7 @@ public class Tester {
 
     @Test
     public void threeSumTest() {
-        // Change call to threeSum to make this call yours.
+
         hw0 threeSumTestTester = new hw0();
         assertTrue(threeSumTestTester.threeSum(new int[] { -6, 3, 10, 200 }));
         assertTrue(threeSumTestTester.threeSum(new int[] { -10, 10, 5 }));
@@ -44,11 +44,12 @@ public class Tester {
 
     @Test
     public void threeSumDistinctTest() {
-        // Change call to threeSumDistinct to make this call yours.
-        assertFalse(threeSumDistinct(new int[] { -6, 3, 10, 200 }));
-        assertTrue(threeSumDistinct(new int[] { -5, 5, 0}));
-        assertFalse(threeSumDistinct(new int[] { 0, 6, 1, -5 }));
-        assertTrue(threeSumDistinct(new int[] { -10, -5, 14, 13, 100, 15 }));
+
+        hw0 threeSumDistinctTestTester = new hw0();
+        assertFalse(threeSumDistinctTestTester.threeSumDistinct(new int[] { -6, 3, 10, 200 }));
+        assertTrue(threeSumDistinctTestTester.threeSumDistinct(new int[] { -5, 5, 0}));
+        assertFalse(threeSumDistinctTestTester.threeSumDistinct(new int[] { 0, 6, 1, -5 }));
+        assertTrue(threeSumDistinctTestTester.threeSumDistinct(new int[] { -10, -5, 14, 13, 100, 15 }));
 
     }
 
