@@ -24,6 +24,7 @@ public class Tester {
     @Test
     public void maxTest() {
         // Change call to max to make this call yours.
+        hw0 maxTester = new hw0();
         assertEquals(14, max(new int[] { 0, -5, 2, 14, 10 }));
         assertEquals(0, max(new int[] {0}));
         assertEquals(12, max(new int[] {2, 5, 10, -11, 12}));
