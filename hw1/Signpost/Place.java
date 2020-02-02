@@ -101,12 +101,10 @@ class Place {
                 for (int dir = 0; dir <= 8; dir += 1) {
                     places0[dir] = new PlaceList();
                 }
-                for (int x1 = 0; x1 < width; x1 += 1) { /** Modified to x1 instead of x0 for += 1 -- wrong component of for loop? **/
+                for (int x1 = 0; x1 < width; x1 += 1) {
                     for (int y1 = 0; y1 < height; y1 += 1) {
                         int dir = dirOf(x0, y0, x1, y1);
-                        /** Added the if statement
-                         * Only add the position if it's a queen's move **/
-                        if(dir != 0){
+                        if (dir != 0){
                             Place p = pl(x1, y1);
                             places0[dir].add(p);
                             places0[0].add(p);
