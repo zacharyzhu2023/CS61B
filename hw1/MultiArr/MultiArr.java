@@ -25,7 +25,7 @@ public class MultiArr {
     public static int maxValue(int[][] arr) {
         int maxValue = Integer.MIN_VALUE;
         for(int i = 0; i < arr.length; i += 1){
-            for(int j = 0; j < arr[0].length; j += 1){
+            for(int j = 0; j < arr[i].length; j += 1){
                 if (arr[i][j] > maxValue) maxValue = arr[i][j];
             }
         }
@@ -38,7 +38,7 @@ public class MultiArr {
         int[] sumArray = new int[arr.length];
         for (int i = 0; i < arr.length; i += 1){
             int tempSum = 0;
-            for (int j = 0; j < arr[0].length; j += 1){
+            for (int j = 0; j < arr[i].length; j += 1){
                 tempSum += arr[i][j];
             }
             sumArray[i] = tempSum;

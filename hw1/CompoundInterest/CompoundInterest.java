@@ -36,7 +36,7 @@ public class CompoundInterest {
      *  2019 dollars, we get 12.544 * 0.97 * 0.97 = 11.8026496 dollars. */
     static double futureValueReal(double presentValue, double rate,
                                   int targetYear, double inflationRate) {
-        return futureValue(presentValue, rate, targetYear)/Math.pow(1+inflationRate/100, numYears(targetYear));
+        return futureValue(presentValue, rate, targetYear)*Math.pow(1-inflationRate/100, numYears(targetYear));
     }
 
     /** Suppose you invest PERYEAR dollars at the end of every year until
@@ -59,8 +59,7 @@ public class CompoundInterest {
      *  INFLATIONRATE. */
     static double totalSavingsReal(double perYear, int targetYear, double rate,
                                double inflationRate) {
-        System.out.println(totalSavings(perYear, targetYear, rate));
-        return totalSavings(perYear, targetYear, rate)/Math.pow(1+inflationRate/100, numYears(targetYear));
+        return totalSavings(perYear, targetYear, rate) * Math.pow(1-inflationRate/100, numYears(targetYear));
 
 
     }
