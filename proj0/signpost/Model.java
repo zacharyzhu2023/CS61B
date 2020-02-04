@@ -520,8 +520,11 @@ class Model implements Iterable<Model.Sq> {
          *    they are not part of the same connected sequence.
          */
         boolean connectable(Sq s1) {
-            // FIXME
-            return true;
+            if(this.pl.dirOf(s1.pl) == this._dir && s1.predecessor() == null && this.successor() == null &&
+                    (this.sequenceNum() == 0 && s1.sequenceNum() == 0) || (this.sequenceNum() == s1.sequenceNum() -1)){
+                return true;
+            }
+            return false;
         }
 
         /** Connect this square to S1, if both are connectable; otherwise do
@@ -550,6 +553,59 @@ class Model implements Iterable<Model.Sq> {
             //        + If both this square and S1 are unnumbered, set the
             //          group of this square's head to the result of joining
             //          the two groups.
+
+            // First Task
+            this._successor = s1;
+            s1._predecessor = this;
+
+            // Pre-Task 6
+            boolean prev_thisFixedNum = this.hasFixedNum();
+            boolean prev_s1FixedNum = s1.hasFixedNum();
+
+            // Second Task
+            Sq successorPointer = this;
+            if(this._hasFixedNum){
+                while(successorPointer.successor() != null){
+                    successorPointer._successor.setFixedNum(successorPointer.sequenceNum() + 1);
+                    successorPointer = successorPointer._successor;
+                }
+            }
+
+
+
+            // Third Task
+            Sq predecessorPointer = this.successor();
+            if(s1.hasFixedNum()){
+                while(predecessorPointer.predecessor() != null){
+                    predecessorPointer._predecessor.setFixedNum(predecessorPointer.sequenceNum() - 1);
+                    predecessorPointer = predecessorPointer._predecessor;
+
+                }
+            }
+
+            /**
+            // Fourth Task
+            Sq newSuccessorPointer = this;
+            while(newSuccessorPointer.successor() != null){
+                newSuccessorPointer.successor()._head = this.head();
+                newSuccessorPointer = newSuccessorPointer.successor();
+            }
+
+            // Fifth Task
+            if (!prev_s1FixedNum && s1.hasFixedNum()){
+                releaseGroup(s1.group());
+            }
+            else if (!prev_thisFixedNum && this.hasFixedNum()){
+                releaseGroup(this.group());
+            }
+
+            // Sixth Task
+            if (!this.hasFixedNum() && !s1.hasFixedNum()){
+                this.head()._group = joinGroups(this.group(), s1.group());
+            }
+            **/
+
+
 
             return true;
         }
