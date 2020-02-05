@@ -519,9 +519,25 @@ class Model implements Iterable<Model.Sq> {
          *  + If neither S1 nor this square have sequence numbers, then
          *    they are not part of the same connected sequence.
          */
+        /** Zachary's self-translation
+         * 1. s1 must be in the right orientation/direction from THIS
+         * 2. s1 isn't already connected to a predecessor AND THIS doesn't have a successor
+         * 3. s1 sequenceNum != 1, THIS sequenceNum != width() * height()
+         * 4a. IF both have sequence numbers, s1's sequence number is is one greater than THIS's sequence number
+         * 4b. IF neither s1 NOR THIS has a sequence number, they are not in the same group OR both are in group -1?
+         *        Alternately, s1.head() != this.head()??
+         * - Group 0 contains EXCLUSIVELY numbered cells
+         * - Group -1 contains unnumbered, unlinked cells
+         * - Group (everything else) contains sequences of unnumbered, linked cells
+         * - Sequence number = 0 if the square is unnumbered
+         * -
+         */
         boolean connectable(Sq s1) {
-            if(this.pl.dirOf(s1.pl) == this._dir && s1.predecessor() == null && this.successor() == null &&
-                    (this.sequenceNum() == 0 && s1.sequenceNum() == 0) || (this.sequenceNum() == s1.sequenceNum() -1)){
+            if(this.pl.dirOf(s1.pl) == this.direction() &&
+                    s1.predecessor() == null && this.successor() == null &&
+                    (s1.sequenceNum() != 1) && (this.sequenceNum() != width() * height()) &&
+             ((this.sequenceNum() != 0 && s1.sequenceNum() != 0 && this.sequenceNum() == s1.sequenceNum() -1) ||
+                     (this.sequenceNum() == 0 && s1.sequenceNum() == 0  && this.head() != s1.head()))){
                 return true;
             }
             return false;
@@ -535,55 +551,53 @@ class Model implements Iterable<Model.Sq> {
                 return false;
             }
             int sgroup = s1.group();
-
+            int thisgroup = this.group();
             _unconnected -= 1;
 
             // FIXME: Connect this square to its successor:
             //        + Set this square's _successor field and S1's
-            //          _predecessor field.
+            //          _predecessor field. (DONE)
             //        + If this square has a number, number all its successors
-            //          accordingly (if needed).
+            //          accordingly (if needed). (I think done?)
             //        + If S1 is numbered, number this square and its
-            //          predecessors accordingly (if needed).
+            //          predecessors accordingly (if needed). (I think done?)
             //        + Set the _head fields of this square's successors this
-            //          square's _head.
+            //          square's _head. (I think done?)
             //        + If either of this square or S1 used to be unnumbered
             //          and is now numbered, release its group of whichever
-            //          was unnumbered, so that it can be reused.
+            //          was unnumbered, so that it can be reused. (What the fuck??)
             //        + If both this square and S1 are unnumbered, set the
             //          group of this square's head to the result of joining
-            //          the two groups.
+            //          the two groups. (Maybe done??)
 
             // First Task
             this._successor = s1;
             s1._predecessor = this;
 
             // Pre-Task 6
-            boolean prev_thisFixedNum = this.hasFixedNum();
-            boolean prev_s1FixedNum = s1.hasFixedNum();
+            boolean prev_thisFixedNum = this.sequenceNum() == 0;
+            boolean prev_s1FixedNum = s1.sequenceNum() == 0;
 
             // Second Task
             Sq successorPointer = this;
-            if(this._hasFixedNum){
+            if(this.sequenceNum() != 0){
                 while(successorPointer.successor() != null){
-                    successorPointer._successor.setFixedNum(successorPointer.sequenceNum() + 1);
-                    successorPointer = successorPointer._successor;
+                    successorPointer._successor._sequenceNum = successorPointer.sequenceNum()+ 1;
+                    successorPointer = successorPointer.successor();
                 }
             }
-
-
 
             // Third Task
             Sq predecessorPointer = this.successor();
-            if(s1.hasFixedNum()){
+            if(s1.sequenceNum() != 0){
                 while(predecessorPointer.predecessor() != null){
-                    predecessorPointer._predecessor.setFixedNum(predecessorPointer.sequenceNum() - 1);
-                    predecessorPointer = predecessorPointer._predecessor;
+                    predecessorPointer._predecessor._sequenceNum = predecessorPointer.sequenceNum() - 1;
+                    predecessorPointer = predecessorPointer.predecessor();
 
                 }
             }
 
-            /**
+
             // Fourth Task
             Sq newSuccessorPointer = this;
             while(newSuccessorPointer.successor() != null){
@@ -591,19 +605,26 @@ class Model implements Iterable<Model.Sq> {
                 newSuccessorPointer = newSuccessorPointer.successor();
             }
 
+
             // Fifth Task
             if (!prev_s1FixedNum && s1.hasFixedNum()){
-                releaseGroup(s1.group());
+                // Change the group of s1 to that of this
+                s1._group = this.group();
+                // Release the group of what s1 was in previously?
+                releaseGroup(sgroup);
             }
             else if (!prev_thisFixedNum && this.hasFixedNum()){
-                releaseGroup(this.group());
+                // Change the group of this to that of s1
+                this._group = s1.group();
+                // Release this's group of this
+                releaseGroup(thisgroup);
             }
 
             // Sixth Task
             if (!this.hasFixedNum() && !s1.hasFixedNum()){
-                this.head()._group = joinGroups(this.group(), s1.group());
+                this._head._group = joinGroups(this.group(), s1.group());
             }
-            **/
+
 
 
 

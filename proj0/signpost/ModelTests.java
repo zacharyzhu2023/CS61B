@@ -174,6 +174,20 @@ public class ModelTests {
           (s1, NE) (      ) (s2, N )
      */
 
+
+    @Test
+    public void connectableTest(){
+        Model model = new Model(tr(SOLN1));
+        Sq s1 = model.new Sq(0, 0, 0, false, 1, -1);
+        Sq s2 = model.new Sq(2, 0, 0, false, 8, -1);
+        Sq s3 = model.new Sq(2, 2, 0, false, 5, -1);
+        Sq s4 = model.new Sq(1, 1, 4, true, 5, 0);
+        Sq s5 = model.new Sq(0, 2, 8, true, 4, 0);
+        Sq s6 = model.new Sq(0, 1, 1, true, 4, 0);
+        assertFalse(s1.connectable(s1));
+        assertFalse(s1.connectable(s2));
+        assertTrue(s1.connectable(s3));
+    }
     @Test
     public void sqConnectTest() {
         Model model = new Model(tr(SOLN1));
