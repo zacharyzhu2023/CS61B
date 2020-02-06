@@ -533,12 +533,22 @@ class Model implements Iterable<Model.Sq> {
          * -
          */
         boolean connectable(Sq s1) {
+//            System.out.println("Direction: " + Boolean.toString(this.pl.dirOf(s1.pl) == this.direction()));
+//            System.out.println("Predecessor/Successor: " + Boolean.toString(s1.predecessor() == null && this.successor() == null));
+//            System.out.println("Sequence num: " + Boolean.toString((s1.sequenceNum() != 1) && (this.sequenceNum() != width() * height())));
+//            System.out.println(("IF: Both have nums: " + Boolean.toString(this.sequenceNum() != 0 && s1.sequenceNum() != 0 && this.sequenceNum() == s1.sequenceNum() -1)));
+//            System.out.println("IF: neither has nums: " + Boolean.toString((this.sequenceNum() == 0 && s1.sequenceNum() == 0  && this.head() != s1.head())));
+//            System.out.println("t1: " + Boolean.toString(this.sequenceNum() != 0 && s1.sequenceNum() != 0));
+//            System.out.println("t2: " + Boolean.toString(this.sequenceNum() == 0 && s1.sequenceNum() == 0));
+//            System.out.println();
+//            System.out.println();
             if(this.pl.dirOf(s1.pl) == this.direction() &&
                     s1.predecessor() == null && this.successor() == null &&
-                    (s1.sequenceNum() != 1) && (this.sequenceNum() != width() * height()) &&
-             ((this.sequenceNum() != 0 && s1.sequenceNum() != 0 && this.sequenceNum() == s1.sequenceNum() -1) ||
-                     (this.sequenceNum() == 0 && s1.sequenceNum() == 0  && this.head() != s1.head()))){
+                    (s1.sequenceNum() != 1) && (this.sequenceNum() != width() * height())) {
+                if (this.sequenceNum() != 0 && s1.sequenceNum() != 0) return this.sequenceNum() == s1.sequenceNum() -1;
+                else if (this.sequenceNum() == 0 && s1.sequenceNum() == 0) return this.head() != s1.head();
                 return true;
+
             }
             return false;
         }
@@ -588,7 +598,7 @@ class Model implements Iterable<Model.Sq> {
             }
 
             // Third Task
-            Sq predecessorPointer = this.successor();
+            Sq predecessorPointer = s1;
             if(s1.sequenceNum() != 0){
                 while(predecessorPointer.predecessor() != null){
                     predecessorPointer._predecessor._sequenceNum = predecessorPointer.sequenceNum() - 1;
@@ -607,7 +617,7 @@ class Model implements Iterable<Model.Sq> {
 
 
             // Fifth Task
-            if (!prev_s1FixedNum && s1.hasFixedNum()){
+            if (!prev_s1FixedNum && s1.sequenceNum() != 0){
                 // Change the group of s1 to that of this
                 s1._group = this.group();
                 // Release the group of what s1 was in previously?
