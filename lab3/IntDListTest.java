@@ -22,6 +22,8 @@ public class IntDListTest {
         assertEquals("Size of singleton", 1, d.size());
         d = new IntDList(5, 10, 15);
         assertEquals("Size of 3-element list", 3, d.size());
+        d = new IntDList(5, 10, 15, 20);
+        assertEquals("Size of 3-element list", 4, d.size());
     }
 
     /**
@@ -52,11 +54,11 @@ public class IntDListTest {
     @Test
     public void testGet() {
         d = new IntDList(0, 5, 10, 15);
+        assertEquals(".get(-2)", 10, d.get(-2));
         assertEquals(".get(0)", 0, d.get(0));
         assertEquals(".get(1)", 5, d.get(1));
         assertEquals(".get(2)", 10, d.get(2));
         assertEquals(".get(3)", 15, d.get(3));
-
         assertEquals(".get(-1)", 15, d.get(-1));
         assertEquals(".get(-2)", 10, d.get(-2));
         assertEquals(".get(-3)", 5, d.get(-3));
@@ -68,6 +70,7 @@ public class IntDListTest {
      */
     @Test
     public void testInsertBack() {
+
         d = new IntDList();
         d.insertBack(0);
 
@@ -101,6 +104,7 @@ public class IntDListTest {
         assertEquals("Second to last element after inserting 15 should be 10", 10, d.get(-2));
         assertEquals("Third to last element after inserting 15 should be 5", 5, d.get(-3));
         assertEquals("Fourth to last element after inserting 15 should be 0", 0, d.get(-4));
+
     }
 
     /**
@@ -323,7 +327,9 @@ public class IntDListTest {
         assertEquals("First element after delete should be (10)", 10, d.get(0));
         assertEquals("Last element after delete should be (10)", 10, d.get(-1));
 
+
         d = new IntDList(5, 10, 15, 20, 25);
+
         assertEquals(".deleteAtIndex(2) value (15)", 15, d.deleteAtIndex(2));
         assertEquals("Size after delete should be 4", 4, d.size());
         assertEquals(".getFront() should return 5", 5, d.getFront());
