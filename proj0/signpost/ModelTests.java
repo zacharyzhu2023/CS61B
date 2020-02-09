@@ -310,6 +310,16 @@ public class ModelTests {
         checkSquare(s9, s9, null, null, 9, 0);
     }
 
+    @Test
+    public void arrowDirectionTest(){
+        // FIXME Make method public to run tests
+        Model model = new Model(tr(SOLN1));
+        assertEquals(model.arrowDirection(0,0), 8);
+        assertEquals(model.arrowDirection(2,2), 5);
+        assertEquals(model.arrowDirection(0,3), 2);
+        assertEquals(model.arrowDirection(3,0), 0);
+    }
+
     /* The following array data is written to look on the page like
      * the arrangement of data on the screen, with the first row
      * corresponding to the top row of the puzzle board, etc.  They are
