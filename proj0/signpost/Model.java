@@ -89,28 +89,6 @@ class Model implements Iterable<Model.Sq> {
         _solution = new int[_width][_height];
         deepCopy(solution, _solution);
 
-        // DUMMY SETUP
-        // This is a particular puzzle provided as a filler until the
-        // puzzle-generation software is complete.
-        // FIXME: Remove everything down to and including
-        // "// END DUMMY SETUP".
-        /**_board = new Sq[][] {
-            { new Sq(0, 0, 0, false, 2, -1), new Sq(0, 1, 0, false, 2, -1),
-              new Sq(0, 2, 0, false, 4, -1), new Sq(0, 3, 1, true, 2, 0) },
-            { new Sq(1, 0, 0, false, 2, -1), new Sq(1, 1, 0, false, 2, -1),
-              new Sq(1, 2, 0, false, 6, -1), new Sq(1, 3, 0, false, 2, -1) },
-            { new Sq(2, 0, 0, false, 6, -1), new Sq(2, 1, 0, false, 2, -1),
-              new Sq(2, 2, 0, false, 6, -1), new Sq(2, 3, 0, false, 2, -1) },
-            { new Sq(3, 0, 16, true, 0, 0), new Sq(3, 1, 0, false, 5, -1),
-              new Sq(3, 2, 0, false, 6, -1), new Sq(3, 3, 0, false, 4, -1) }
-        };
-        for (Sq[] col: _board) {
-            for (Sq sq : col) {
-                _allSquares.add(sq);
-            }
-        }**/
-        // END DUMMY SETUP
-
         // FIXME: Initialize _board so that _board[x][y] contains the Sq object
         //        representing the contents at cell (x, y), _allSquares
         //        contains the list of all Sq objects on the board, and
@@ -121,8 +99,8 @@ class Model implements Iterable<Model.Sq> {
 
         _board = new Sq[width()][height()];
         _solnNumToPlace = new Place[size()+1];
-        for (int x0 = 0; x0 < _solution.length; x0 += 1){
-            for (int y0 = 0; y0 < solution[x0].length; y0 += 1){
+        for (int x0 = 0; x0 < width(); x0 += 1){
+            for (int y0 = 0; y0 < height(); y0 += 1){
                 int direction0 = arrowDirection(x0, y0);
                 boolean fixed0 = false;
                 int group0 = -1;
@@ -199,7 +177,7 @@ class Model implements Iterable<Model.Sq> {
         _board = new Sq[_width][_height];
         for (int x0 = 0; x0 < _width; x0 += 1){
             for (int y0 = 0; y0 < _height; y0 += 1){
-                Sq sq0 = new Sq(model._board[x0][y0]);
+                Sq sq0 = new Sq(model.get(x0, y0));
                 _board[x0][y0] = sq0;
                 _allSquares.add(sq0);
             }
@@ -234,7 +212,7 @@ class Model implements Iterable<Model.Sq> {
 
         for (int x1 = 0; x1 < _width; x1 += 1){
             for (int y1 = 0; y1 < _height; y1 += 1){
-                _board[x1][y1]._head = _board[x1][y1];
+                _board[x1][y1]._head = model.get(x1, y1).head();
             }
         }
 
@@ -337,13 +315,11 @@ class Model implements Iterable<Model.Sq> {
         boolean changesMade = false;
         for (int x0 = 0; x0 < width(); x0 += 1){
             for (int y0 = 0; y0 < height(); y0 += 1){
-                PlaceList potentialSuccessors = _board[x0][y0]._successors;
+                PlaceList potentialSuccessors = _board[x0][y0].successors();
                 for(int z0 = 0; z0 < potentialSuccessors.size(); z0 += 1){
-                    Place successor0 = potentialSuccessors.get(z0);
-                    int s0x = successor0.x;
-                    int s0y = successor0.y;
-                    if(_board[s0x][s0y].sequenceNum() == _board[x0][y0].sequenceNum() + 1){
-                        _board[x0][y0].connect(_board[s0x][s0y]);
+                    Sq successor0 = get(potentialSuccessors.get(z0));
+                    if(get(x0, y0).sequenceNum() + 1 == successor0.sequenceNum()){
+                        get(x0,y0).connect(successor0);
                         changesMade = true;
                     }
                 }
@@ -359,7 +335,7 @@ class Model implements Iterable<Model.Sq> {
         // FIXME
         for (int x0 = 0; x0 < width(); x0 += 1){
             for (int y0 = 0; y0 < height(); y0 += 1){
-                _board[x0][y0]._sequenceNum = _solution[x0][y0];
+                get(x0, y0)._sequenceNum = _solution[x0][y0];
             }
         }
         autoconnect();
@@ -656,10 +632,11 @@ class Model implements Iterable<Model.Sq> {
         boolean connectable(Sq s1) {
             if(this.pl.dirOf(s1.pl) == this.direction() &&
                     s1.predecessor() == null && this.successor() == null &&
-                    (s1.sequenceNum() != 1) && (this.sequenceNum() != width() * height())) {
-                if (this.sequenceNum() != 0 && s1.sequenceNum() != 0) return this.sequenceNum() == s1.sequenceNum() -1;
-                else if (this.sequenceNum() == 0 && s1.sequenceNum() == 0) return this.head() != s1.head();
-                return true;
+                    (s1.sequenceNum() != 1) && (this.sequenceNum() != size())) {
+                if (this.sequenceNum() != 0 && s1.sequenceNum() != 0)
+                    return this.sequenceNum() == s1.sequenceNum() -1;
+                else
+                    return this.head() != s1.head();
 
             }
             return false;
@@ -710,8 +687,8 @@ class Model implements Iterable<Model.Sq> {
             }
 
             // Third Task
-            Sq predecessorPointer = s1;
-            if(s1.sequenceNum() != 0){
+            else if(s1.sequenceNum() != 0){
+                Sq predecessorPointer = s1;
                 while(predecessorPointer.predecessor() != null){
                     predecessorPointer._predecessor._sequenceNum = predecessorPointer.sequenceNum() - 1;
                     predecessorPointer = predecessorPointer.predecessor();
@@ -729,22 +706,16 @@ class Model implements Iterable<Model.Sq> {
 
 
             // Fifth Task
-            if (!prev_s1FixedNum && s1.sequenceNum() != 0){
-                // Change the group of s1 to that of this
-                s1._group = this.group();
-                // Release the group of what s1 was in previously?
+            if (prev_s1FixedNum && s1.sequenceNum() != 0){
                 releaseGroup(sgroup);
             }
-            else if (!prev_thisFixedNum && this.sequenceNum() != 0){
-                // Change the group of this to that of s1
-                this._group = sgroup;
-                // Release this's group of this
+            else if (prev_thisFixedNum && this.sequenceNum() != 0){
                 releaseGroup(thisgroup);
             }
 
             // Sixth Task
             if (this.sequenceNum() == 0 && s1.sequenceNum() == 0){
-                this._head._group = joinGroups(this.group(), sgroup);
+                this._head._group = joinGroups(thisgroup, sgroup);
             }
 
             return true;
