@@ -176,7 +176,7 @@ public class ModelTests {
 
 
     @Test
-    public void connectableTest(){
+    public void connectableTest() {
         Model model = new Model(tr(SOLN1));
         Sq s1 = model.new Sq(0, 0, 0, false, 1, -1);
         Sq s2 = model.new Sq(2, 0, 0, false, 8, -1);
@@ -311,13 +311,12 @@ public class ModelTests {
     }
 
     @Test
-    public void arrowDirectionTest(){
-        // FIXME Make method public to run tests
+    public void arrowDirectionTest() {
         Model model = new Model(tr(SOLN1));
-        assertEquals(model.arrowDirection(0,0), 8);
-        assertEquals(model.arrowDirection(2,2), 5);
-        assertEquals(model.arrowDirection(0,3), 2);
-        assertEquals(model.arrowDirection(3,0), 0);
+        assertEquals(model.arrowDirection(0, 0), 8);
+        assertEquals(model.arrowDirection(2, 2), 5);
+        assertEquals(model.arrowDirection(0, 3), 2);
+        assertEquals(model.arrowDirection(3, 0), 0);
     }
 
     /* The following array data is written to look on the page like

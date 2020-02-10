@@ -22,8 +22,7 @@ class PuzzleGenerator implements PuzzleSource {
     public Model getPuzzle(int width, int height, boolean allowFreeEnds) {
         Model model =
             new Model(makePuzzleSolution(width, height, allowFreeEnds));
-        // FIXME: Remove the "//" on the following two lines.
-         makeSolutionUnique(model);
+        makeSolutionUnique(model);
         model.autoconnect();
         return model;
     }
@@ -52,15 +51,6 @@ class PuzzleGenerator implements PuzzleSource {
         }
         _vals[x0][y0] = 1;
         _vals[x1][y1] = last;
-        // FIXME: Remove the following return statement and uncomment the
-        //        next three lines.
-        /**
-        return new int[][] {
-            { 14, 9, 8, 1 },
-            { 15, 10, 7, 2 },
-            { 13, 11, 6, 3 },
-            { 16, 12, 5, 4 }
-        };**/
         boolean ok = findSolutionPathFrom(x0, y0);
         assert ok;
         return _vals;
@@ -137,7 +127,7 @@ class PuzzleGenerator implements PuzzleSource {
     static Sq findUniqueSuccessor(Model model, Sq start) {
         Sq successor0 = null;
         int connectables = 0;
-        for(int i = 0; i < start.successors().size(); i += 1) {
+        for (int i = 0; i < start.successors().size(); i += 1) {
             Sq sq0 = model.get(start.successors().get(i));
             if (start.connectable(sq0) && sq0.sequenceNum() == start.sequenceNum() + 1) {
                 return sq0;
@@ -179,14 +169,14 @@ class PuzzleGenerator implements PuzzleSource {
     static Sq findUniquePredecessor(Model model, Sq end) {
         Sq predecessor0 = null;
         int connectables = 0;
-        for(int i = 0; i < end.predecessors().size(); i += 1) {
+        for (int i = 0; i < end.predecessors().size(); i += 1) {
             Sq sq0 = model.get(end.predecessors().get(i));
             if (sq0.connectable(end)) {
                 predecessor0 = sq0;
                 connectables += 1;
             }
         }
-        if (connectables == 1){
+        if (connectables == 1) {
             return predecessor0;
         }
         return null;
