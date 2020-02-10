@@ -23,8 +23,8 @@ class PuzzleGenerator implements PuzzleSource {
         Model model =
             new Model(makePuzzleSolution(width, height, allowFreeEnds));
         // FIXME: Remove the "//" on the following two lines.
-        // makeSolutionUnique(model);
-        // model.autoconnect();
+         makeSolutionUnique(model);
+        model.autoconnect();
         return model;
     }
 
@@ -61,8 +61,8 @@ class PuzzleGenerator implements PuzzleSource {
             { 13, 11, 6, 3 },
             { 16, 12, 5, 4 }
         };**/
-        //boolean ok = findSolutionPathFrom(x0, y0);
-        //assert ok;
+        boolean ok = findSolutionPathFrom(x0, y0);
+        assert ok;
         return _vals;
     }
 
@@ -135,7 +135,20 @@ class PuzzleGenerator implements PuzzleSource {
      *  numbered square in the proper direction from START (with the next
      *  number in sequence). */
     static Sq findUniqueSuccessor(Model model, Sq start) {
-        // FIXME: Fill in to satisfy the comment.
+        Sq successor0 = null;
+        int connectables = 0;
+        for(int i = 0; i < start.successors().size(); i += 1) {
+            Sq sq0 = model.get(start.successors().get(i));
+            if (start.connectable(sq0) && sq0.sequenceNum() == start.sequenceNum() + 1) {
+                return sq0;
+            } else if (start.connectable(sq0)) {
+                successor0 = sq0;
+                connectables += 1;
+            }
+        }
+        if (connectables == 1) {
+            return successor0;
+        }
         return null;
     }
 
@@ -164,7 +177,18 @@ class PuzzleGenerator implements PuzzleSource {
      *  the only unconnected predecessor.  This is because findUniqueSuccessor
      *  already finds the other cases of numbered, unconnected cells. */
     static Sq findUniquePredecessor(Model model, Sq end) {
-        // FIXME: Replace the following to satisfy the comment.
+        Sq predecessor0 = null;
+        int connectables = 0;
+        for(int i = 0; i < end.predecessors().size(); i += 1) {
+            Sq sq0 = model.get(end.predecessors().get(i));
+            if (sq0.connectable(end)) {
+                predecessor0 = sq0;
+                connectables += 1;
+            }
+        }
+        if (connectables == 1){
+            return predecessor0;
+        }
         return null;
     }
 

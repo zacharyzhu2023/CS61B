@@ -86,7 +86,7 @@ public class PuzzleGeneratorTests {
         assertEquals("Unique connection to numbered Sq", M.get(1, 1),
                      findUniqueSuccessor(M, M.get(3, 3)));
         assertEquals("Unique connection to numbered Sq", M.get(1, 1),
-                     findUniqueSuccessor(M, M.get(3, 3)));
+                findUniqueSuccessor(M, M.get(3, 3)));
         assertEquals("Unique connection of numbered to unnumbered Sq",
                      M.get(4, 2),
                      findUniqueSuccessor(M, M.get(6, 4)));
