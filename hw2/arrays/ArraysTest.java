@@ -29,9 +29,12 @@ public class ArraysTest {
 
     @Test
     public void naturalRunsTest() {
-        assertArrayEquals(new int[][] {{1, 3, 7}, {2, 4, 6}, {5, 5}}, Arrays.naturalRuns(new int[] {1, 3, 7, 2, 4, 6, 5, 5}));
+        assertArrayEquals(new int[][] {{1, 3, 7}, {2, 4, 6}, {5}, {5}}, Arrays.naturalRuns(new int[] {1, 3, 7, 2, 4, 6, 5, 5}));
         assertArrayEquals(new int[][] {{7}, {5}, {4}, {3, 4, 8, 10}}, Arrays.naturalRuns(new int[] {7, 5, 4, 3, 4, 8, 10}));
         assertArrayEquals(new int[][] {{1, 2}}, Arrays.naturalRuns(new int[] {1, 2}));
+        assertArrayEquals(new int[][] {{5}, {5}, {1}}, Arrays.naturalRuns(new int[] {5, 5, 1}));
+        assertArrayEquals(new int[][] {{5}, {5}}, Arrays.naturalRuns(new int[] {5, 5}));
+        assertArrayEquals(new int[][] {{5}, {5, 10}, {1}}, Arrays.naturalRuns(new int[] {5, 5, 10, 1}));
         assertArrayEquals(new int[][] {{}}, Arrays.naturalRuns(new int[] {}));
     }
 

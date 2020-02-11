@@ -64,13 +64,23 @@ class Arrays {
         for (int i = 0; i < A.length - 1; i++) {
             s = s + A[i] + " ";
             if (i + 2 == A.length) {
-                s = s + A[i + 1] + " ";
-                String[] splitString = s.split(" ");
-                int[] numArr = new int[splitString.length];
-                for (int j = 0; j < splitString.length; j += 1) {
-                    numArr[j] = Integer.parseInt(splitString[j]);
+                if (A[i + 1] <= A[i]) {
+                    String[] splitString = s.split(" ");
+                    int[] numArr = new int[splitString.length];
+                    for (int j = 0; j < splitString.length; j += 1) {
+                        numArr[j] = Integer.parseInt(splitString[j]);
+                    }
+                    finalArr[counter] = numArr;
+                    finalArr[counter + 1] = new int[] {A[i + 1]};
+                } else{
+                    s = s + A[i + 1];
+                    String[] splitString = s.split(" ");
+                    int[] numArr = new int[splitString.length];
+                    for (int j = 0; j < splitString.length; j += 1) {
+                        numArr[j] = Integer.parseInt(splitString[j]);
+                    }
+                    finalArr[counter] = numArr;
                 }
-                finalArr[counter] = numArr;
                 return finalArr;
 
             }
@@ -83,8 +93,10 @@ class Arrays {
                 finalArr[counter] = numArr;
                 counter += 1;
                 s = "";
+
             }
         }
+        System.out.println("PRINTED");
         return finalArr;
     }
 }
