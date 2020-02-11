@@ -22,11 +22,9 @@ class Lists {
         /* *Replace this body with the solution. */
         if (L == null) {
             return null;
-        }
-        else if (L.tail == null) {
+        } else if (L.tail == null) {
             return new IntListList(L, null);
-        }
-        else {
+        } else {
             IntList p1 = L;
             IntList p2 = L;
             while (p1.tail != null && p1.tail.head > p1.head) {
@@ -34,8 +32,7 @@ class Lists {
             }
             if (p1.tail == null) {
                 return new IntListList(p2, null);
-            }
-            else{
+            } else {
                 L = p1.tail;
                 p1.tail = null;
                 return new IntListList(p2, naturalRuns(L));

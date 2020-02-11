@@ -18,7 +18,7 @@ class Arrays {
             return B;
         } else if (B.length == 0) {
             return A;
-        } else{
+        } else {
             int[] finalArr = new int[A.length + B.length];
             for (int i = 0; i < A.length; i += 1) {
                 finalArr[i] = A[i];
@@ -34,9 +34,9 @@ class Arrays {
     /** Returns the array formed by removing LEN items from A,
      *  beginning with item #START. */
     static int[] remove(int[] A, int start, int len) {
-        int[] finalArr = new int[A.length-len];
+        int[] finalArr = new int[A.length - len];
         System.arraycopy(A, 0, finalArr, 0, start);
-        System.arraycopy(A, start + len, finalArr, start, A.length-start-len);
+        System.arraycopy(A, start + len, finalArr, start, A.length - start - len);
         return finalArr;
     }
 
@@ -72,7 +72,7 @@ class Arrays {
                     }
                     finalArr[counter] = numArr;
                     finalArr[counter + 1] = new int[] {A[i + 1]};
-                } else{
+                } else {
                     s = s + A[i + 1];
                     String[] splitString = s.split(" ");
                     int[] numArr = new int[splitString.length];
