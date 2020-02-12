@@ -647,8 +647,7 @@ class Model implements Iterable<Model.Sq> {
             _unconnected += 1; next._predecessor = _successor = null;
             if (_sequenceNum == 0) {
                 if (this.successor() == null && this.predecessor() == null
-                        && next.predecessor() == null
-                        && next.successor() == null) {
+                    && next.predecessor() == null && next.successor() == null) {
                     releaseGroup(this.group()); releaseGroup(next.group());
                     this._group = -1; next._group = -1;
                 } else {
