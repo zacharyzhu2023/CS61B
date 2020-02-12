@@ -35,7 +35,7 @@ public class ArraysTest {
         assertArrayEquals(new int[][] {{5}, {5}, {1}}, Arrays.naturalRuns(new int[] {5, 5, 1}));
         assertArrayEquals(new int[][] {{5}, {5}}, Arrays.naturalRuns(new int[] {5, 5}));
         assertArrayEquals(new int[][] {{5}, {5, 10}, {1}}, Arrays.naturalRuns(new int[] {5, 5, 10, 1}));
-        assertArrayEquals(new int[][] {{}}, Arrays.naturalRuns(new int[] {}));
+        assertArrayEquals(new int[][] {}, Arrays.naturalRuns(new int[] {}));
     }
 
 
