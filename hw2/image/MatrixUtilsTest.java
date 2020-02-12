@@ -47,9 +47,12 @@ public class MatrixUtilsTest {
         double[][] accumAfter2 = new double[][] {
                 {1000000, 1000000, 1000000, 1000000}};
 
-        assertArrayEquals(accumAfter0, MatrixUtils.accumulateVertical(accumBefore0));
-        assertArrayEquals(accumAfter1, MatrixUtils.accumulateVertical(accumBefore1));
-        assertArrayEquals(accumAfter2, MatrixUtils.accumulateVertical(accumBefore2));
+        assertArrayEquals(accumAfter0,
+                MatrixUtils.accumulateVertical(accumBefore0));
+        assertArrayEquals(accumAfter1,
+                MatrixUtils.accumulateVertical(accumBefore1));
+        assertArrayEquals(accumAfter2,
+                MatrixUtils.accumulateVertical(accumBefore2));
 
     }
 
@@ -74,14 +77,18 @@ public class MatrixUtilsTest {
                         {2089520, 1162923, 1124919, 2098278},
                         {2162923, 2124919, 2124919, 2124919}};
 
-        double[][] accumBeforeHorizontal = new double[][] {
+        double[][] accumBeforeHorizontal =
+                new double[][] {
                 {1000000, 1000000, 1000000, 1000000}};
-        double[][] accumAfterHorizontal = new double[][] {
+        double[][] accumAfterHorizontal =
+                new double[][] {
                 {1000000, 2000000, 3000000, 4000000}};
         assertArrayEquals(accumAfterVertical0,
-                MatrixUtils.accumulate(accumBeforeVertical0, MatrixUtils.Orientation.VERTICAL));
+                MatrixUtils.accumulate(accumBeforeVertical0,
+                        MatrixUtils.Orientation.VERTICAL));
         assertArrayEquals(accumAfterHorizontal,
-                MatrixUtils.accumulate(accumBeforeHorizontal, MatrixUtils.Orientation.HORIZONTAL));
+                MatrixUtils.accumulate(accumBeforeHorizontal,
+                        MatrixUtils.Orientation.HORIZONTAL));
 
     }
 
