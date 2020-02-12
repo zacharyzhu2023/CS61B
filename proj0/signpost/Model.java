@@ -659,7 +659,8 @@ class Model implements Iterable<Model.Sq> {
                             && next.successor() == null) {
                         this._group = next._group; next._group = -1;
                     } else {
-                        next._group = newGroup(); }
+                        next._group = newGroup();
+                    }
                 }
             } else {
                 boolean tGFNum = false; Sq thisPointer0 = this;
@@ -682,8 +683,7 @@ class Model implements Iterable<Model.Sq> {
                 boolean nNum = false; Sq nextPointer0 = next;
                 while (nextPointer0 != null) {
                     if (nextPointer0.hasFixedNum()) {
-                        nNum = true;
-                    }
+                        nNum = true; }
                     nextPointer0 = nextPointer0.successor(); }
                 if (!nNum) {
                     Sq nP = next;
