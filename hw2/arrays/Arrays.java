@@ -48,7 +48,7 @@ class Arrays {
      *  {{1, 3, 7}, {5}, {4, 6, 9, 10}}. */
     static int[][] naturalRuns(int[] A) {
         if (A.length == 0) {
-            return new int[][]{{}};
+            return new int[][]{};
         } else if (A.length == 1) {
             return new int[][]{A};
         }
