@@ -672,8 +672,7 @@ class Model implements Iterable<Model.Sq> {
                 if (!tGFNum) {
                     Sq tP = this.head();
                     while (tP != null) {
-                        tP._sequenceNum = 0; tP = tP.successor();
-                    }
+                        tP._sequenceNum = 0; tP = tP.successor(); }
                     if (this.predecessor() != null) {
                         this._head._group = newGroup();
                     } else {
@@ -697,9 +696,9 @@ class Model implements Iterable<Model.Sq> {
                     }
                 }
             }
-            Sq nextPointer = next;
-            while (nextPointer != null) {
-                nextPointer._head = next; nextPointer = nextPointer.successor(); }
+            Sq nextP = next;
+            while (nextP != null) {
+                nextP._head = next; nextP = nextP.successor(); }
         }
 
         @Override
