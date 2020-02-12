@@ -26,6 +26,7 @@ public class MatrixUtils {
      * @param e
      * @param r
      * @param c
+     * @return an int value int m
      * **/
     public static double get(double[][] e, int r, int c) {
         if (r >= e.length || c >= e[r].length) {
@@ -137,6 +138,7 @@ public class MatrixUtils {
 
     /** Transpose a matrix.
      * @param m
+     * @return a double[][] transposed version of m
      * **/
     public static double[][] transpose(double[][] m) {
         double[][] transposed = new double[m[0].length][m.length];
