@@ -680,18 +680,16 @@ class Model implements Iterable<Model.Sq> {
                         this._group = -1;
                     }
                 }
-                boolean nextGroupHasFixedNum = false;
-                Sq nextPointer0 = next;
+                boolean nNum = false; Sq nextPointer0 = next;
                 while (nextPointer0 != null) {
                     if (nextPointer0.hasFixedNum()) {
-                        nextGroupHasFixedNum = true;
+                        nNum = true;
                     }
                     nextPointer0 = nextPointer0.successor(); }
-                if (!nextGroupHasFixedNum) {
-                    Sq nextPointer = next;
-                    while (nextPointer != null) {
-                        nextPointer._sequenceNum = 0;
-                        nextPointer = nextPointer.successor(); }
+                if (!nNum) {
+                    Sq nP = next;
+                    while (nP != null) {
+                        nP._sequenceNum = 0; nP = nP.successor(); }
                     if (next.successor() != null) {
                         next._head = next; next._head._group = newGroup();
                     } else {
