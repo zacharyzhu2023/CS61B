@@ -683,7 +683,8 @@ class Model implements Iterable<Model.Sq> {
                 boolean nNum = false; Sq nextPointer0 = next;
                 while (nextPointer0 != null) {
                     if (nextPointer0.hasFixedNum()) {
-                        nNum = true; }
+                        nNum = true;
+                    }
                     nextPointer0 = nextPointer0.successor(); }
                 if (!nNum) {
                     Sq nP = next;
@@ -698,8 +699,7 @@ class Model implements Iterable<Model.Sq> {
             }
             Sq nextPointer = next;
             while (nextPointer != null) {
-                nextPointer._head = next; nextPointer = nextPointer.successor();
-            }
+                nextPointer._head = next; nextPointer = nextPointer.successor(); }
         }
 
         @Override
