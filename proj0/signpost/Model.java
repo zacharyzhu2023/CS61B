@@ -63,7 +63,7 @@ import static signpost.Utils.*;
  *  0) and all cells with fixed sequence numbers appear at the
  *  corresponding position in that sequence.
  *
- *  @author
+ *  @author Zachary Zhu
  */
 class Model implements Iterable<Model.Sq> {
 
@@ -84,11 +84,9 @@ class Model implements Iterable<Model.Sq> {
         _width = solution.length; _height = solution[0].length;
         int last = _width * _height;
         BitSet allNums = new BitSet();
-
         _allSuccessors = Place.successorCells(_width, _height);
         _solution = new int[_width][_height];
         deepCopy(solution, _solution);
-
         _board = new Sq[width()][height()];
         _solnNumToPlace = new Place[size() + 1];
         for (int x0 = 0; x0 < width(); x0 += 1) {
@@ -107,7 +105,6 @@ class Model implements Iterable<Model.Sq> {
                 _solnNumToPlace[_solution[x0][y0]] = temp.pl;
             }
         }
-
         int[] arr = new int[size()];
         int[] checkArr = new int[size()];
         int counter3 = 0;
@@ -277,7 +274,6 @@ class Model implements Iterable<Model.Sq> {
      *  unconnected and are separated by a queen move.  Returns true iff
      *  any changes were made. */
     boolean autoconnect() {
-        // FIXME
         boolean changesMade = false;
         for (int x0 = 0; x0 < width(); x0 += 1) {
             for (int y0 = 0; y0 < height(); y0 += 1) {
@@ -298,7 +294,6 @@ class Model implements Iterable<Model.Sq> {
     /** Sets the numbers in this board's squares to the solution from which
      *  this board was last initialized by the constructor. */
     void solve() {
-        // FIXME
         for (int x0 = 0; x0 < width(); x0 += 1) {
             for (int y0 = 0; y0 < height(); y0 += 1) {
                 get(x0, y0)._sequenceNum = _solution[x0][y0];
@@ -311,7 +306,6 @@ class Model implements Iterable<Model.Sq> {
     /** Return the direction from cell (X, Y) in the solution to its
      *  successor, or 0 if it has none. */
     public int arrowDirection(int x, int y) {
-        // FIXME
         if (_solution[x][y] == size()) {
             return 0;
         }
@@ -585,8 +579,10 @@ class Model implements Iterable<Model.Sq> {
 
         boolean connectable(Sq s1) {
             if (this.pl.dirOf(s1.pl) == this.direction()
-                    && s1.predecessor() == null && this.successor() == null
-                    && (s1.sequenceNum() != 1) && (this.sequenceNum() != size())) {
+                    && s1.predecessor() == null
+                    && this.successor() == null
+                    && (s1.sequenceNum() != 1)
+                    && (this.sequenceNum() != size())) {
                 if (this.sequenceNum() != 0 && s1.sequenceNum() != 0) {
                     return this.sequenceNum() == s1.sequenceNum() - 1;
                 } else {
@@ -606,13 +602,10 @@ class Model implements Iterable<Model.Sq> {
             int sgroup = s1.group();
             int thisgroup = this.group();
             _unconnected -= 1;
-
             this._successor = s1;
             s1._predecessor = this;
-
             boolean prevThisFixedNum = this.sequenceNum() == 0;
             boolean s1PrevFixedNum = s1.sequenceNum() == 0;
-
             Sq successorPointer = this;
             if (this.sequenceNum() != 0) {
                 while (successorPointer.successor() != null) {
@@ -627,14 +620,11 @@ class Model implements Iterable<Model.Sq> {
 
                 }
             }
-
             Sq newSuccessorPointer = this;
             while (newSuccessorPointer.successor() != null) {
                 newSuccessorPointer.successor()._head = this.head();
                 newSuccessorPointer = newSuccessorPointer.successor();
             }
-
-
             if (s1PrevFixedNum && s1.sequenceNum() != 0) {
                 releaseGroup(sgroup);
             } else if (prevThisFixedNum && this.sequenceNum() != 0) {
