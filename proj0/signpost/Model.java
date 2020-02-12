@@ -661,19 +661,18 @@ class Model implements Iterable<Model.Sq> {
                     } else {
                         next._group = newGroup();
                     }
-                } } else {
-                boolean thisGroupHasFixedNum = false;
-                Sq thisPointer0 = this;
+                }
+            } else {
+                boolean tGFNum = false; Sq thisPointer0 = this;
                 while (thisPointer0 != null) {
                     if (thisPointer0.hasFixedNum()) {
-                        thisGroupHasFixedNum = true;
+                        tGFNum = true;
                     }
                     thisPointer0 = thisPointer0.predecessor(); }
-                if (!thisGroupHasFixedNum) {
-                    Sq thisPointer = this.head();
-                    while (thisPointer != null) {
-                        thisPointer._sequenceNum = 0;
-                        thisPointer = thisPointer.successor(); }
+                if (!tGFNum) {
+                    Sq tP = this.head();
+                    while (tP != null) {
+                        tP._sequenceNum = 0; tP = tP.successor(); }
                     if (this.predecessor() != null) {
                         this._head._group = newGroup();
                     } else {
@@ -684,7 +683,8 @@ class Model implements Iterable<Model.Sq> {
                 Sq nextPointer0 = next;
                 while (nextPointer0 != null) {
                     if (nextPointer0.hasFixedNum()) {
-                        nextGroupHasFixedNum = true; }
+                        nextGroupHasFixedNum = true;
+                    }
                     nextPointer0 = nextPointer0.successor(); }
                 if (!nextGroupHasFixedNum) {
                     Sq nextPointer = next;
