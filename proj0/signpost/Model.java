@@ -676,8 +676,7 @@ class Model implements Iterable<Model.Sq> {
                     }
                     if (this.predecessor() != null) {
                         this._head._group = newGroup();
-                    } else {
-                        this._group = -1;
+                    } else { this._group = -1;
                     }
                 }
                 boolean nNum = false; Sq nextPointer0 = next;
