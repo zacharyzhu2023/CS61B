@@ -648,15 +648,13 @@ class Model implements Iterable<Model.Sq> {
             next._predecessor = _successor = null;
             if (_sequenceNum == 0) {
                 if (this.successor() == null && this.predecessor() == null
-                        && next.predecessor() == null
-                        && next.successor() == null) {
+                        && next.predecessor() == null && next.successor() == null) {
                     releaseGroup(this.group()); releaseGroup(next.group());
                     this._group = -1; next._group = -1;
                 } else {
                     if (this.successor() == null
                             && this.predecessor() == null) {
-                        next._group = this._group;
-                        this._group = -1;
+                        next._group = this._group; this._group = -1;
                     } else if (next.predecessor() == null
                             && next.successor() == null) {
                         this._group = next._group; next._group = -1;
@@ -676,8 +674,7 @@ class Model implements Iterable<Model.Sq> {
                 if (!thisGroupHasFixedNum) {
                     Sq thisPointer = this.head();
                     while (thisPointer != null) {
-                        thisPointer._sequenceNum = 0;
-                        thisPointer = thisPointer.successor();
+                        thisPointer._sequenceNum = 0; thisPointer = thisPointer.successor();
                     }
                     if (this.predecessor() != null) {
                         this._head._group = newGroup();
@@ -696,12 +693,10 @@ class Model implements Iterable<Model.Sq> {
                 if (!nextGroupHasFixedNum) {
                     Sq nextPointer = next;
                     while (nextPointer != null) {
-                        nextPointer._sequenceNum = 0;
-                        nextPointer = nextPointer.successor();
+                        nextPointer._sequenceNum = 0; nextPointer = nextPointer.successor();
                     }
                     if (next.successor() != null) {
-                        next._head = next;
-                        next._head._group = newGroup();
+                        next._head = next; next._head._group = newGroup();
                     } else {
                         next._group = -1;
                     }
@@ -709,8 +704,7 @@ class Model implements Iterable<Model.Sq> {
             }
             Sq nextPointer = next;
             while (nextPointer != null) {
-                nextPointer._head = next;
-                nextPointer = nextPointer.successor();
+                nextPointer._head = next; nextPointer = nextPointer.successor();
             }
         }
 
