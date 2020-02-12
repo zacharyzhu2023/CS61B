@@ -280,9 +280,9 @@ class Model implements Iterable<Model.Sq> {
             for (int y0 = 0; y0 < height(); y0 += 1) {
                 PlaceList potentialSuccessors = _board[x0][y0].successors();
                 for (int z0 = 0; z0 < potentialSuccessors.size(); z0 += 1) {
-                    Sq successor0 = get(potentialSuccessors.get(z0));
-                    if (get(x0, y0).sequenceNum() + 1 == successor0.sequenceNum()) {
-                        get(x0, y0).connect(successor0);
+                    Sq s0 = get(potentialSuccessors.get(z0));
+                    if (get(x0, y0).sequenceNum() + 1 == s0.sequenceNum()) {
+                        get(x0, y0).connect(s0);
                         changesMade = true;
                     }
                 }
@@ -607,11 +607,11 @@ class Model implements Iterable<Model.Sq> {
             s1._predecessor = this;
             boolean prevThisFixedNum = this.sequenceNum() == 0;
             boolean s1PrevFixedNum = s1.sequenceNum() == 0;
-            Sq sPointer = this;
+            Sq sP = this;
             if (this.sequenceNum() != 0) {
-                while (sPointer.successor() != null) {
-                    sPointer._successor._sequenceNum = sPointer.sequenceNum() + 1;
-                    sPointer = sPointer.successor();
+                while (sP.successor() != null) {
+                    sP._successor._sequenceNum = sP.sequenceNum() + 1;
+                    sP = sP.successor();
                 }
             } else if (s1.sequenceNum() != 0) {
                 Sq predP = s1;
