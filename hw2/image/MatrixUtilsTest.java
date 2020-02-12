@@ -59,14 +59,13 @@ public class MatrixUtilsTest {
 
     @Test
     public void accumulateTest() {
-        double[][] accumBeforeVertical0 =
-                new double[][] {
-                        {1000000, 1000000, 1000000, 1000000},
-                        {1000000, 75990, 30003, 1000000},
-                        {1000000, 30002, 103046, 1000000},
-                        {1000000, 29515, 38273, 1000000},
-                        {1000000, 73403, 35399, 1000000},
-                        {1000000, 1000000, 1000000, 1000000}};
+        double[][] accumBeforeVertical0 = new double[][] {
+                {1000000, 1000000, 1000000, 1000000},
+                {1000000, 75990, 30003, 1000000},
+                {1000000, 30002, 103046, 1000000},
+                {1000000, 29515, 38273, 1000000},
+                {1000000, 73403, 35399, 1000000},
+                {1000000, 1000000, 1000000, 1000000}};
 
         double[][] accumAfterVertical0 =
                 new double[][] {
@@ -77,11 +76,9 @@ public class MatrixUtilsTest {
                         {2089520, 1162923, 1124919, 2098278},
                         {2162923, 2124919, 2124919, 2124919}};
 
-        double[][] accumBeforeHorizontal =
-                new double[][] {
+        double[][] accumBeforeHorizontal = new double[][] {
                 {1000000, 1000000, 1000000, 1000000}};
-        double[][] accumAfterHorizontal =
-                new double[][] {
+        double[][] accumAfterHorizontal = new double[][] {
                 {1000000, 2000000, 3000000, 4000000}};
         assertArrayEquals(accumAfterVertical0,
                 MatrixUtils.accumulate(accumBeforeVertical0,

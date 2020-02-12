@@ -20,7 +20,7 @@ public class MatrixUtils {
     enum Orientation { VERTICAL, HORIZONTAL };
 
 
-    /** Get the current value for a matrix **/
+    /** Get the current value for a matrix. **/
     public static double get(double[][] e, int r, int c) {
         if (r >= e.length || c >= e[r].length) {
             return Double.POSITIVE_INFINITY;
@@ -85,7 +85,8 @@ public class MatrixUtils {
                         aVM[i][j] = aVM[i][j] + Math.min(get(aVM, i - 1, j),
                                 get(aVM, i - 1, j - 1));
                     } else {
-                        aVM[i][j] = aVM[i][j] + Math.min(Math.min(get(aVM, i - 1, j),
+                        aVM[i][j] = aVM[i][j] +
+                                Math.min(Math.min(get(aVM, i - 1, j),
                                 get(aVM, i - 1, j - 1)),
                                 get(aVM, i - 1, j + 1));
                     }
@@ -128,7 +129,7 @@ public class MatrixUtils {
         }
     }
 
-    /** Transpose a matrix **/
+    /** Transpose a matrix. **/
     public static double[][] transpose(double[][] m) {
         double[][] transposed = new double[m[0].length][m.length];
         for (int i = 0; i < m.length; i += 1) {
@@ -193,7 +194,7 @@ public class MatrixUtils {
      */
 
     public static int[] findSeam(double[][] m, Orientation orientation) {
-        return null; //your code here
+        return null;
     }
 
     /** does nothing. ARGS not used. use for whatever purposes you'd like */
@@ -204,8 +205,7 @@ public class MatrixUtils {
 
         double[][] em Rescaler.energyMatrix(sc);
 
-        //double[][] m = sc.cumulativeEnergyMatrix(true);
-        double[][] m = MatrixUtils.accumulateVertical(em);
+
         System.out.println(MatrixUtils.matrixToString(em));
         System.out.println();
 
