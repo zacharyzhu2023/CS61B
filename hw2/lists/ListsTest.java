@@ -10,13 +10,6 @@ import static org.junit.Assert.*;
 
 public class ListsTest {
 
-    // It might initially seem daunting to try to set up
-    // IntListList expected.
-    //
-    // There is an easy way to get the IntListList that you want in just
-    // few lines of code! Make note of the IntListList.list method that
-    // takes as input a 2D array.
-
     @Test
     public void naturalRunsTest() {
         int[] arr1 = new int[] {1, 3, 7, 5, 4, 6, 9, 10, 10, 11};

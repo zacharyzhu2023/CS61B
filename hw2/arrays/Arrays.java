@@ -6,7 +6,7 @@ package arrays;
 /** HW #2 */
 
 /** Array utilities.
- *  @author
+ *  @author Zachary Zhu
  */
 class Arrays {
 
@@ -36,7 +36,8 @@ class Arrays {
     static int[] remove(int[] A, int start, int len) {
         int[] finalArr = new int[A.length - len];
         System.arraycopy(A, 0, finalArr, 0, start);
-        System.arraycopy(A, start + len, finalArr, start, A.length - start - len);
+        System.arraycopy(A, start + len, finalArr, start,
+                A.length - start - len);
         return finalArr;
     }
 

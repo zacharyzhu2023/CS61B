@@ -19,6 +19,16 @@ public class MatrixUtils {
 
     enum Orientation { VERTICAL, HORIZONTAL };
 
+
+    /** Get the current value for a matrix **/
+    public static double get(double[][] e, int r, int c) {
+        if (r >= e.length || c >= e[r].length) {
+            return Double.POSITIVE_INFINITY;
+        } else {
+            return e[r][c];
+        }
+    }
+
     /** Non-destructively accumulates an energy matrix in the vertical
      *  direction.
      *
@@ -53,13 +63,6 @@ public class MatrixUtils {
      *  2162923   2124919   2124919   2124919
      *
      */
-    public static double get(double[][] e, int r, int c) {
-        if (r >= e.length || c >= e[r].length) {
-            return Double.POSITIVE_INFINITY;
-        } else {
-            return e[r][c];
-        }
-    }
     public static double[][] accumulateVertical(double[][] m) {
         if (m.length == 0) {
             return new double[][] {};
@@ -83,7 +86,8 @@ public class MatrixUtils {
                                 get(aVM, i - 1, j - 1));
                     } else {
                         aVM[i][j] = aVM[i][j] + Math.min(Math.min(get(aVM, i - 1, j),
-                                get(aVM, i - 1, j - 1)), get(aVM, i - 1, j + 1));
+                                get(aVM, i - 1, j - 1)),
+                                get(aVM, i - 1, j + 1));
                     }
                 }
             }
@@ -114,6 +118,17 @@ public class MatrixUtils {
      *  for project 1, but in a more complex way.
      *
      */
+
+    public static double[][] accumulate(double[][] m, Orientation orientation) {
+        if (orientation == Orientation.VERTICAL) {
+            return accumulateVertical(m);
+        } else {
+            double[][] a = accumulateVertical(transpose(m));
+            return transpose(accumulateVertical(transpose(m)));
+        }
+    }
+
+    /** Transpose a matrix **/
     public static double[][] transpose(double[][] m) {
         double[][] transposed = new double[m[0].length][m.length];
         for (int i = 0; i < m.length; i += 1) {
@@ -122,14 +137,6 @@ public class MatrixUtils {
             }
         }
         return transposed;
-    }
-    public static double[][] accumulate(double[][] m, Orientation orientation) {
-        if (orientation == Orientation.VERTICAL) {
-            return accumulateVertical(m);
-        } else {
-            double[][] a = accumulateVertical(transpose(m));
-            return transpose(accumulateVertical(transpose(m)));
-        }
     }
 
     /** Finds the vertical seam VERTSEAM of the given matrix M.
