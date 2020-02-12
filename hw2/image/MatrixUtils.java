@@ -1,5 +1,7 @@
 package image;
 
+import org.junit.runners.Parameterized;
+
 /** Provides a variety of utilities for operating on matrices.
  *  All methods assume that the double[][] arrays provided are rectangular.
  *
@@ -20,7 +22,11 @@ public class MatrixUtils {
     enum Orientation { VERTICAL, HORIZONTAL };
 
 
-    /** Get the current value for a matrix. **/
+    /** Get the current value for a matrix.
+     * @param e
+     * @param r
+     * @param c
+     * **/
     public static double get(double[][] e, int r, int c) {
         if (r >= e.length || c >= e[r].length) {
             return Double.POSITIVE_INFINITY;
@@ -85,8 +91,8 @@ public class MatrixUtils {
                         aVM[i][j] = aVM[i][j] + Math.min(get(aVM, i - 1, j),
                                 get(aVM, i - 1, j - 1));
                     } else {
-                        aVM[i][j] = aVM[i][j] +
-                                Math.min(Math.min(get(aVM, i - 1, j),
+                        aVM[i][j] = aVM[i][j]
+                                + Math.min(Math.min(get(aVM, i - 1, j),
                                 get(aVM, i - 1, j - 1)),
                                 get(aVM, i - 1, j + 1));
                     }
@@ -129,7 +135,9 @@ public class MatrixUtils {
         }
     }
 
-    /** Transpose a matrix. **/
+    /** Transpose a matrix.
+     * @param m
+     * **/
     public static double[][] transpose(double[][] m) {
         double[][] transposed = new double[m[0].length][m.length];
         for (int i = 0; i < m.length; i += 1) {
