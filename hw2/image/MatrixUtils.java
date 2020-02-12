@@ -23,9 +23,9 @@ public class MatrixUtils {
 
 
     /** Get the current value for a matrix.
-     * @param e
-     * @param r
-     * @param c
+     * @param e double[][] array of arrays
+     * @param r an integer row pos
+     * @param c an integer column pos
      * @return an int value int m
      * **/
     public static double get(double[][] e, int r, int c) {
@@ -137,7 +137,7 @@ public class MatrixUtils {
     }
 
     /** Transpose a matrix.
-     * @param m
+     * @param m a double[][] array
      * @return a double[][] transposed version of m
      * **/
     public static double[][] transpose(double[][] m) {
