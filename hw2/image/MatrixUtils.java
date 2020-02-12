@@ -53,9 +53,43 @@ public class MatrixUtils {
      *  2162923   2124919   2124919   2124919
      *
      */
-
+    public static double get(double[][] e, int r, int c) {
+        if (r >= e.length || c >= e[r].length) {
+            return Double.POSITIVE_INFINITY;
+        } else {
+            return e[r][c];
+        }
+    }
     public static double[][] accumulateVertical(double[][] m) {
-        return null; //your code here
+        if (m.length == 0) {
+            return new double[][] {};
+        } else if (m.length == 1) {
+            return m;
+        } else if (m[0].length == 1) {
+            double[][] aVM = MatrixUtils.copy(m);
+            for (int i = 1; i < m.length; i += 1) {
+                aVM[i][0] = aVM[i - 1][0] + aVM[i][0];
+            }
+            return aVM;
+        } else {
+            double[][] aVM = MatrixUtils.copy(m);
+            for (int i = 1; i < m.length; i += 1) {
+                for (int j = 0; j < m[i].length; j += 1) {
+                    if (j == 0) {
+                        aVM[i][j] = aVM[i][j] + Math.min(get(aVM, i - 1, j),
+                                get(aVM, i - 1, j + 1));
+                    } else if (j == m[i].length - 1) {
+                        aVM[i][j] = aVM[i][j] + Math.min(get(aVM, i - 1, j),
+                                get(aVM, i - 1, j - 1));
+                    } else {
+                        aVM[i][j] = aVM[i][j] + Math.min(Math.min(get(aVM, i - 1, j),
+                                get(aVM, i - 1, j - 1)), get(aVM, i - 1, j + 1));
+                    }
+                }
+            }
+            return aVM;
+        }
+
     }
 
     /** Non-destructively accumulates a matrix M along the specified
@@ -71,7 +105,7 @@ public class MatrixUtils {
      *  accumulateVertical(mT) returns the correct result.
      *
      *  accumulate should be very short (only a few lines). Most of the
-     *  work should be done in creaing the helper function (and even
+     *  work should be done in creating the helper function (and even
      *  that function should be pretty short and straightforward).
      *
      *  The important lesson here is that you should never have big
@@ -80,9 +114,22 @@ public class MatrixUtils {
      *  for project 1, but in a more complex way.
      *
      */
-
+    public static double[][] transpose(double[][] m) {
+        double[][] transposed = new double[m[0].length][m.length];
+        for (int i = 0; i < m.length; i += 1) {
+            for (int j = 0; j < m[0].length; j += 1) {
+                transposed[j][i] = m[i][j];
+            }
+        }
+        return transposed;
+    }
     public static double[][] accumulate(double[][] m, Orientation orientation) {
-        return null; //your code here
+        if (orientation == Orientation.VERTICAL) {
+            return accumulateVertical(m);
+        } else {
+            double[][] a = accumulateVertical(transpose(m));
+            return transpose(accumulateVertical(transpose(m)));
+        }
     }
 
     /** Finds the vertical seam VERTSEAM of the given matrix M.
@@ -115,7 +162,22 @@ public class MatrixUtils {
      */
 
     public static int[] findVerticalSeam(double[][] m) {
-        return null; //your code here
+        if (m.length == 0) {
+            return new int[] {};
+        }
+        int[] verticalSeams = new int[m.length];
+        for (int i = 0; i < m.length; i += 1) {
+            int maxLoc = 0;
+            double maxVal = 0;
+            for (int j = 0; j < m.length; j += 1) {
+                if (m[i][j] > maxVal) {
+                    maxVal = m[i][j];
+                    maxLoc = j;
+                }
+            }
+            verticalSeams[i] = maxLoc;
+        }
+        return verticalSeams;
     }
 
     /** Returns the SEAM of M with the given ORIENTATION.
