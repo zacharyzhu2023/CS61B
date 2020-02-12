@@ -105,8 +105,7 @@ class Model implements Iterable<Model.Sq> {
                 _solnNumToPlace[_solution[x0][y0]] = temp.pl;
             }
         }
-        int[] arr = new int[size()];
-        int[] checkArr = new int[size()];
+        int[] arr = new int[size()], checkArr = new int[size()];
         int counter3 = 0;
         for (int x3 = 0; x3 < _solution.length; x3 += 1) {
             for (int y3 = 0; y3 < _solution[0].length; y3 += 1) {
@@ -162,8 +161,8 @@ class Model implements Iterable<Model.Sq> {
             for (int y1 = 0; y1 < height(); y1 += 1) {
                 _board[x1][y1]._successors =
                         sCells0[x1][y1][arrowDirection(x1, y1)];
-                for (int z1 = 0; z1 < _board[x1][y1]._successors.size(); z1 += 1) {
-                    Place sPlace0 = _board[x1][y1]._successors.get(z1);
+                for (int z = 0; z < _board[x1][y1]._successors.size(); z++) {
+                    Place sPlace0 = _board[x1][y1]._successors.get(z);
                     int sPX = sPlace0.x;
                     int sPY = sPlace0.y;
                     if (_board[sPX][sPY]._predecessors == null) {
@@ -656,7 +655,8 @@ class Model implements Iterable<Model.Sq> {
                     this._group = -1;
                     next._group = -1;
                 } else {
-                    if (this.successor() == null && this.predecessor() == null) {
+                    if (this.successor() == null
+                            && this.predecessor() == null) {
                         next._group = this._group;
                         this._group = -1;
                     } else if (next.predecessor() == null
