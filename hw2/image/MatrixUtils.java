@@ -1,6 +1,5 @@
 package image;
 
-import org.junit.runners.Parameterized;
 
 /** Provides a variety of utilities for operating on matrices.
  *  All methods assume that the double[][] arrays provided are rectangular.
