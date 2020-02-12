@@ -91,15 +91,15 @@ class Model implements Iterable<Model.Sq> {
         _solnNumToPlace = new Place[size() + 1];
         for (int x0 = 0; x0 < width(); x0 += 1) {
             for (int y0 = 0; y0 < height(); y0 += 1) {
-                int direction0 = arrowDirection(x0, y0);
-                boolean fixed0 = false;
+                int dir0 = arrowDirection(x0, y0);
+                boolean f0 = false;
                 int group0 = -1, sequenceNum0 = 0;
                 if (_solution[x0][y0] == 1 || _solution[x0][y0] == size()) {
-                    fixed0 = true;
+                    f0 = true;
                     group0 = 0;
                     sequenceNum0 = _solution[x0][y0];
                 }
-                Sq temp = new Sq(x0, y0, sequenceNum0, fixed0, direction0, group0);
+                Sq temp = new Sq(x0, y0, sequenceNum0, f0, dir0, group0);
                 _board[x0][y0] = temp;
                 _allSquares.add(temp);
                 _solnNumToPlace[_solution[x0][y0]] = temp.pl;
@@ -120,10 +120,10 @@ class Model implements Iterable<Model.Sq> {
             throw new IllegalArgumentException("Solution is invalid");
         }
 
-        PlaceList[][][] successorCells0 = Place.successorCells(width(), height());
+        PlaceList[][][] sCells0 = Place.successorCells(width(), height());
         for (int x1 = 0; x1 < width(); x1 += 1) {
             for (int y1 = 0; y1 < height(); y1 += 1) {
-                _board[x1][y1]._successors = successorCells0[x1][y1][arrowDirection(x1, y1)];
+                _board[x1][y1]._successors = sCells0[x1][y1][arrowDirection(x1, y1)];
                 for (int z1 = 0; z1 < _board[x1][y1]._successors.size(); z1 += 1) {
                     Place successorPlace0 = _board[x1][y1]._successors.get(z1);
                     int successorPlace0X = successorPlace0.x;
@@ -156,18 +156,18 @@ class Model implements Iterable<Model.Sq> {
             }
         }
 
-        PlaceList[][][] successorCells0 = Place.successorCells(width(), height());
+        PlaceList[][][] sCells0 = Place.successorCells(width(), height());
         for (int x1 = 0; x1 < width(); x1 += 1) {
             for (int y1 = 0; y1 < height(); y1 += 1) {
-                _board[x1][y1]._successors = successorCells0[x1][y1][arrowDirection(x1, y1)];
+                _board[x1][y1]._successors = sCells0[x1][y1][arrowDirection(x1, y1)];
                 for (int z1 = 0; z1 < _board[x1][y1]._successors.size(); z1 += 1) {
-                    Place successorPlace0 = _board[x1][y1]._successors.get(z1);
-                    int successorPlace0X = successorPlace0.x;
-                    int successorPlace0Y = successorPlace0.y;
-                    if (_board[successorPlace0X][successorPlace0Y]._predecessors == null) {
-                        _board[successorPlace0X][successorPlace0Y]._predecessors = new PlaceList();
+                    Place sPlace0 = _board[x1][y1]._successors.get(z1);
+                    int sPlace0X = sPlace0.x;
+                    int sPlace0Y = sPlace0.y;
+                    if (_board[sPlace0X][sPlace0Y]._predecessors == null) {
+                        _board[sPlace0X][sPlace0Y]._predecessors = new PlaceList();
                     }
-                    _board[successorPlace0X][successorPlace0Y]._predecessors.add(_board[x1][y1].pl);
+                    _board[sPlace0X][sPlace0Y]._predecessors.add(_board[x1][y1].pl);
                 }
 
             }
