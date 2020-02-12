@@ -8,7 +8,7 @@ import static signpost.Place.PlaceList;
 import static signpost.Utils.*;
 
 /** A creator of random Signpost puzzles.
- *  @author
+ *  @author Zachary Zhu
  */
 class PuzzleGenerator implements PuzzleSource {
 
@@ -129,7 +129,8 @@ class PuzzleGenerator implements PuzzleSource {
         int connectables = 0;
         for (int i = 0; i < start.successors().size(); i += 1) {
             Sq sq0 = model.get(start.successors().get(i));
-            if (start.connectable(sq0) && sq0.sequenceNum() == start.sequenceNum() + 1) {
+            if (start.connectable(sq0)
+                    && sq0.sequenceNum() == start.sequenceNum() + 1) {
                 return sq0;
             } else if (start.connectable(sq0)) {
                 successor0 = sq0;

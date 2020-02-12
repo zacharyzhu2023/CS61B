@@ -123,8 +123,9 @@ class Model implements Iterable<Model.Sq> {
         PlaceList[][][] sCells0 = Place.successorCells(width(), height());
         for (int x1 = 0; x1 < width(); x1 += 1) {
             for (int y1 = 0; y1 < height(); y1 += 1) {
-                _board[x1][y1]._successors = sCells0[x1][y1][arrowDirection(x1, y1)];
-                for (int z = 0; z < _board[x1][y1]._successors.size(); z ++) {
+                _board[x1][y1]._successors =
+                        sCells0[x1][y1][arrowDirection(x1, y1)];
+                for (int z = 0; z < _board[x1][y1]._successors.size(); z++) {
                     Place sPlace0 = _board[x1][y1]._successors.get(z);
                     int sPX = sPlace0.x;
                     int sPY = sPlace0.y;
@@ -159,7 +160,8 @@ class Model implements Iterable<Model.Sq> {
         PlaceList[][][] sCells0 = Place.successorCells(width(), height());
         for (int x1 = 0; x1 < width(); x1 += 1) {
             for (int y1 = 0; y1 < height(); y1 += 1) {
-                _board[x1][y1]._successors = sCells0[x1][y1][arrowDirection(x1, y1)];
+                _board[x1][y1]._successors =
+                        sCells0[x1][y1][arrowDirection(x1, y1)];
                 for (int z1 = 0; z1 < _board[x1][y1]._successors.size(); z1 += 1) {
                     Place sPlace0 = _board[x1][y1]._successors.get(z1);
                     int sPX = sPlace0.x;
