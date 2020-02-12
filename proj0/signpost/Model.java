@@ -124,14 +124,14 @@ class Model implements Iterable<Model.Sq> {
         for (int x1 = 0; x1 < width(); x1 += 1) {
             for (int y1 = 0; y1 < height(); y1 += 1) {
                 _board[x1][y1]._successors = sCells0[x1][y1][arrowDirection(x1, y1)];
-                for (int z1 = 0; z1 < _board[x1][y1]._successors.size(); z1 += 1) {
-                    Place successorPlace0 = _board[x1][y1]._successors.get(z1);
-                    int successorPlace0X = successorPlace0.x;
-                    int successorPlace0Y = successorPlace0.y;
-                    if (_board[successorPlace0X][successorPlace0Y]._predecessors == null) {
-                        _board[successorPlace0X][successorPlace0Y]._predecessors = new PlaceList();
+                for (int z = 0; z < _board[x1][y1]._successors.size(); z ++) {
+                    Place sPlace0 = _board[x1][y1]._successors.get(z);
+                    int sPX = sPlace0.x;
+                    int sPY = sPlace0.y;
+                    if (_board[sPX][sPY]._predecessors == null) {
+                        _board[sPX][sPY]._predecessors = new PlaceList();
                     }
-                    _board[successorPlace0X][successorPlace0Y]._predecessors.add(_board[x1][y1].pl);
+                    _board[sPX][sPY]._predecessors.add(_board[x1][y1].pl);
                 }
             }
         }
@@ -162,12 +162,12 @@ class Model implements Iterable<Model.Sq> {
                 _board[x1][y1]._successors = sCells0[x1][y1][arrowDirection(x1, y1)];
                 for (int z1 = 0; z1 < _board[x1][y1]._successors.size(); z1 += 1) {
                     Place sPlace0 = _board[x1][y1]._successors.get(z1);
-                    int sPlace0X = sPlace0.x;
-                    int sPlace0Y = sPlace0.y;
-                    if (_board[sPlace0X][sPlace0Y]._predecessors == null) {
-                        _board[sPlace0X][sPlace0Y]._predecessors = new PlaceList();
+                    int sPX = sPlace0.x;
+                    int sPY = sPlace0.y;
+                    if (_board[sPX][sPY]._predecessors == null) {
+                        _board[sPX][sPY]._predecessors = new PlaceList();
                     }
-                    _board[sPlace0X][sPlace0Y]._predecessors.add(_board[x1][y1].pl);
+                    _board[sPX][sPY]._predecessors.add(_board[x1][y1].pl);
                 }
 
             }
@@ -606,17 +606,17 @@ class Model implements Iterable<Model.Sq> {
             s1._predecessor = this;
             boolean prevThisFixedNum = this.sequenceNum() == 0;
             boolean s1PrevFixedNum = s1.sequenceNum() == 0;
-            Sq successorPointer = this;
+            Sq sPointer = this;
             if (this.sequenceNum() != 0) {
-                while (successorPointer.successor() != null) {
-                    successorPointer._successor._sequenceNum = successorPointer.sequenceNum() + 1;
-                    successorPointer = successorPointer.successor();
+                while (sPointer.successor() != null) {
+                    sPointer._successor._sequenceNum = sPointer.sequenceNum() + 1;
+                    sPointer = sPointer.successor();
                 }
             } else if (s1.sequenceNum() != 0) {
-                Sq predPointer = s1;
-                while (predPointer.predecessor() != null) {
-                    predPointer._predecessor._sequenceNum = predPointer.sequenceNum() - 1;
-                    predPointer = predPointer.predecessor();
+                Sq predP = s1;
+                while (predP.predecessor() != null) {
+                    predP._predecessor._sequenceNum = predP.sequenceNum() - 1;
+                    predP = predP.predecessor();
 
                 }
             }
@@ -657,7 +657,8 @@ class Model implements Iterable<Model.Sq> {
                     if (this.successor() == null && this.predecessor() == null) {
                         next._group = this._group;
                         this._group = -1;
-                    } else if (next.predecessor() == null && next.successor() == null) {
+                    } else if (next.predecessor() == null
+                            && next.successor() == null) {
                         this._group = next._group;
                         next._group = -1;
                     } else {
