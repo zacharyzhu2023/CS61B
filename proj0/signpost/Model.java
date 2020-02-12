@@ -650,10 +650,8 @@ class Model implements Iterable<Model.Sq> {
                 if (this.successor() == null && this.predecessor() == null
                         && next.predecessor() == null
                         && next.successor() == null) {
-                    releaseGroup(this.group());
-                    releaseGroup(next.group());
-                    this._group = -1;
-                    next._group = -1;
+                    releaseGroup(this.group()); releaseGroup(next.group());
+                    this._group = -1; next._group = -1;
                 } else {
                     if (this.successor() == null
                             && this.predecessor() == null) {
@@ -661,8 +659,7 @@ class Model implements Iterable<Model.Sq> {
                         this._group = -1;
                     } else if (next.predecessor() == null
                             && next.successor() == null) {
-                        this._group = next._group;
-                        next._group = -1;
+                        this._group = next._group; next._group = -1;
                     } else {
                         next._group = newGroup();
                     }
