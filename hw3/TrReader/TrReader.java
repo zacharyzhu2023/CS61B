@@ -39,6 +39,7 @@ public class TrReader extends Reader {
             fin += c;
         }
         System.out.println(fin);
+        System.out.println("NEW");
         if (offset >= arr.length) {
             return -1;
         }
