@@ -27,16 +27,18 @@ public class TrReaderTest {
      * */
     @Test
     public void testSource() throws IOException {
-        Reader r = makeStringReader(new FileReader("TrReader/TrReaderTest.java"), 4096);
+        Reader r = makeStringReader(new FileReader("TrReaderTest.java"), 4096);
         TrReader trR = new TrReader(r, "import jav.", "josh hug___");
         char[] cbuf = new char[250];
         assertEquals(250, trR.read(cbuf));
         String result = new String(cbuf);
         assertEquals(TRANSLATION.substring(0, 250), result);
 
+        StringReader s1 = new StringReader("abcde");
+        char[] b = new char[] {'a', 'b', 'c', 'd', 'e'};
+        TrReader tester1 = new TrReader(s1, "edcab", "EDCAB");
+        tester1.read(b, 3, 0);
 
-        //TrReader tester1 = new TrReader(new StringReader("abcde"), "edcab", "EDCAB");
-        //tester1.read();
 
 
     }
