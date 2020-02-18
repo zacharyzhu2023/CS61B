@@ -34,10 +34,11 @@ public class TrReader extends Reader {
 
     public int read(char[] arr, int offset, int len) throws IOException{
         //FIXME
-        for(int i = 0; i < arr.length; i++) {
-            System.out.print(arr.toString());
+        String fin = "";
+        for (char c: arr) {
+            fin += c;
         }
-        System.out.println();
+        System.out.println(fin);
         if (offset >= arr.length) {
             return -1;
         }
