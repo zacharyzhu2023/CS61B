@@ -34,7 +34,7 @@ public class TrReader extends Reader {
 
     public int read(char[] arr, int offset, int len) throws IOException{
         //FIXME
-        if (len == 0 || offset >= arr.length) {
+        if (offset >= arr.length) {
             return -1;
         }
         int c = r.read();
