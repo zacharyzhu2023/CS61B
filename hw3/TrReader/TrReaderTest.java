@@ -33,6 +33,11 @@ public class TrReaderTest {
         assertEquals(250, trR.read(cbuf));
         String result = new String(cbuf);
         assertEquals(TRANSLATION.substring(0, 250), result);
+
+//        char[] b = new char[] {'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z'};
+//        Reader reader = new StringReader("azbzczdz");
+//        TrReader tester = new TrReader(reader, "edcab", "EDCAB");
+//        tester.read(b, 3, 2);
     }
 
     /** Return a StringReader that contains the contents delivered by R,

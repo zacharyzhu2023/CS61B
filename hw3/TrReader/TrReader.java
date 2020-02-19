@@ -39,12 +39,10 @@ public class TrReader extends Reader {
         if (len == 0) {
             return 0;
         }
-        System.out.println("Initial array: " + Arrays.toString(arr));
         int readNum = r.read(arr, offset, len);
-        System.out.println("Final array: " + Arrays.toString(arr));
         for (int i = 0; i + offset < arr.length && i < len; i += 1) {
-            if (f.indexOf(arr[i]) != -1) {
-                arr[i] = t.charAt(f.indexOf(arr[i]));
+            if (f.indexOf(arr[i + offset]) != -1) {
+                arr[i + offset] = t.charAt(f.indexOf(arr[i + offset]));
             }
         }
         return readNum;
