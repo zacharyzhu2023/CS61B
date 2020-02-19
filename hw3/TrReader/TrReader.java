@@ -34,18 +34,19 @@ public class TrReader extends Reader {
 
     public int read(char[] arr, int offset, int len) throws IOException{
         //FIXME
-        String fin = "";
-        for (char c: arr) {
-            fin += c;
-        }
-        System.out.println(fin);
-        System.out.println("NEW");
-        if (offset >= arr.length) {
-            return -1;
+
+        if (len == 0) {
+            return 0;
         }
         int c = r.read();
+        if (c == -1) {
+            return -1;
+        }
+
+        int numRead = 1;
         int counter = 0;
-        while (c != -1 && counter < arr.length) {
+        //counter < len - 1
+        while (c != -1 && counter + offset < arr.length && numRead <= len) {
             if (f.indexOf(c) != -1) {
                 arr[counter + offset] = t.charAt(f.indexOf(c));
             }
@@ -53,8 +54,9 @@ public class TrReader extends Reader {
                 arr[counter + offset] = (char) c;
             }
             c = r.read();
+            numRead += 1;
             counter += 1;
         }
-        return Math.min(len, arr.length - offset);
+        return numRead - 1;
     }
 }

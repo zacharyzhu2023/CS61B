@@ -27,17 +27,38 @@ public class TrReaderTest {
      * */
     @Test
     public void testSource() throws IOException {
-        Reader r = makeStringReader(new FileReader("TrReaderTest.java"), 4096);
+        Reader r = makeStringReader(new FileReader("TrReader/TrReaderTest.java"), 4096);
         TrReader trR = new TrReader(r, "import jav.", "josh hug___");
         char[] cbuf = new char[250];
         assertEquals(250, trR.read(cbuf));
         String result = new String(cbuf);
         assertEquals(TRANSLATION.substring(0, 250), result);
 
-        StringReader s1 = new StringReader("abcde");
-        char[] b = new char[] {'a', 'b', 'c', 'd', 'e'};
-        TrReader tester1 = new TrReader(s1, "edcab", "EDCAB");
-        tester1.read(b, 3, 0);
+
+//        // Test 1
+//        StringReader s1 = new StringReader("abcde");
+//        char[] b1 = new char[] {'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z'};
+//        TrReader tester1 = new TrReader(s1, "edcab", "EDCAB");
+//        tester1.read(b1, 3, 0);
+//        String t1 = "";
+//        for (char c: b1) {
+//            t1 += c;
+//        }
+//        System.out.println(t1);
+//
+//
+//        // Test 2
+//        StringReader s2 = new StringReader("azbzczdz");
+//        char[] b2 = new char[] {'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z'};
+//        TrReader tester2 = new TrReader(s2, "edcab", "EDCAB");
+//        tester1.read(b1, 3, 0);
+//        String t2 = "";
+//        for (char c: b1) {
+//            t2 += c;
+//        }
+//        System.out.println(t2);
+
+
 
 
 
