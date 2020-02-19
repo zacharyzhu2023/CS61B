@@ -35,6 +35,11 @@ public class TrReader extends Reader {
     public int read(char[] arr, int offset, int len) throws IOException{
         //FIXME
 
+        String initialStr = "";
+        for (char c: arr) {
+            initialStr += c;
+        }
+        System.out.println("initial: " + initialStr);
         if (len == 0) {
             return 0;
         }
@@ -57,6 +62,12 @@ public class TrReader extends Reader {
             numRead += 1;
             counter += 1;
         }
+
+        String finalStr = "";
+        for (char ff: arr) {
+            finalStr += ff;
+        }
+        System.out.println("final: " + finalStr);
         return numRead - 1;
     }
 }
