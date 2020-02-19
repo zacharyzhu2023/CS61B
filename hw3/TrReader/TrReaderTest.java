@@ -27,7 +27,7 @@ public class TrReaderTest {
      * */
     @Test
     public void testSource() throws IOException {
-        Reader r = makeStringReader(new FileReader("TrReader/TrReaderTest.java"), 4096);
+        Reader r = makeStringReader(new FileReader("TrReaderTest.java"), 4096);
         TrReader trR = new TrReader(r, "import jav.", "josh hug___");
         char[] cbuf = new char[250];
         assertEquals(250, trR.read(cbuf));
