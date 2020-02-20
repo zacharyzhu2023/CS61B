@@ -1,4 +1,6 @@
-/** Functions to increment and sum the elements of a WeirdList. */
+/** Functions to increment and sum the elements of a WeirdList.
+ * @author Zachary Zhu
+ *  */
 class WeirdListClient {
 
     /** Return the result of adding N to each element of L. */
