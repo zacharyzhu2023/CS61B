@@ -17,6 +17,8 @@ public class WeirdList {
     public static final WeirdList EMPTY = new EmptyList();
 
     /** A new WeirdList whose head is HEAD and tail is TAIL.
+     * @param newHead input for head
+     * @param newTail input for the tail
      * */
     public WeirdList(int newHead, WeirdList newTail) {
         this.head = newHead;
