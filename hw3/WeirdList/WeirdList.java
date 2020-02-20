@@ -2,13 +2,16 @@
  * @author Zachary Zhu
  */
 public class WeirdList {
-    /** Necessary instance attributes for a WeirdList **/
+    /** Necessary instance attributes for a WeirdList.
+     *  **/
     private int head;
     private WeirdList tail;
-    /** The empty sequence of integers. */
+    /** The empty sequence of integers.
+     * */
     public static final WeirdList EMPTY = new EmptyList();
 
-    /** A new WeirdList whose head is HEAD and tail is TAIL. */
+    /** A new WeirdList whose head is HEAD and tail is TAIL.
+     * */
     public WeirdList(int head, WeirdList tail) { 
         this.head = head;
         this.tail = tail;

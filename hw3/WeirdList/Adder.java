@@ -11,7 +11,7 @@ public class Adder implements IntUnaryFunction {
      * that will be added to other numbers.
      * @param n int to be added
      *  **/
-    public Adder (int n) {
+    public Adder(int n) {
         constant = n;
     }
 
@@ -20,7 +20,7 @@ public class Adder implements IntUnaryFunction {
      * @param x apply method with constant and value
      * **/
     @Override
-    public int apply (int x) {
+    public int apply(int x) {
         return x + constant;
     }
 }
