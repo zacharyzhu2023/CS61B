@@ -14,9 +14,10 @@ public class Totaler implements IntUnaryFunction {
         total = initialTotal;
     }
 
-    /** Implementation of the apply method for the sum method **/
+    /** Implementation of the apply method for the sum method.
+     *  **/
     @Override
-    public int apply (int x) {
+    public int apply(int x) {
         total += x;
         return total;
     }

@@ -18,9 +18,9 @@ public class WeirdList {
 
     /** A new WeirdList whose head is HEAD and tail is TAIL.
      * */
-    public WeirdList(int head, WeirdList tail) { 
-        this.head = head;
-        this.tail = tail;
+    public WeirdList(int newHead, WeirdList newTail) {
+        this.head = newHead;
+        this.tail = newTail;
     }
 
     /** Returns the number of elements in the sequence that
