@@ -22,9 +22,9 @@ public class TrReader extends Reader {
     private String t;
 
     /** Constructor for TrReader.
-     * @param str
-     * @param from
-     * @param to
+     * @param str input reader
+     * @param from string from
+     * @param to string to
      **/
     public TrReader(Reader str, String from, String to) throws IOException {
         r = str;
@@ -39,7 +39,6 @@ public class TrReader extends Reader {
      */
 
     /** Implement the close() method.
-     * @return void
      * **/
     public void close() throws IOException {
         r.close();
@@ -47,9 +46,9 @@ public class TrReader extends Reader {
 
 
     /** Implement the read(char[] arr, int offset, int len) method.
-     * @param arr
-     * @param offset
-     * @param len
+     * @param arr input array
+     * @param offset the int offset
+     * @param len num characters read max
      * @return int number characters read
      * **/
     public int read(char[] arr, int offset, int len) throws IOException {
