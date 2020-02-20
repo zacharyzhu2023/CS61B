@@ -27,17 +27,14 @@ public class TrReaderTest {
      * */
     @Test
     public void testSource() throws IOException {
-        Reader r = makeStringReader(new FileReader("TrReader/TrReaderTest.java"), 4096);
-        TrReader trR = new TrReader(r, "import jav.", "josh hug___");
+        Reader r = makeStringReader(
+                new FileReader("TrReaderTest.java"), 4096);
+        TrReader trR =
+                new TrReader(r, "import jav.", "josh hug___");
         char[] cbuf = new char[250];
         assertEquals(250, trR.read(cbuf));
         String result = new String(cbuf);
         assertEquals(TRANSLATION.substring(0, 250), result);
-
-//        char[] b = new char[] {'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z', 'Z'};
-//        Reader reader = new StringReader("azbzczdz");
-//        TrReader tester = new TrReader(reader, "edcab", "EDCAB");
-//        tester.read(b, 3, 2);
     }
 
     /** Return a StringReader that contains the contents delivered by R,
@@ -48,7 +45,8 @@ public class TrReaderTest {
         char[] buf = new char[maxSize];
         r.read(buf);
         String result = new String(buf);
-        return new StringReader(result.replace("\r\n", "\n"));
+        return new StringReader(result.replace(
+                "\r\n", "\n"));
     }
 
     public static void main(String[] args) {

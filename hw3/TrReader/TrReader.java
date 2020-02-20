@@ -1,6 +1,5 @@
 import java.io.Reader;
 import java.io.IOException;
-import java.util.Arrays;
 
 /** Translating Reader: a stream that is a translation of an
  *  existing reader.
@@ -19,6 +18,7 @@ public class TrReader extends Reader {
     private String f;
     private String t;
 
+    /** Constructor for TrReader. **/
     public TrReader(Reader str, String from, String to) throws IOException {
         r = str;
         f = from;
@@ -30,11 +30,14 @@ public class TrReader extends Reader {
      *       reject this file, saying that you must declare TrReader
      *       abstract. Don't do that; define the right methods instead!
      */
+
+    /** Implement the close() method. **/
     public void close() throws IOException {
         r.close();
     }
 
 
+    /** Implement the read(char[] arr, int offset, int len) method **/
     public int read(char[] arr, int offset, int len) throws IOException {
         if (len == 0) {
             return 0;
