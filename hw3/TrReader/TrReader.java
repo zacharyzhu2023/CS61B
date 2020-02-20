@@ -14,11 +14,18 @@ public class TrReader extends Reader {
      * in STR unchanged.  FROM and TO must have the same length.
      */
 
+    /** Reader r instance variable. **/
     private Reader r;
+    /** String f instance variable. **/
     private String f;
+    /** String t instance variable. **/
     private String t;
 
-    /** Constructor for TrReader. **/
+    /** Constructor for TrReader.
+     * @Param Reader str
+     * @Param String from
+     * @Param String to
+     **/
     public TrReader(Reader str, String from, String to) throws IOException {
         r = str;
         f = from;
@@ -31,13 +38,20 @@ public class TrReader extends Reader {
      *       abstract. Don't do that; define the right methods instead!
      */
 
-    /** Implement the close() method. **/
+    /** Implement the close() method.
+     * @Return void
+     * **/
     public void close() throws IOException {
         r.close();
     }
 
 
-    /** Implement the read(char[] arr, int offset, int len) method **/
+    /** Implement the read(char[] arr, int offset, int len) method.
+     * @Param char[] arr
+     * @Param int offset
+     * @Param int len
+     * @Return int number characters read
+     * **/
     public int read(char[] arr, int offset, int len) throws IOException {
         if (len == 0) {
             return 0;
