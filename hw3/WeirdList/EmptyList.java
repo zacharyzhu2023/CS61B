@@ -2,7 +2,7 @@
  * @author Zachary Zhu
  */
 
-public class EmptyList extends WeirdList{
+public class EmptyList extends WeirdList {
 
     /** Constructor for an EmptyList.
      *  **/

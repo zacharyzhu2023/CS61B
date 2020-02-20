@@ -1,7 +1,15 @@
+/** Class that totals.
+ * @author Zachary Zhu
+ */
+
 public class Totaler implements IntUnaryFunction {
 
+    /** instance variable total.
+     *  **/
     private int total;
-    /** Constructor that initializes the number that will be added to **/
+    /** Constructor that initializes the number that will be added to.
+     * @param initialTotal starting point
+     *  **/
     public Totaler(int initialTotal) {
         total = initialTotal;
     }
@@ -13,7 +21,9 @@ public class Totaler implements IntUnaryFunction {
         return total;
     }
 
-    /** Method to get the final sum **/
+    /** Method to get the final sum.
+     * @return returns the total
+     *  **/
     public int getTotal() {
         return total;
     }

@@ -4,7 +4,13 @@
 public class WeirdList {
     /** Necessary instance attributes for a WeirdList.
      *  **/
+
+    /** instance variable head.
+     *  **/
     private int head;
+    /** Instance variable tail.
+     *
+     */
     private WeirdList tail;
     /** The empty sequence of integers.
      * */
