@@ -152,6 +152,7 @@ public class TestTable {
         assertEquals("Header is incorrect.", expectedJoined.headerList(),
                 joined.headerList());
 
+
         for (int i = 0; i < expectedJoined.numColumns(); i += 1) {
             testRow(joined.getRow(i), expectedJoined.getRow(i));
         }
@@ -276,6 +277,7 @@ public class TestTable {
         List<String> expectedRow2 = Arrays.asList("Michelle", "Hwang",
                 "HashMap", "Michelle",
                 "Hwang", "Black");
+
 
         assertEquals("Filtered Table size is incorrect.", 3, filtered.numRows());
         assertEquals("Header is Incorrect", expectedHeaderList,
