@@ -139,7 +139,10 @@ public abstract class PermutationTest {
         assertEquals('C', p1.permute('A'));
         assertEquals('D', p1.permute('C'));
         assertEquals('B', p1.permute('D'));
-        assertEquals('C', p1.permute(0));
+        assertEquals(2, p1.permute(0));
+        assertEquals(0, p1.permute(1));
+        assertEquals(3, p1.permute(2));
+        assertEquals(1, p1.permute(3));
 //        assertEquals('B', p1.permute((int)'D'));
 
         Permutation p2 = getNewPermutation("(AB) (CEF)", getNewAlphabet("ABCEFGW"));
