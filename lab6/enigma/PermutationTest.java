@@ -166,10 +166,10 @@ public abstract class PermutationTest {
     @Test
     public void checkAlphabetTest() {
         Permutation p1 = getNewPermutation("(BACD)", getNewAlphabet("ABCD"));
-        assertEquals("ABCD", p1.alphabet());
+        assertTrue(p1.alphabet().equals("ABCD"));
         Permutation p2 = getNewPermutation("(AB) (CEF)", getNewAlphabet("ABCEFGW"));
-        assertEquals("ABCEFGW", p2.alphabet());
+        assertTrue(p2.alphabet().equals("ABCEFGW"));
         Permutation p3 = getNewPermutation("(A) (CWE)", getNewAlphabet("ABCEFGW"));
-        assertEquals("ABCEFGW", p3.alphabet());
+        assertTrue(p3.alphabet().equals("ABCEFGW"));
     }
 }
