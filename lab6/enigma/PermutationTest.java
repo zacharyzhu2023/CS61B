@@ -192,11 +192,14 @@ public abstract class PermutationTest {
 
     @Test
     public void checkAlphabetTest() {
-        Permutation p1 = getNewPermutation("(BACD)", getNewAlphabet("ABCD"));
-        //assertTrue(p1.alphabet().equals("ABCD"));
-        Permutation p2 = getNewPermutation("(AB) (CEF)", getNewAlphabet("ABCEFGW"));
-        //assertTrue(p2.alphabet().equals("ABCEFGW"));
-        Permutation p3 = getNewPermutation("(A) (CWE)", getNewAlphabet("ABCEFGW"));
-        //assertTrue(p3.alphabet().equals("ABCEFGW"));
+        Alphabet a1 = getNewAlphabet("ABCD");
+        Permutation p1 = getNewPermutation("(BACD)", a1);
+        assertEquals(p1.alphabet(), a1);
+        Alphabet a2 = getNewAlphabet("ABCEFGW");
+        Permutation p2 = getNewPermutation("(AB) (CEF)", a2);
+        assertEquals(p2.alphabet(), a2);
+        Alphabet a3 = getNewAlphabet("ABCEFGW");
+        Permutation p3 = getNewPermutation("(A) (CWE)", a3);
+        assertEquals(p3.alphabet(), a3);
     }
 }
