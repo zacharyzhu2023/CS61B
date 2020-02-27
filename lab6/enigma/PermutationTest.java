@@ -228,7 +228,7 @@ public abstract class PermutationTest {
     public void mustFailMoreTestsExperiment1() {
         Permutation p1 = getNewPermutation("", getNewAlphabet("DEFGA"));
         assertEquals(5, p1.size());
-//        assertTrue(p1.derangement());
+        assertFalse(p1.derangement());
 
         assertEquals('D', p1.permute('D'));
         assertEquals('E', p1.permute('E'));
@@ -246,11 +246,26 @@ public abstract class PermutationTest {
         assertEquals(1, p1.invert(1));
 
         Permutation p2 = getNewPermutation("", getNewAlphabet("A"));
-//        assertTrue(p2.derangement());
-//        assertEquals('A', p2.permute('A'));
-//        assertEquals(0, p2.permute(0));
-//        assertEquals('A', p2.invert('A'));
-//        assertEquals(0, p2.invert(0));
+        assertEquals(1, p2.size());
+        assertFalse(p2.derangement());
+        assertEquals('A', p2.permute('A'));
+        assertEquals(0, p2.permute(0));
+        assertEquals('A', p2.invert('A'));
+        assertEquals(0, p2.invert(0));
+
+        Permutation p4 = getNewPermutation("(A) (B) (C)", getNewAlphabet("ABC"));
+        assertEquals(3, p4.size());
+        assertTrue(p4.derangement());
+
+        assertEquals('A', p2.permute('A'));
+        assertEquals('B', p2.permute('B'));
+        assertEquals(0, p2.permute(0));
+        assertEquals(1, p2.permute(1));
+
+        assertEquals('A', p2.invert('A'));
+        assertEquals('B', p2.invert('B'));
+        assertEquals(0, p2.invert(0));
+        assertEquals(1, p2.invert(1));
 
     }
 
