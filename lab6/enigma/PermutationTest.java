@@ -228,7 +228,7 @@ public abstract class PermutationTest {
     public void mustFailMoreTestsExperiment1() {
         Permutation p1 = getNewPermutation("", getNewAlphabet("DEFGA"));
         assertEquals(5, p1.size());
-        assertTrue(p1.derangement());
+//        assertTrue(p1.derangement());
 
         assertEquals('D', p1.permute('D'));
         assertEquals('E', p1.permute('E'));
@@ -246,7 +246,7 @@ public abstract class PermutationTest {
         assertEquals(1, p1.invert(1));
 
         Permutation p2 = getNewPermutation("", getNewAlphabet("A"));
-        assertTrue(p2.derangement());
+//        assertTrue(p2.derangement());
 //        assertEquals('A', p2.permute('A'));
 //        assertEquals(0, p2.permute(0));
 //        assertEquals('A', p2.invert('A'));
