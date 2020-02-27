@@ -202,4 +202,17 @@ public abstract class PermutationTest {
         Permutation p3 = getNewPermutation("(A) (CWE)", a3);
         assertEquals(p3.alphabet(), a3);
     }
+
+    @Test(expected = EnigmaException.class)
+    public void testNotInAlphabet1() {
+        Permutation p1 = getNewPermutation("(BACD)", getNewAlphabet("ABCD"));
+        p1.invert('F');
+    }
+
+    @Test(expected = EnigmaException.class)
+    public void testNotInAlphabet2() {
+        Permutation p2 = getNewPermutation("(COP) (I) (UG)", getNewAlphabet("CHEGPOIUA"));
+        p2.permute('N');
+    }
+
 }
