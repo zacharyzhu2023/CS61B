@@ -197,6 +197,6 @@ public abstract class PermutationTest {
         Permutation p2 = getNewPermutation("(AB) (CEF)", getNewAlphabet("ABCEFGW"));
         //assertTrue(p2.alphabet().equals("ABCEFGW"));
         Permutation p3 = getNewPermutation("(A) (CWE)", getNewAlphabet("ABCEFGW"));
-        //assertTrue(p3.alphabet().equals("ABCEFGW"));
+        assertTrue(p3.alphabet().equals("ABCEFGW"));
     }
 }
