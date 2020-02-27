@@ -224,4 +224,27 @@ public abstract class PermutationTest {
         p2.permute('N');
     }
 
+    @Test
+    public void mustFailMoreTestsExperiment() {
+        Permutation p1 = getNewPermutation("", getNewAlphabet("DEFGA"));
+        assertEquals(5, p1.size());
+        
+        assertEquals('D', p1.permute('D'));
+        assertEquals('E', p1.permute('E'));
+        assertEquals('F', p1.permute('F'));
+        assertEquals('G', p1.permute('G'));
+        assertEquals('A', p1.permute('A'));
+        assertEquals(0, p1.permute(0));
+        assertEquals(1, p1.permute(1));
+
+        assertEquals('G', p1.invert('G'));
+        assertEquals('A', p1.invert('A'));
+        assertEquals('D', p1.invert('D'));
+        assertEquals('E', p1.invert('E'));
+        assertEquals(0, p1.invert(0));
+        assertEquals(1, p1.invert(1));
+
+
+    }
+
 }
