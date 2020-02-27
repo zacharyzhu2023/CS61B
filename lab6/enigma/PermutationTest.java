@@ -91,10 +91,10 @@ public abstract class PermutationTest {
         assertEquals('A', p1.invert('C'));
         assertEquals('C', p1.invert('D'));
         assertEquals('D', p1.invert('B'));
-        assertEquals(0, p1.permute(2));
-        assertEquals(1, p1.permute(0));
-        assertEquals(2, p1.permute(3));
-        assertEquals(3, p1.permute(1));
+        assertEquals(0, p1.invert(2));
+        assertEquals(1, p1.invert(0));
+        assertEquals(2, p1.invert(3));
+        assertEquals(3, p1.invert(1));
 
         Permutation p2 = getNewPermutation("(AB) (CEF)", getNewAlphabet("ABCEFGW"));
         assertEquals('W', p2.invert('W'));
@@ -102,10 +102,10 @@ public abstract class PermutationTest {
         assertEquals('C', p2.invert('E'));
         assertEquals('E', p2.invert('F'));
         assertEquals('F', p2.invert('C'));
-        assertEquals(6, p2.permute(6));
-        assertEquals(0, p2.permute(1));
-        assertEquals(1, p2.permute(0));
-        assertEquals(2, p2.permute(3));
+        assertEquals(6, p2.invert(6));
+        assertEquals(0, p2.invert(1));
+        assertEquals(1, p2.invert(0));
+        assertEquals(2, p2.invert(3));
 
         Permutation p3 = getNewPermutation("(A) (CWE)", getNewAlphabet("ABCEFGW"));
         assertEquals('C', p3.invert('W'));
@@ -128,10 +128,10 @@ public abstract class PermutationTest {
         assertEquals('T', p4.invert('P'));
         assertEquals('M', p4.invert('M'));
         assertEquals('Z', p4.invert('Z'));
-        assertEquals(0, p4.permute(0));
-        assertEquals(1, p4.permute(2));
-        assertEquals(2, p4.permute(1));
-        assertEquals(12, p4.permute(12));
+        assertEquals(0, p4.invert(0));
+        assertEquals(1, p4.invert(2));
+        assertEquals(2, p4.invert(1));
+        assertEquals(12, p4.invert(12));
 
     }
 
