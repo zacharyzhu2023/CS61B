@@ -248,8 +248,8 @@ public abstract class PermutationTest {
         assertEquals('A', p1.invert('A'));
         assertEquals('D', p1.invert('D'));
         assertEquals('E', p1.invert('E'));
-        assertEquals(0, p1.invert(4));
-        assertEquals(1, p1.invert(5));
+        assertEquals(0, p1.invert(5));
+        assertEquals(1, p1.invert(6));
 
         Permutation p2 = getNewPermutation("", getNewAlphabet("A"));
         assertEquals(1, p2.size());
