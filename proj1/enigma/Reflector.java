@@ -3,7 +3,7 @@ package enigma;
 import static enigma.EnigmaException.*;
 
 /** Class that represents a reflector in the enigma.
- *  @author
+ *  @author Zachary Zhu
  */
 class Reflector extends FixedRotor {
 
@@ -11,7 +11,6 @@ class Reflector extends FixedRotor {
      * is PERM. */
     Reflector(String name, Permutation perm) {
         super(name, perm);
-        // FIXME
     }
 
     // FIXME?
@@ -20,6 +19,24 @@ class Reflector extends FixedRotor {
     void set(int posn) {
         if (posn != 0) {
             throw error("reflector has only one position");
+        }
+    }
+
+    @Override
+    boolean reflecting() {
+        return true;
+    }
+
+
+    @Override
+    int convertBackward(int e) {
+        throw new EnigmaException("Can't convert backward");
+    }
+
+    @Override
+    void set(char cposn) {
+        if (cposn != permutation().alphabet().toChar(setting())) {
+            throw new EnigmaException("Cannot set position");
         }
     }
 

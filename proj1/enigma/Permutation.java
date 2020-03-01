@@ -16,7 +16,9 @@ class Permutation {
     Permutation(String cycles, Alphabet alphabet) {
         _alphabet = alphabet;
         _permutations = parser(cycles);
-        clean(_permutations);
+        if (!clean(_permutations)) {
+            throw new EnigmaException("Invalid input");
+        }
         addRemainder(_permutations);
     }
 
@@ -67,10 +69,16 @@ class Permutation {
     public boolean clean(ArrayList<String> inp) {
         String cleaned = "";
         for (String s: inp) {
+            if (s.length() == 0) {
+                return false;
+            }
             cleaned += s;
         }
         for (int i = 0; i < cleaned.length(); i += 1) {
             if (!_alphabet.contains(cleaned.charAt(i))) {
+                return false;
+            } else if (cleaned.charAt(i) == '(' || cleaned.charAt(i) == ')'
+            || cleaned.charAt(i) == '*') {
                 return false;
             }
         }

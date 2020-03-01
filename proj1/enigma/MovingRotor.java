@@ -14,16 +14,50 @@ class MovingRotor extends Rotor {
      */
     MovingRotor(String name, Permutation perm, String notches) {
         super(name, perm);
-        // FIXME
+        cleanNotches(notches);
+        _notches = notches;
     }
 
-    // FIXME?
+    public void cleanNotches(String notches) {
+        for (int i = 0; i < notches.length(); i += 1) {
+            for (int j = i + 1; j < notches.length(); j += 1) {
+                if (notches.charAt(i) == notches.charAt(j)) {
+                    throw new EnigmaException("Notches are invalid: contains repeat");
+                }
+            }
+            if (!alphabet().contains(notches.charAt(i))) {
+                throw new EnigmaException("Notches are invalid: not in alphabet");
+            }
+        }
+    }
+
+    @Override
+    boolean atNotch() {
+        char c = alphabet().toChar(setting());
+        if (_notches.indexOf(c) != -1) {
+            return true;
+        }
+        return false;
+    }
 
     @Override
     void advance() {
-        // FIXME
+        if (atNotch()) {
+            set(permutation().wrap(setting() + 1));
+        }
     }
 
-    // FIXME: ADDITIONAL FIELDS HERE, AS NEEDED
+    @Override
+    boolean rotates() {
+        return true;
+    }
 
+    /** Return the notches.
+     *
+     * @return string notches
+     */
+    String getNotches() {
+        return _notches;
+    }
+    private String _notches;
 }
