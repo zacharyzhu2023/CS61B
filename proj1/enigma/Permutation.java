@@ -17,7 +17,7 @@ class Permutation {
         _alphabet = alphabet;
         _permutations = parser(cycles);
         if (!clean(_permutations)) {
-            throw new EnigmaException("Invalid input");
+            throw new EnigmaException("Input contains repeat, empty cycle, or forbidden char");
         }
         addRemainder(_permutations);
     }
@@ -29,7 +29,7 @@ class Permutation {
      */
     public ArrayList<String> parser(String s) {
         if (s.length() != 0 && s.charAt(s.length() - 1) != ')') {
-            throw new EnigmaException("Invalid input");
+            throw new EnigmaException("Invalid input: doesn't end with paranthese");
         } else if (s.length() == 0) {
             return new ArrayList<String>();
         }
