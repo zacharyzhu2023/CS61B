@@ -1,10 +1,10 @@
 package enigma;
-
+import java.util.ArrayList;
 import static enigma.EnigmaException.*;
 
 /** Represents a permutation of a range of integers starting at 0 corresponding
  *  to the characters of an alphabet.
- *  @author
+ *  @author Zachary Zhu
  */
 class Permutation {
 
@@ -15,7 +15,91 @@ class Permutation {
      *  Whitespace is ignored. */
     Permutation(String cycles, Alphabet alphabet) {
         _alphabet = alphabet;
-        // FIXME
+        _permutations = parser(cycles);
+        clean(_permutations);
+        addRemainder(_permutations);
+    }
+
+    /** Returns an ArrayList of Strings that represent permutations.
+     * Raise an exception if input is invalid.
+     * @param s as input string
+     * @return String ArrayList with given cycles as strings in ArrayList
+     */
+    public ArrayList<String> parser(String s) {
+        if (s.length() != 0 && s.charAt(s.length() - 1) != ')') {
+            throw new EnigmaException("Invalid input");
+        } else if (s.length() == 0) {
+            return new ArrayList<String>();
+        }
+        ArrayList<String> output = new ArrayList<String>();
+        int counter = 0;
+        boolean openParan = false;
+        boolean closeParan = true;
+        String temp = "";
+        while (counter < s.length()) {
+            if (!openParan && closeParan) {
+                if (s.charAt(counter) != ' ' && s.charAt(counter) != '(') {
+                    throw new EnigmaException("Invalid input");
+                } else if (s.charAt(counter) == '(') {
+                    openParan = true; closeParan = false;
+                }
+
+            } else if (openParan && !closeParan) {
+                if (s.charAt(counter) != ')') {
+                    temp += s.charAt(counter);
+                } else if (s.charAt(counter) == ')') {
+                    output.add(temp); temp = "";
+                    closeParan = true; openParan = false;
+                }
+            }
+            counter += 1;
+        }
+        return output;
+    }
+
+
+
+    /** Method ensures that no faulty input exists in ArrayList parsed.
+     * @param inp an ArrayList
+     * @return whether the ArrayList is clean
+     *
+     */
+    public boolean clean(ArrayList<String> inp) {
+        String cleaned = "";
+        for (String s: inp) {
+            cleaned += s;
+        }
+        for (int i = 0; i < cleaned.length(); i += 1) {
+            if (!_alphabet.contains(cleaned.charAt(i))) {
+                return false;
+            }
+        }
+        for (int i = 0; i < cleaned.length(); i += 1) {
+            for (int j = i + 1; j < cleaned.length(); j += 1) {
+                if (cleaned.charAt(i) == cleaned.charAt(j)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /** Method to add any characters in alphabet not in a cycle
+     * to the permutations.
+     * @param input as an ArrayList
+     * @return a finished ArrayList of permutations
+     */
+    public void addRemainder(ArrayList<String> input) {
+        String chars = "";
+        for (int i = 0; i < input.size(); i += 1) {
+            chars += input.get(i);
+        }
+        String alpha = _alphabet.getAlphabet();
+        for (int i = 0; i < alpha.length(); i += 1) {
+            if (chars.indexOf(alpha.charAt(i)) == -1) {
+                input.add(Character.toString(alpha.charAt(i)));
+            }
+        }
     }
 
     /** Add the cycle c0->c1->...->cm->c0 to the permutation, where CYCLE is
@@ -35,30 +119,60 @@ class Permutation {
 
     /** Returns the size of the alphabet I permute. */
     int size() {
-        return 0; // FIXME
+        return alphabet().size();
     }
 
     /** Return the result of applying this permutation to P modulo the
      *  alphabet size. */
     int permute(int p) {
-        return 0;  // FIXME
+        char c = _alphabet.getAlphabet().charAt(wrap(p));
+        char permuted = permute(c);
+        return _alphabet.getAlphabet().indexOf(permuted);
     }
 
     /** Return the result of applying the inverse of this permutation
      *  to  C modulo the alphabet size. */
     int invert(int c) {
-        return 0;  // FIXME
+        char c1 = _alphabet.getAlphabet().charAt(wrap(c));
+        char inverted = invert(c1);
+        return _alphabet.getAlphabet().indexOf(inverted);
     }
 
     /** Return the result of applying this permutation to the index of P
      *  in ALPHABET, and converting the result to a character of ALPHABET. */
     char permute(char p) {
-        return 0;  // FIXME
+        for (int i = 0; i < _permutations.size(); i += 1) {
+            if (_permutations.get(i).indexOf(p) != -1) {
+                if (_permutations.get(i).length() == 1) {
+                    return p;
+                } else {
+                    int index = (_permutations.get(i).indexOf(p) + 1);
+                    if (index == _permutations.get(i).length()) {
+                        index = 0;
+                    }
+                    return _permutations.get(i).charAt(index);
+                }
+            }
+        }
+        throw new EnigmaException("char not found");
     }
 
     /** Return the result of applying the inverse of this permutation to C. */
     char invert(char c) {
-        return 0;  // FIXME
+        for (int i = 0; i < _permutations.size(); i += 1) {
+            if (_permutations.get(i).indexOf(c) != -1) {
+                if (_permutations.get(i).length() == 1) {
+                    return c;
+                } else {
+                    int index = _permutations.get(i).indexOf(c) - 1;
+                    if (index == -1) {
+                        index = _permutations.get(i).length() - 1;
+                    }
+                    return _permutations.get(i).charAt(index);
+                }
+            }
+        }
+        throw new EnigmaException("char not found");
     }
 
     /** Return the alphabet used to initialize this Permutation. */
@@ -69,11 +183,21 @@ class Permutation {
     /** Return true iff this permutation is a derangement (i.e., a
      *  permutation for which no value maps to itself). */
     boolean derangement() {
-        return true;  // FIXME
+        for (int i = 0; i < _permutations.size(); i += 1) {
+            if (_permutations.get(i).length() == 1) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** Alphabet of this permutation. */
     private Alphabet _alphabet;
+    private ArrayList<String> _permutations;
 
-    // FIXME: ADDITIONAL FIELDS HERE, AS NEEDED
+    /** Method to get the permutations. **/
+    ArrayList<String> getPermutations() {
+        return _permutations;
+    }
+
 }
