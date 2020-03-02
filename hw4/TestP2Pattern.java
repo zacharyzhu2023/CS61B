@@ -53,7 +53,6 @@ public class TestP2Pattern {
         assertTrue(checkMatch(p, good1));
         assertTrue(checkMatch(p, good2));
         assertTrue(checkMatch(p, good3));
-
         String bad1 = "6, 1, 4, 1, 2, 3";
         String bad2 = "(6, 1, 4, 1, 2, 3,)";
         String bad3 = "(, 6, 1, 4, 1, 2, 3)";
@@ -75,12 +74,11 @@ public class TestP2Pattern {
         String good3 = "www.ucb-login.edu";
         String good4 = "www.facebook-login.co.uk";
         String good5 = "x.museum";
-        assertTrue(checkMatch(p, good1));
+
         assertTrue(checkMatch(p, good2));
         assertTrue(checkMatch(p, good3));
         assertTrue(checkMatch(p, good4));
         assertTrue(checkMatch(p, good5));
-
 
         String bad1 = "-google.com";
         String bad2 = "google-.com";
@@ -130,6 +128,7 @@ public class TestP2Pattern {
         String good3 = "255.255.0.0";
         String good4 = "127.0.0.1";
         String good5 = "01.001.001.1";
+
         assertTrue(checkMatch(p, good1));
         assertTrue(checkMatch(p, good2));
         assertTrue(checkMatch(p, good3));
