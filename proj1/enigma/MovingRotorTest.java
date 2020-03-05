@@ -10,7 +10,7 @@ import java.util.HashMap;
 import static enigma.TestUtils.*;
 
 /** The suite of all JUnit tests for the Permutation class.
- *  @author
+ *  @author Zachary Zhu
  */
 public class MovingRotorTest {
 
@@ -59,7 +59,7 @@ public class MovingRotorTest {
 
     @Test
     public void checkRotorAdvance() {
-        setRotor("I", NAVALA, "");
+        setRotor("I", NAVALA, "ABCDEFG");
         rotor.advance();
         checkRotor("Rotor I advanced", UPPER_STRING, NAVALB_MAP.get("I"));
     }

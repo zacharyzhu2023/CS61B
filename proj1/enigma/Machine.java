@@ -6,7 +6,7 @@ import java.util.Collection;
 import static enigma.EnigmaException.*;
 
 /** Class that represents a complete enigma machine.
- *  @author
+ *  @author Zachary Zhu
  */
 class Machine {
 
@@ -16,17 +16,19 @@ class Machine {
     Machine(Alphabet alpha, int numRotors, int pawls,
             Collection<Rotor> allRotors) {
         _alphabet = alpha;
-        // FIXME
+        _numRotors = numRotors;
+        _pawls = pawls;
+        _allRotors = allRotors;
     }
 
     /** Return the number of rotor slots I have. */
     int numRotors() {
-        return 0; // FIXME
+        return _numRotors;
     }
 
     /** Return the number pawls (and thus rotating rotors) I have. */
     int numPawls() {
-        return 0; // FIXME
+        return _pawls;
     }
 
     /** Set my rotor slots to the rotors named ROTORS from my set of
@@ -46,14 +48,23 @@ class Machine {
     /** Set the plugboard to PLUGBOARD. */
     void setPlugboard(Permutation plugboard) {
         // FIXME
+        _plugboard = plugboard;
+
     }
 
     /** Returns the result of converting the input character C (as an
      *  index in the range 0..alphabet size - 1), after first advancing
-
      *  the machine. */
     int convert(int c) {
-        return 0; // FIXME
+        return 0;
+        // FIXME
+        /** Pseudocode approach
+         * 1. Advance all relevant components of the machine
+         * 2. Plug in c as an index of the alphabet size
+         * 3. Go through all of the rotors--for each, figure out the 4 components:
+         *      What's the raw input? Translated input? Output? Translated output?
+         * 4. Adjust for plugboard if necessary
+         */
     }
 
     /** Returns the encoding/decoding of MSG, updating the state of
@@ -66,4 +77,8 @@ class Machine {
     private final Alphabet _alphabet;
 
     // FIXME: ADDITIONAL FIELDS HERE, IF NEEDED.
+    private int _numRotors;
+    private int _pawls;
+    private Collection<Rotor> _allRotors;
+    private Permutation _plugboard;
 }
