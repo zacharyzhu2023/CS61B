@@ -12,23 +12,31 @@ class MovingRotor extends Rotor {
      *  The Rotor is initally in its 0 setting (first character of its
      *  alphabet).
      */
+
     MovingRotor(String name, Permutation perm, String notches) {
         super(name, perm);
         cleanNotches(notches);
         _notches = notches;
     }
 
+    /** Method that checks if notches are valid or not.
+     * Throws an error if they are not.
+     * @param notches
+     */
+
     public void cleanNotches(String notches) {
         for (int i = 0; i < notches.length(); i += 1) {
             for (int j = i + 1; j < notches.length(); j += 1) {
                 if (notches.charAt(i) == notches.charAt(j)) {
                     throw new
-                            EnigmaException("Notches are invalid: contains repeat");
+                            EnigmaException("Notches are " +
+                            "invalid: contains repeat");
                 }
             }
             if (!alphabet().contains(notches.charAt(i))) {
                 throw new
-                        EnigmaException("Notches are invalid: not in alphabet");
+                        EnigmaException("Notches are " +
+                        "invalid: not in alphabet");
             }
         }
     }
@@ -53,11 +61,13 @@ class MovingRotor extends Rotor {
     }
 
     /** Return the notches.
-     *
      * @return string notches
      */
+
     String getNotches() {
         return _notches;
     }
+
+    /** Variable that stores ths notches string. **/
     private String _notches;
 }

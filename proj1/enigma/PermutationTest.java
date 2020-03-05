@@ -74,7 +74,7 @@ public class PermutationTest {
 
 
     @Test
-    public void ConstructorTest() {
+    public void constructorTest() {
         ArrayList<String> pTest1 = new ArrayList<String>();
         pTest1.add("BACD");
         assertTrue(p1.getPermutations().equals(pTest1));

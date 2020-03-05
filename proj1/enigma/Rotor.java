@@ -62,8 +62,8 @@ class Rotor {
     /** Return the conversion of P (an integer in the range 0..size()-1)
      *  according to my permutation. */
     int convertForward(int p) {
-        int new_setting = _permutation.wrap(p + _setting);
-        int permutation = _permutation.permute(new_setting);
+        int newSetting = _permutation.wrap(p + _setting);
+        int permutation = _permutation.permute(newSetting);
         int result = _permutation.wrap(permutation - _setting);
         return result;
     }
@@ -71,8 +71,8 @@ class Rotor {
     /** Return the conversion of E (an integer in the range 0..size()-1)
      *  according to the inverse of my permutation. */
     int convertBackward(int e) {
-        int new_setting = _permutation.wrap(e + _setting);
-        int permutation = _permutation.invert(new_setting);
+        int newSetting = _permutation.wrap(e + _setting);
+        int permutation = _permutation.invert(newSetting);
         int result = _permutation.wrap(permutation - _setting);
         return result;
     }

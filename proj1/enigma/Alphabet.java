@@ -33,7 +33,9 @@ class Alphabet {
         return _chars.indexOf(ch) != -1;
     }
 
-    /** Returns true if a String has duplicate characters **/
+    /** Returns true if a String has duplicate characters.
+     * @param s the string input that might have duplicates
+     *  **/
     boolean hasDuplicates(String s) {
         for (int i = 0; i < s.length(); i += 1) {
             for (int j = i + 1; j < s.length(); j += 1) {
