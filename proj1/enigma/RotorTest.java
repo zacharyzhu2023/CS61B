@@ -16,8 +16,8 @@ public class RotorTest {
             new Alphabet("ABCEFGW"));
     Permutation p3 = new Permutation("(A) (CWE)",
             new Alphabet("ABCEFGW"));
-    Permutation p4 = new Permutation("(CEB) (DA) " +
-            "(F) (G) (PRT)",
+    Permutation p4 = new Permutation("(CEB) (DA) "
+            + "(F) (G) (PRT)",
             new Alphabet("FDABPRTYCEGNMZ"));
     Permutation p5 = new Permutation("",
             new Alphabet("DEFGA"));
@@ -27,18 +27,22 @@ public class RotorTest {
             new Alphabet("ABCDEF"));
     Permutation p8 = new Permutation("(A) (B) (C)",
             new Alphabet("ABC"));
-    Permutation p9 = new Permutation("(01234)   " +
-            "(5678) (9AB) (CDEFGH)",
+    Permutation p9 = new Permutation("(01234)   "
+            + "(5678) (9AB) (CDEFGH)",
             new Alphabet("0123456789ABCDEFGH"));
     Rotor r1 = new Rotor("r1", p1);
     Rotor r2 = new Rotor("r2", p2);
     Rotor r3 = new FixedRotor("r3", p3);
     Rotor r4 = new FixedRotor("r4", p4);
     Rotor r5 = new Reflector("r5", p5);
-    Rotor r6  = new MovingRotor("r6", p6, "A"); /** Notches at A **/
-    Rotor r7 = new MovingRotor("r7", p7, "ADC"); /** Notches at ADC **/
-    Rotor r8 = new MovingRotor("r8", p8, "B"); /** Notches at B **/
-    Rotor r9 = new MovingRotor("r9", p9, "05BGH"); /** Notches at 05BGH **/
+    /** Notches at A **/
+    Rotor r6  = new MovingRotor("r6", p6, "A");
+    /** Notches at ADC **/
+    Rotor r7 = new MovingRotor("r7", p7, "ADC");
+    /** Notches at B **/
+    Rotor r8 = new MovingRotor("r8", p8, "B");
+    /** Notches at 05BGH **/
+    Rotor r9 = new MovingRotor("r9", p9, "05BGH");
 
 
     /** Check that rotor has an alphabet whose size is that of

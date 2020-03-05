@@ -203,6 +203,7 @@ class Permutation {
 
     /** Alphabet of this permutation. */
     private Alphabet _alphabet;
+    /** Tracking the permutations. */
     private ArrayList<String> _permutations;
 
     /** Method to get the permutations.
