@@ -17,7 +17,8 @@ class Permutation {
         _alphabet = alphabet;
         _permutations = parser(cycles);
         if (!clean(_permutations)) {
-            throw new EnigmaException("Input contains repeat, empty cycle, or forbidden char");
+            throw new EnigmaException("Input contains repeat, " +
+                    "empty cycle, or forbidden char");
         }
         addRemainder(_permutations);
     }
@@ -29,7 +30,8 @@ class Permutation {
      */
     public ArrayList<String> parser(String s) {
         if (s.length() != 0 && s.charAt(s.length() - 1) != ')') {
-            throw new EnigmaException("Invalid input: doesn't end with paranthese");
+            throw new EnigmaException("Invalid input: " +
+                    "doesn't end with paranthese");
         } else if (s.length() == 0) {
             return new ArrayList<String>();
         }
@@ -77,8 +79,8 @@ class Permutation {
         for (int i = 0; i < cleaned.length(); i += 1) {
             if (!_alphabet.contains(cleaned.charAt(i))) {
                 return false;
-            } else if (cleaned.charAt(i) == '(' || cleaned.charAt(i) == ')'
-            || cleaned.charAt(i) == '*') {
+            } else if (cleaned.charAt(i) == '(' || cleaned.charAt(i) == ')' ||
+                    cleaned.charAt(i) == '*') {
                 return false;
             }
         }
@@ -113,7 +115,7 @@ class Permutation {
     /** Add the cycle c0->c1->...->cm->c0 to the permutation, where CYCLE is
      *  c0c1...cm. */
     private void addCycle(String cycle) {
-        // FIXME
+
     }
 
     /** Return the value of P modulo the size of this permutation. */

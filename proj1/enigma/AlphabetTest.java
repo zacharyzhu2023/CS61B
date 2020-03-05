@@ -15,12 +15,12 @@ public class AlphabetTest {
 
     @Test (expected = EnigmaException.class)
     public void faultyConstructor1() {
-        Alphabet a5 = new Alphabet("thee");
+        Alphabet a15 = new Alphabet("thee");
     }
 
     @Test (expected = EnigmaException.class)
     public void faultyConstructor2() {
-        Alphabet a6 = new Alphabet("authg9msp0bc30");
+        Alphabet a16 = new Alphabet("authg9msp0bc30");
     }
 
 

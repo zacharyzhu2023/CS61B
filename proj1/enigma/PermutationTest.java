@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 import static enigma.TestUtils.*;
 
 /** The suite of all JUnit tests for the Permutation class.
- *  @author
+ *  @author Zachary ZHu
  */
 public class PermutationTest {
 
@@ -55,14 +55,22 @@ public class PermutationTest {
     }
 
 
-    Permutation p1 = new Permutation("(BACD)", new Alphabet("ABCD"));
-    Permutation p2 = new Permutation("(AB) (CEF)", new Alphabet("ABCEFGW"));
-    Permutation p3 = new Permutation("(A) (CWE)", new Alphabet("ABCEFGW"));
-    Permutation p4 = new Permutation("(CEB) (DA) (F) (G) (PRT)", new Alphabet("FDABPRTYCEGNMZ"));
-    Permutation p5 = new Permutation("", new Alphabet("DEFGA"));
-    Permutation p6 = new Permutation("", new Alphabet("A"));
-    Permutation p7 = new Permutation("(AF) (DB) (EC)", new Alphabet("ABCDEF"));
-    Permutation p8 = new Permutation("(A) (B) (C)", new Alphabet("ABC"));
+    Permutation p1 = new Permutation("(BACD)",
+            new Alphabet("ABCD"));
+    Permutation p2 = new Permutation("(AB) (CEF)",
+            new Alphabet("ABCEFGW"));
+    Permutation p3 = new Permutation("(A) (CWE)",
+            new Alphabet("ABCEFGW"));
+    Permutation p4 = new Permutation("(CEB) (DA) (F) (G) (PRT)",
+            new Alphabet("FDABPRTYCEGNMZ"));
+    Permutation p5 = new Permutation("",
+            new Alphabet("DEFGA"));
+    Permutation p6 = new Permutation("",
+            new Alphabet("A"));
+    Permutation p7 = new Permutation("(AF) (DB) (EC)",
+            new Alphabet("ABCDEF"));
+    Permutation p8 = new Permutation("(A) (B) (C)",
+            new Alphabet("ABC"));
 
 
     @Test
@@ -193,15 +201,7 @@ public class PermutationTest {
         assertEquals(7, p3.size());
     }
 
-//    @Test
-//    public void checkAlphabetTest() {
-//        Alphabet a1 = new Alphabet("ABCD");
-//        Permutation pAlpha1 = new Permutation("(BACD)", a1);
-//        assertEquals(p1.alphabet(), a1);
-//        Alphabet a2 = new Alphabet("ABCEFGW");
-//        Permutation pAlpha2 = new Permutation("(AB) (CEF)", a2);
-//        assertEquals(p2.alphabet(), a2);
-//    }
+
 
     @Test(expected = EnigmaException.class)
     public void testNotInAlphabet1() {
