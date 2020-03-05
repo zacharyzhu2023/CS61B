@@ -97,7 +97,6 @@ class Permutation {
     /** Method to add any characters in alphabet not in a cycle
      * to the permutations.
      * @param input as an ArrayList
-     * @return a finished ArrayList of permutations
      */
     public void addRemainder(ArrayList<String> input) {
         String chars = "";
