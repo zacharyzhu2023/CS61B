@@ -99,7 +99,7 @@ class Rotor {
     /** The permutation implemented by this rotor in its 0 position. */
     private Permutation _permutation;
 
-    // FIXME: ADDITIONAL FIELDS HERE, AS NEEDED
+   /** Initial default setting. **/
     private int _setting;
 
 }

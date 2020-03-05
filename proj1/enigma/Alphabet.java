@@ -8,7 +8,6 @@ class Alphabet {
 
     /** A new alphabet containing CHARS.  Character number #k has index
      *  K (numbering from 0). No character may be duplicated. */
-    private String _chars;
     Alphabet(String chars) {
         if (chars.length() == 0) {
             throw new EnigmaException("Empty alphabet");
@@ -72,5 +71,8 @@ class Alphabet {
     String getAlphabet() {
         return _chars;
     }
+
+    /** String that represents the characters in alphabet. **/
+    private String _chars;
 
 }
