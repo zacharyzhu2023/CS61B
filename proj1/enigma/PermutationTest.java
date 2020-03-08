@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 import static enigma.TestUtils.*;
 
 /** The suite of all JUnit tests for the Permutation class.
- *  @author Zachary ZHu
+ *  @author Zachary Zhu
  */
 public class PermutationTest {
 

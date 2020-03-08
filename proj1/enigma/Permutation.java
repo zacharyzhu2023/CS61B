@@ -29,21 +29,24 @@ class Permutation {
      * @return String ArrayList with given cycles as strings in ArrayList
      */
     public ArrayList<String> parser(String s) {
-        if (s.length() != 0 && s.charAt(s.length() - 1) != ')') {
+        if (s.length() == 0) {
+            return new ArrayList<String>();
+        } else if (s.charAt(s.length() - 1) != ')') {
             throw new EnigmaException("Invalid input: "
                     + "doesn't end with paranthese");
-        } else if (s.length() == 0) {
-            return new ArrayList<String>();
+        } else if (s.charAt(0) != '(') {
+            throw new EnigmaException("Invalid input: "
+                    + "doesn't start with paranthese");
         }
         ArrayList<String> output = new ArrayList<String>();
-        int counter = 0;
-        boolean openParan = false;
-        boolean closeParan = true;
+        int counter = 1;
+        boolean openParan = true;
+        boolean closeParan = false;
         String temp = "";
         while (counter < s.length()) {
             if (!openParan && closeParan) {
                 if (s.charAt(counter) != ' ' && s.charAt(counter) != '(') {
-                    throw new EnigmaException("Invalid input");
+                    throw new EnigmaException("Invalid input format");
                 } else if (s.charAt(counter) == '(') {
                     openParan = true; closeParan = false;
                 }
@@ -80,7 +83,7 @@ class Permutation {
             if (!_alphabet.contains(cleaned.charAt(i))) {
                 return false;
             } else if (cleaned.charAt(i) == '(' || cleaned.charAt(i) == ')'
-                    || cleaned.charAt(i) == '*') {
+                    || cleaned.charAt(i) == '*' || cleaned.charAt(i) == ' ') {
                 return false;
             }
         }

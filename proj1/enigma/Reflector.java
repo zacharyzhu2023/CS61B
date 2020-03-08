@@ -11,6 +11,9 @@ class Reflector extends FixedRotor {
      * is PERM. */
     Reflector(String name, Permutation perm) {
         super(name, perm);
+        if (!perm.derangement()) {
+            throw new EnigmaException("Permutation not a derangement");
+        }
     }
 
 
@@ -25,7 +28,6 @@ class Reflector extends FixedRotor {
     boolean reflecting() {
         return true;
     }
-
 
     @Override
     int convertBackward(int e) {

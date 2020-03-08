@@ -10,10 +10,13 @@ class Alphabet {
      *  K (numbering from 0). No character may be duplicated. */
     Alphabet(String chars) {
         if (chars.length() == 0) {
-            throw new EnigmaException("Empty alphabet");
+            throw new EnigmaException("Invalid format: Empty alphabet");
         }
         if (hasDuplicates(chars)) {
             throw new EnigmaException("Alphabet has duplicate characters");
+        }
+        if (chars.indexOf(' ') != -1) {
+            throw new EnigmaException("Alphabet contains whitespace");
         }
         _chars = chars;
     }
