@@ -2,8 +2,6 @@ package enigma;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static enigma.TestUtils.*;
-import java.util.HashMap;
-import ucb.junit.textui;
 
 public class RotorTest {
 

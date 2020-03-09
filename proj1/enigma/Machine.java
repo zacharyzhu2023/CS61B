@@ -46,7 +46,6 @@ class Machine {
         String[] names = new String[rotors.size()];
         int totalRotors = 0;
         int numPawls = 0;
-        int numReflectors = 0;
         int counter = 0;
         for (Rotor r: rotors) {
             if (!r.alphabet().getAlphabet().equals(_alphabet.getAlphabet())) {
@@ -55,8 +54,6 @@ class Machine {
             names[counter] = r.name();
             if (r.rotates()) {
                 numPawls += 1;
-            } else if (r.reflecting()) {
-                numReflectors += 1;
             }
             totalRotors += 1;
             counter += 1;
@@ -92,20 +89,15 @@ class Machine {
 
 
     void insertRotors(String[] rotors) {
-        // Check length
         if (rotors.length > _rotorArray.length) {
             throw new EnigmaException
                     ("Length of rotors passed and matching don't correspond");
         }
-
-        // Check name is contained
         for (String name: rotors) {
             if (!_rotorHashMap.keySet().contains(name)) {
                 throw new EnigmaException("Rotor name not found");
             }
         }
-
-        // Check to see if names repeated in rotors
         for (int i = 0; i < rotors.length; i += 1) {
             for (int j = i + 1; j < rotors.length; j += 1) {
                 if (rotors[i].equals(rotors[j])) {
@@ -114,8 +106,6 @@ class Machine {
                 }
             }
         }
-
-        // Check to see sorted version is correct + sort
         _rotorArray = new Rotor[rotors.length];
         for (int i = 0; i < rotors.length; i += 1) {
             _rotorArray[i] = _rotorHashMap.get(rotors[i]);
@@ -145,7 +135,7 @@ class Machine {
                     ("Wrong number of characters in setting");
         } else {
             for (int i = 1; i < _rotorArray.length; i += 1) {
-                if (!_rotorArray[i].alphabet().contains(setting.charAt(i-1))) {
+                if (!_rotorArray[i].alphabet().contains(setting.charAt(i - 1))) {
                     throw new EnigmaException
                             ("Rotor alphabet does not contain setting char");
                 } else {
@@ -171,21 +161,19 @@ class Machine {
                     throw new EnigmaException
                             ("Rotor alphabet does not contain setting char");
                 } else {
-//                    System.out.println("BEFORE: " + _rotorArray[i].setting());
                     _rotorArray[i].permutation().shiftAlphabet(setting.charAt(i - 1));
                     int currentPos = _rotorArray[i].setting();
                     int shift = _alphabet.getAlphabet().indexOf(setting.charAt(i - 1));
                     int finalPos = currentPos - shift;
                     _rotorArray[i].set(finalPos);
-//                    System.out.println("AFTER: " + _rotorArray[i].setting());
                 }
             }
         }
     }
     /** Set the plugboard to PLUGBOARD. */
     void setPlugboard(Permutation plugboard) {
-        if (!plugboard.alphabet().getAlphabet().
-                equals(_alphabet.getAlphabet())) {
+        if (!plugboard.alphabet().getAlphabet().equals
+                (_alphabet.getAlphabet())) {
             throw new EnigmaException("Alphabet of plugboard wrong");
         }
         _plugboard = plugboard;
@@ -204,8 +192,6 @@ class Machine {
      *  */
 
     int convert(int c) {
-
-        // Advance the rotors
         boolean[] canRotate = new boolean[_rotorArray.length];
         canRotate[_rotorArray.length - 1] = true;
         for (int i = _rotorArray.length - 1; i >= 1; i -= 1) {
@@ -227,22 +213,17 @@ class Machine {
         }
 
         for (int i = _rotorArray.length - 1; i >= 0; i -= 1) {
-
-
             c = _alphabet.toInt(_rotorArray[i].alphabet().toChar
                     (_rotorArray[i].convertForward
                             (_rotorArray[i].alphabet().toInt
                                     (_alphabet.toChar(c)))));
         }
-
         for (int i = 1; i <= _rotorArray.length - 1; i += 1) {
             c = _alphabet.toInt(_rotorArray[i].alphabet().toChar
                     (_rotorArray[i].convertBackward
                             (_rotorArray[i].alphabet().toInt
                                     (_alphabet.toChar(c)))));
         }
-
-        // Final plugboard conversion
         if (_plugboard != null) {
             c = _plugboard.invert(c);
         }
