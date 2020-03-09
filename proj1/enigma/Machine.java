@@ -35,7 +35,8 @@ class Machine {
 
     /**
      * 1. Must have unique names
-     * 2. Check TRUE number of rotors (2+), pawls (number of moving rotors), and reflectors (must == 1)
+     * 2. Check TRUE number of rotors (2+), pawls
+     * (number of moving rotors), and reflectors (must == 1)
      * 3. Rotors must share an alphabet
      * @param rotors check to see if argument passed in contains errors.
      */
@@ -133,7 +134,8 @@ class Machine {
                     + "characters in setting");
         } else {
             for (int i = 1; i < _rotorArray.length; i += 1) {
-                if (!_rotorArray[i].alphabet().contains(setting.charAt(i - 1))) {
+                if (!_rotorArray[i].alphabet().
+                        contains(setting.charAt(i - 1))) {
                     throw new EnigmaException("Rotor alphabet "
                             + "does not contain setting char");
                 } else {
@@ -146,7 +148,8 @@ class Machine {
     }
 
     /**
-     * Shift the Rotors' permutations in accordance with Ringstalleung configuration.
+     * Shift the Rotors' permutations in accordance
+     * with Ringstalleung configuration.
      * @param setting reflects the setting of the Ringstalleung.
      */
     void ringstalleungRotors(String setting) {
@@ -160,10 +163,12 @@ class Machine {
                     throw new EnigmaException("Rotor alphabet "
                             + "does not contain setting char");
                 } else {
-                    _rotorArray[i].permutation().shiftAlphabet(setting.charAt(i - 1));
+                    _rotorArray[i].permutation().
+                            shiftAlphabet(setting.charAt(i - 1));
                     int currentPos = _rotorArray[i].setting();
                     int shift =
-                            _alphabet.getAlphabet().indexOf(setting.charAt(i - 1));
+                            _alphabet.getAlphabet().
+                                    indexOf(setting.charAt(i - 1));
                     int finalPos = currentPos - shift;
                     _rotorArray[i].set(finalPos);
                 }
@@ -185,8 +190,10 @@ class Machine {
      *  Approach
      *     1. Advance all relevant components of the machine
      *     2. Adjust for plugboard at beginning
-     *     3. Go through all of the rotors--for each, figure out the 4 components:
-     *          - What's the raw input? Translated input? Output? Translated output?
+     *     3. Go through all of the rotors--for each, figure
+     *     out the 4 components:
+     *          - What's the raw input? Translated input?
+     *          Output? Translated output?
      *     4. Adjust for plugboard at the end
      *
      *  */
