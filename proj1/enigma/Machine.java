@@ -149,13 +149,39 @@ class Machine {
                     throw new EnigmaException
                             ("Rotor alphabet does not contain setting char");
                 } else {
-                    _rotorArray[i].set(setting.charAt(i-1));
+                    _rotorArray[i].permutation().
+                            shiftAlphabet(_alphabet.getAlphabet().charAt(0));
+                    _rotorArray[i].set(setting.charAt(i - 1));
                 }
             }
         }
     }
 
-
+    /**
+     * Shift the Rotors' permutations in accordance with Ringstalleung configuration.
+     * @param setting reflects the setting of the Ringstalleung.
+     */
+    void ringstalleungRotors(String setting) {
+        if (setting.length() != numRotors() - 1) {
+            throw new EnigmaException
+                    ("Wrong number of characters in setting");
+        } else {
+            for (int i = 1; i < _rotorArray.length; i += 1) {
+                if (!_rotorArray[i].alphabet().contains(setting.charAt(i - 1))) {
+                    throw new EnigmaException
+                            ("Rotor alphabet does not contain setting char");
+                } else {
+//                    System.out.println("BEFORE: " + _rotorArray[i].setting());
+                    _rotorArray[i].permutation().shiftAlphabet(setting.charAt(i - 1));
+                    int currentPos = _rotorArray[i].setting();
+                    int shift = _alphabet.getAlphabet().indexOf(setting.charAt(i - 1));
+                    int finalPos = currentPos - shift;
+                    _rotorArray[i].set(finalPos);
+//                    System.out.println("AFTER: " + _rotorArray[i].setting());
+                }
+            }
+        }
+    }
     /** Set the plugboard to PLUGBOARD. */
     void setPlugboard(Permutation plugboard) {
         if (!plugboard.alphabet().getAlphabet().
@@ -196,18 +222,24 @@ class Machine {
             }
         }
 
-        // Initial plugboard conversion
         if (_plugboard != null) {
             c = _plugboard.permute(c);
         }
-        // Convert the character forward
+
         for (int i = _rotorArray.length - 1; i >= 0; i -= 1) {
-            c = _rotorArray[i].convertForward(c);
+
+
+            c = _alphabet.toInt(_rotorArray[i].alphabet().toChar
+                    (_rotorArray[i].convertForward
+                            (_rotorArray[i].alphabet().toInt
+                                    (_alphabet.toChar(c)))));
         }
 
-        // Inverting the character after the reflector
         for (int i = 1; i <= _rotorArray.length - 1; i += 1) {
-            c = _rotorArray[i].convertBackward(c);
+            c = _alphabet.toInt(_rotorArray[i].alphabet().toChar
+                    (_rotorArray[i].convertBackward
+                            (_rotorArray[i].alphabet().toInt
+                                    (_alphabet.toChar(c)))));
         }
 
         // Final plugboard conversion
@@ -231,6 +263,13 @@ class Machine {
         return convertedMsg;
     }
 
+    /**
+     * Accessor method for the hashmap
+     * @return the RotorHashMap
+     */
+    HashMap<String, Rotor> getRotorHashMap() {
+        return _rotorHashMap;
+    }
     /** Common alphabet of my rotors. */
     private final Alphabet _alphabet;
 
@@ -239,7 +278,7 @@ class Machine {
     /** The number of pawls. */
     private int _pawls;
     /** The HashMap with corresponding name and rotor. */
-    private HashMap<String, Rotor> _rotorHashMap;
+    private final HashMap<String, Rotor> _rotorHashMap;
     /** The Permutation of plugboard. */
     private Permutation _plugboard;
     /** The array holding the rotors. */

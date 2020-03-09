@@ -203,6 +203,18 @@ class Permutation {
         return true;
     }
 
+    /**
+     * Shift the alphabet in such a way that it start with character c.
+     * @param c represents the starting character
+     */
+    void shiftAlphabet(char c) {
+        int index = _alphabet.getAlphabet().indexOf(c);
+        String newPost = _alphabet.getAlphabet().substring(0, index);
+        String newPrior = _alphabet.getAlphabet().
+                substring(index, _alphabet.size());
+        _alphabet = new Alphabet(newPrior + newPost);
+    }
+
     /** Alphabet of this permutation. */
     private Alphabet _alphabet;
     /** Tracking the permutations. */
@@ -216,6 +228,9 @@ class Permutation {
     }
     /**
      * RINGSTALLONE
-     * - 
+     * - if Ringstallone (LAST COMPONENT OF SETTING UP MACHINE):
+     *      --> Shift the alphabets of every rotor
+     *      --> Settings of the rotor?
+     *      --> Fix the settings
      */
 }

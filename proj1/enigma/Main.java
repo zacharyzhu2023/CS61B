@@ -5,10 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.util.*;
 
 import static enigma.EnigmaException.*;
 
@@ -152,19 +149,22 @@ public final class Main {
             char type = typeNotches.charAt(0);
             String notches = typeNotches.substring(1);
             String rotorCycles = "";
-            while (_config.hasNext("[(][^*]+[)]")) { // Check if REGEX is correct
+            while (_config.hasNext("[(][^*]+[)]")) {
                 rotorCycles += _config.next();
             }
 
             if (type == 'R') {
-                return new Reflector(name, new Permutation(rotorCycles, _alphabet));
+                return new Reflector(name,
+                        new Permutation(rotorCycles, _alphabet));
             } else if (type == 'N') {
-                return new FixedRotor(name, new Permutation(rotorCycles, _alphabet));
+                return new FixedRotor(name,
+                        new Permutation(rotorCycles, _alphabet));
             } else if (type == 'M') {
                 if (notches.length() == 0) {
                     throw new EnigmaException("Empty notches for moving rotor");
                 }
-                return new MovingRotor(name, new Permutation(rotorCycles, _alphabet), notches);
+                return new MovingRotor(name,
+                        new Permutation(rotorCycles, _alphabet), notches);
             } else {
                 throw new EnigmaException("Invalid rotor type");
             }
@@ -174,10 +174,12 @@ public final class Main {
         }
     }
 
+
     /** Set M according to the specification given on SETTINGS,
      *  which must have the format specified in the assignment. */
     private void setUp(Machine M, String settings) {
         Scanner configSettings = new Scanner(settings);
+        boolean isRingStalleung = false;
         if (!configSettings.next().equals("*")) {
             throw new EnigmaException("Doesn't start with asterisk");
         }
@@ -185,9 +187,24 @@ public final class Main {
         while (configSettings.hasNext("[^(]+")) {
             names.add(configSettings.next());
         }
-        String setting = names.get(names.size() - 1);
-        names.remove(names.size() - 1);
-        String[] namesArray = new String[names.size()];
+        HashMap<String, Rotor> temp = M.getRotorHashMap();
+        if (!temp.containsKey(names.get(names.size()-2))) {
+            isRingStalleung = true;
+        }
+        String[] namesArray;
+        String setting;
+        String ringSetting = "";
+        if (!isRingStalleung) {
+            setting = names.get(names.size() - 1);
+            names.remove(names.size() - 1);
+            namesArray = new String[names.size()];
+        } else {
+            setting = names.get(names.size() - 2);
+            ringSetting = names.get(names.size() - 1);
+            names.remove(names.size() - 1);
+            names.remove(names.size()-1);
+            namesArray = new String[names.size()];
+        }
         for (int i = 0; i < names.size(); i += 1) {
             namesArray[i] = names.get(i);
         }
@@ -198,6 +215,9 @@ public final class Main {
         M.insertRotors(namesArray);
         M.setRotors(setting);
         M.setPlugboard(new Permutation(plugboardString, _alphabet));
+        if (isRingStalleung) {
+            M.ringstalleungRotors(ringSetting);
+        }
 
 
     }
