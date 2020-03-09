@@ -85,6 +85,12 @@ public final class Main {
          */
         Machine m = readConfig();
         String configMsg = characteredLine();
+        if (configMsg.length() == 0) {
+            throw new EnigmaException("Argument is invalid");
+        } else if (configMsg.charAt(0) != '*') {
+            throw new EnigmaException("Argument doesn't "
+                    + "start with asterisk");
+        }
         while (_input.hasNextLine()) {
             setUp(m, configMsg);
             while (_input.hasNext("[^*]+")) {
@@ -102,6 +108,8 @@ public final class Main {
                 if (inputMsg.equals("")) {
                     _output.append("\n");
                     configMsg = characteredLine();
+                } else {
+                    configMsg = inputMsg;
                 }
             }
 
