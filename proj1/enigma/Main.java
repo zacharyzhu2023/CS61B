@@ -84,11 +84,12 @@ public final class Main {
          * Scan it
          * Pass scanned message to output
          * read scanned message
+         * If nextLine() is blank, that means it's an empty line
          */
         Machine m = readConfig();
-        String message = "";
+        String configMsg = characteredLine();
         while (_input.hasNextLine()) {
-            setUp(m, _input.nextLine());
+            setUp(m, configMsg);
             while (_input.hasNext("[^*]+")) {
                 String line = _input.nextLine();
                 Scanner scanLine = new Scanner(line);
@@ -96,12 +97,31 @@ public final class Main {
                 while (scanLine.hasNext()) {
                     inputMsg += scanLine.next();
                 }
-                message = m.convert(inputMsg);
+                String message = m.convert(inputMsg);
                 printMessageLine(message);
+            }
+            if (_input.hasNextLine()) {
+                String inputMsg = _input.nextLine();
+                if (inputMsg.equals("")) {
+                    _output.append("\n");
+                    configMsg = characteredLine();
+                }
             }
 
         }
 
+    }
+
+    /**
+     * Dealing with the blank line problem above.
+     * @return next line that isn't blank.
+     */
+    private String characteredLine() {
+        String blank = "";
+        while (blank.equals("") && _input.hasNextLine()) {
+            blank = _input.nextLine();
+        }
+        return blank;
     }
 
     /** Return an Enigma machine configured from the contents of configuration
