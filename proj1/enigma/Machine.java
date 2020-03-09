@@ -1,10 +1,7 @@
 package enigma;
-
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Collection;
 
-import static enigma.EnigmaException.*;
 
 /** Class that represents a complete enigma machine.
  *  @author Zachary Zhu
@@ -101,8 +98,8 @@ class Machine {
         for (int i = 0; i < rotors.length; i += 1) {
             for (int j = i + 1; j < rotors.length; j += 1) {
                 if (rotors[i].equals(rotors[j])) {
-                    throw new EnigmaException
-                            ("insertRotors contains repeated name in rotor");
+                    throw new EnigmaException("insertRotors "
+                            + "contains repeated name in rotor");
                 }
             }
         }
@@ -116,8 +113,8 @@ class Machine {
         boolean moving = false;
         for (int i = _rotorArray.length - 1; i <= 0; i -= 1) {
             if (moving && !_rotorArray[i].rotates()) {
-                throw new EnigmaException
-                        ("Stationary rotor after moving encountered");
+                throw new EnigmaException("Stationary rotor "
+                        + "after moving encountered");
             }
             if (_rotorArray[i].rotates()) {
                 moving = true;
@@ -190,7 +187,6 @@ class Machine {
      *     4. Adjust for plugboard at the end
      *
      *  */
-
     int convert(int c) {
         boolean[] canRotate = new boolean[_rotorArray.length];
         canRotate[_rotorArray.length - 1] = true;
@@ -201,17 +197,14 @@ class Machine {
                 canRotate[i - 1] = true;
             }
         }
-
         for (int i = 0; i < _rotorArray.length; i += 1) {
             if (canRotate[i]) {
                 _rotorArray[i].advance();
             }
         }
-
         if (_plugboard != null) {
             c = _plugboard.permute(c);
         }
-
         for (int i = _rotorArray.length - 1; i >= 0; i -= 1) {
             c = _alphabet.toInt(_rotorArray[i].alphabet().toChar
                     (_rotorArray[i].convertForward
@@ -245,7 +238,7 @@ class Machine {
     }
 
     /**
-     * Accessor method for the hashmap
+     * Accessor method for the hashmap.
      * @return the RotorHashMap
      */
     HashMap<String, Rotor> getRotorHashMap() {
@@ -265,14 +258,4 @@ class Machine {
     /** The array holding the rotors. */
     private Rotor[] _rotorArray;
 
-    /**
-     * Notes for fixes
-     * Checking number of available rotors: don't check number of reflectors
-     * InsertRotors: check size, if names exist, AND names of rotors must be unique (String[] names)
-     * Check bounds for LOOPS
-     * Check convert method if output wrong
-     * For final message: take a whole line
-     * Append message
-     *
-     */
 }

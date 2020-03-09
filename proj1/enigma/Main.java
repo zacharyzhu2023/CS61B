@@ -188,7 +188,7 @@ public final class Main {
             names.add(configSettings.next());
         }
         HashMap<String, Rotor> temp = M.getRotorHashMap();
-        if (!temp.containsKey(names.get(names.size()-2))) {
+        if (!temp.containsKey(names.get(names.size() - 2))) {
             isRingStalleung = true;
         }
         String[] namesArray;
@@ -202,7 +202,7 @@ public final class Main {
             setting = names.get(names.size() - 2);
             ringSetting = names.get(names.size() - 1);
             names.remove(names.size() - 1);
-            names.remove(names.size()-1);
+            names.remove(names.size() - 1);
             namesArray = new String[names.size()];
         }
         for (int i = 0; i < names.size(); i += 1) {

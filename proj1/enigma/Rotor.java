@@ -10,8 +10,8 @@ class Rotor {
     /** A rotor named NAME whose permutation is given by PERM. */
     Rotor(String name, Permutation perm) {
         if (name.indexOf('(')  != -1 || name.indexOf(' ') != -1) {
-            throw new EnigmaException
-                    ("Name of rotor contains forbidden chars");
+            throw new EnigmaException("Name of rotor contains "
+                    + "forbidden chars");
         }
         _name = name;
         _permutation = perm;
