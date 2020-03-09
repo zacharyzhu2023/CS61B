@@ -1,5 +1,6 @@
 package enigma;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Collection;
 
@@ -10,7 +11,6 @@ import static enigma.EnigmaException.*;
  */
 class Machine {
 
-    // Check to
     /** A new Enigma machine with alphabet ALPHA, 1 < NUMROTORS rotor slots,
      *  and 0 <= PAWLS < NUMROTORS pawls.  ALLROTORS contains all the
      *  available rotors. */
@@ -24,10 +24,10 @@ class Machine {
         _alphabet = alpha;
         _numRotors = numRotors;
         _pawls = pawls;
-        cleanRotors(allRotors);
         _rotorArray = new Rotor[allRotors.size()];
         _rotorHashMap = new HashMap<>();
         int counter = 0;
+        cleanRotors(allRotors);
         for (Rotor r: allRotors) {
             _rotorArray[counter] = r;
             _rotorHashMap.put(r.name(), r);
@@ -72,8 +72,6 @@ class Machine {
             throw new EnigmaException("Wrong number of rotors passed in");
         } else if (numPawls < 0 || numPawls >= totalRotors) {
             throw new EnigmaException("Wrong number of pawls passed in");
-        } else if (numReflectors != 1) {
-            throw new EnigmaException("Wrong number of reflectors");
         }
 
     }
@@ -107,7 +105,18 @@ class Machine {
             }
         }
 
+        // Check to see if names repeated in rotors
+        for (int i = 0; i < rotors.length; i += 1) {
+            for (int j = i + 1; j < rotors.length; j += 1) {
+                if (rotors[i].equals(rotors[j])) {
+                    throw new EnigmaException
+                            ("insertRotors contains repeated name in rotor");
+                }
+            }
+        }
+
         // Check to see sorted version is correct + sort
+        _rotorArray = new Rotor[rotors.length];
         for (int i = 0; i < rotors.length; i += 1) {
             _rotorArray[i] = _rotorHashMap.get(rotors[i]);
         }
@@ -115,7 +124,7 @@ class Machine {
             throw new EnigmaException("First rotor isn't reflecting");
         }
         boolean moving = false;
-        for (int i = 0; i < _rotorArray.length; i += 1) {
+        for (int i = _rotorArray.length - 1; i <= 0; i -= 1) {
             if (moving && !_rotorArray[i].rotates()) {
                 throw new EnigmaException
                         ("Stationary rotor after moving encountered");
@@ -172,14 +181,15 @@ class Machine {
 
         // Advance the rotors
         boolean[] canRotate = new boolean[_rotorArray.length];
-        canRotate[canRotate.length - 1] = true;
-        for (int i = 1; i < _rotorArray.length - 1; i += 1) {
+        canRotate[_rotorArray.length - 1] = true;
+        for (int i = _rotorArray.length - 1; i >= 1; i -= 1) {
             if (_rotorArray[i].atNotch()
                     && _rotorArray[i - 1].rotates()) {
                 canRotate[i] = true;
                 canRotate[i - 1] = true;
             }
         }
+
         for (int i = 0; i < _rotorArray.length; i += 1) {
             if (canRotate[i]) {
                 _rotorArray[i].advance();
@@ -235,4 +245,14 @@ class Machine {
     /** The array holding the rotors. */
     private Rotor[] _rotorArray;
 
+    /**
+     * Notes for fixes
+     * Checking number of available rotors: don't check number of reflectors
+     * InsertRotors: check size, if names exist, AND names of rotors must be unique (String[] names)
+     * Check bounds for LOOPS
+     * Check convert method if output wrong
+     * For final message: take a whole line
+     * Append message
+     *
+     */
 }

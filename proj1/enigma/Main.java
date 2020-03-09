@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -78,15 +79,29 @@ public final class Main {
      *  file _config and apply it to the messages in _input, sending the
      *  results to _output. */
     private void process() {
+        /**
+         * Get next line
+         * Scan it
+         * Pass scanned message to output
+         * read scanned message
+         */
         Machine m = readConfig();
         String message = "";
         while (_input.hasNextLine()) {
             setUp(m, _input.nextLine());
             while (_input.hasNext("[^*]+")) {
-                message += m.convert(_input.next());
+                String line = _input.nextLine();
+                Scanner scanLine = new Scanner(line);
+                String inputMsg = "";
+                while (scanLine.hasNext()) {
+                    inputMsg += scanLine.next();
+                }
+                message = m.convert(inputMsg);
+                printMessageLine(message);
             }
+
         }
-        printMessageLine(message);
+
     }
 
     /** Return an Enigma machine configured from the contents of configuration
@@ -117,14 +132,10 @@ public final class Main {
             char type = typeNotches.charAt(0);
             String notches = typeNotches.substring(1);
             String rotorCycles = "";
-            while (_config.hasNext("[(][^*]+[)]")) {
+            while (_config.hasNext("[(][^*]+[)]")) { // Check if REGEX is correct
                 rotorCycles += _config.next();
             }
 
-            System.out.println("NAME: " + name);
-            System.out.println("TYPE: " + type);
-            System.out.println("NOTCHES: " + notches);
-            System.out.println("CYCLES: " + rotorCycles);
             if (type == 'R') {
                 return new Reflector(name, new Permutation(rotorCycles, _alphabet));
             } else if (type == 'N') {
@@ -151,12 +162,15 @@ public final class Main {
             throw new EnigmaException("Doesn't start with asterisk");
         }
         ArrayList<String> names = new ArrayList<String>();
-        while (configSettings.hasNext("[^(]")) {
+        while (configSettings.hasNext("[^(]+")) {
             names.add(configSettings.next());
         }
         String setting = names.get(names.size() - 1);
         names.remove(names.size() - 1);
-        String[] namesArray = (String[]) names.toArray();
+        String[] namesArray = new String[names.size()];
+        for (int i = 0; i < names.size(); i += 1) {
+            namesArray[i] = names.get(i);
+        }
         String plugboardString = "";
         while (configSettings.hasNext()) {
             plugboardString += configSettings.next();
@@ -165,19 +179,20 @@ public final class Main {
         M.setRotors(setting);
         M.setPlugboard(new Permutation(plugboardString, _alphabet));
 
+
     }
 
     /** Print MSG in groups of five (except that the last group may
      *  have fewer letters). */
     private void printMessageLine(String msg) {
         while (msg.length() >= 5) {
-            _output.print(msg.substring(0, 5));
+            _output.append(msg.substring(0, 5) + " ");
             msg = msg.substring(5);
         }
         if (msg.length() != 0) {
-            _output.print(msg);
+            _output.append(msg);
         }
-        _output.println();
+        _output.append("\n");
     }
 
     /** Alphabet used in this machine. */
