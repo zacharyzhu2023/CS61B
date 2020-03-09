@@ -1,11 +1,11 @@
 package enigma;
-
-import java.awt.font.NumericShaper;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.HashMap;
+import java.util.NoSuchElementException;
 
 import static enigma.EnigmaException.*;
 

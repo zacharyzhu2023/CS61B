@@ -10,7 +10,8 @@ public class MachineTest {
         int numRotors = 5;
         int numPawls = 3;
         MovingRotor r1 = new MovingRotor("I",
-                new Permutation("(AELTPHQXRU) (BKNW) (CMOY) (DFG) (IV) (JZ) (S)",
+                new Permutation("(AELTPHQXRU) (BKNW) "
+                        + "(CMOY) (DFG) (IV) (JZ) (S)",
                         new Alphabet()), "Q");
         MovingRotor r3 = new MovingRotor("III",
                 new Permutation("(ABDHPEJT) (CFLVMZOYQIRWUKXSG) (N)",

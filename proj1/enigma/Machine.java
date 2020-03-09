@@ -45,7 +45,8 @@ class Machine {
         int numPawls = 0;
         int counter = 0;
         for (Rotor r: rotors) {
-            if (!r.alphabet().getAlphabet().equals(_alphabet.getAlphabet())) {
+            if (!r.alphabet().getAlphabet()
+                    .equals(_alphabet.getAlphabet())) {
                 throw new EnigmaException("Alphabets don't match up");
             }
             names[counter] = r.name();
@@ -87,8 +88,8 @@ class Machine {
 
     void insertRotors(String[] rotors) {
         if (rotors.length > _rotorArray.length) {
-            throw new EnigmaException
-                    ("Length of rotors passed and matching don't correspond");
+            throw new EnigmaException("Length of rotors passed "
+                    + "and matching don't correspond");
         }
         for (String name: rotors) {
             if (!_rotorHashMap.keySet().contains(name)) {
@@ -128,13 +129,13 @@ class Machine {
      *  to the leftmost rotor setting (not counting the reflector).  */
     void setRotors(String setting) {
         if (setting.length() != numRotors() - 1) {
-            throw new EnigmaException
-                    ("Wrong number of characters in setting");
+            throw new EnigmaException("Wrong number of "
+                    + "characters in setting");
         } else {
             for (int i = 1; i < _rotorArray.length; i += 1) {
                 if (!_rotorArray[i].alphabet().contains(setting.charAt(i - 1))) {
-                    throw new EnigmaException
-                            ("Rotor alphabet does not contain setting char");
+                    throw new EnigmaException("Rotor alphabet "
+                            + "does not contain setting char");
                 } else {
                     _rotorArray[i].permutation().
                             shiftAlphabet(_alphabet.getAlphabet().charAt(0));
@@ -150,17 +151,19 @@ class Machine {
      */
     void ringstalleungRotors(String setting) {
         if (setting.length() != numRotors() - 1) {
-            throw new EnigmaException
-                    ("Wrong number of characters in setting");
+            throw new EnigmaException("Wrong number of "
+                    + "characters in setting");
         } else {
             for (int i = 1; i < _rotorArray.length; i += 1) {
-                if (!_rotorArray[i].alphabet().contains(setting.charAt(i - 1))) {
-                    throw new EnigmaException
-                            ("Rotor alphabet does not contain setting char");
+                if (!_rotorArray[i].alphabet().
+                        contains(setting.charAt(i - 1))) {
+                    throw new EnigmaException("Rotor alphabet "
+                            + "does not contain setting char");
                 } else {
                     _rotorArray[i].permutation().shiftAlphabet(setting.charAt(i - 1));
                     int currentPos = _rotorArray[i].setting();
-                    int shift = _alphabet.getAlphabet().indexOf(setting.charAt(i - 1));
+                    int shift =
+                            _alphabet.getAlphabet().indexOf(setting.charAt(i - 1));
                     int finalPos = currentPos - shift;
                     _rotorArray[i].set(finalPos);
                 }
