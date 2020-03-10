@@ -9,9 +9,10 @@ public class BitExercise {
     * (least significant) 1-bit set to 0.
     * For example, 100 in binary is 0b1100100, so lastBit(100)
     * should return 4, which in binary is 0b100.
+     * 1100100 100100 00100
     */
     public static int lastBit(int x) {
-        return 0; //TODO: Your code here
+        return ((~x) + 1) & x;
     }
 
     /** Fill in the function below so that it returns 
@@ -19,7 +20,7 @@ public class BitExercise {
     * For example: 2, 32, and 8192 are powers of two.
     */
     public static boolean powerOfTwo(int x) {
-        return false; //TODO: Your code here
+        return lastBit(x) == x;
     }
     
     /** Fill in the function below so that it returns 
