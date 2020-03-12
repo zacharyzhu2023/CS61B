@@ -12,7 +12,9 @@ public class NybblesTest {
         for (int i = 0; i < arr.size(); i += 1) {
             arr.set(i, i % 8);
         }
+
         for (int i = 0; i < arr.size(); i += 1) {
+            System.out.println("Currently at: " + i);
             assertEquals(i % 8, arr.get(i));
         }
     }
