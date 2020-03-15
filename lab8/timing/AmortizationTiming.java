@@ -7,15 +7,15 @@ import java.util.List;
 
 public class AmortizationTiming {
 
-    private static final int MAX_SIZE = 1024;
-    private static final int N_LISTS = 1000;
+    private static final int MAX_SIZE = 100;
+    private static final int N_LISTS = 100;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 int maxSize, nLists;
                 maxSize = nLists = 0;
-                boolean accumulate = false;
+                boolean accumulate = true;
                 if(args.length == 0 ) {
                     maxSize = MAX_SIZE;
                     nLists = N_LISTS;

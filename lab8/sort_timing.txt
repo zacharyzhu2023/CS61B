@@ -1,20 +1,26 @@
 Q: Is one sorting algorithm always faster than another?
-A:
+A: No, there is variation as to what algorithm is the fastest depending on the parameters.
 
 Q: Above we said that BubbleSort, WipingBubbleSort, and InsertionSort each had the same Theta(N^2) asymptotic time complexity. How can you explain the differences in the plots for these three algorithms?
-A:
+A: They differ depending on inputs. While they are in the same family, they do not necessarily have exactly the same runtime. Depending on the input list
+they're sorting, their efficiencies differ.
 
 Q: What information can we gain from empirical analysis of algorithms which might not be as noticeable in asymptotical bounds?
-A:
+A: From an empirical analysis on the algorithms, we have a better idea of how each algorithm performs at each individual input. With
+the asymptotical bounds, we only know what the behavior of the algorithm should be like, not how it actually performs.
 
 Q: For any given sorting algorithm, does increasing the array size always mean the sorting takes longer?
-A:
+A: Increasing the array size does not always mean that it takes longer to sort. According to several of the graphs, a larger input
+still resulted in a smaller runtime.
 
 Q: How does changing nrepeats change the plot?
-A:
+A: Increasing nrepeats increased the predictability and repeatability of the results. When nrepeats was smaller and the other
+parameters were held constant, there was more variation present with the behavior of the graphs.
 
 Q: Is your plot the exact same as your partner's plot, even with the same values of ntrials, by, and nrepeats?
-A:
+A: No, the plots are not exactly the same, even when ntrials, by, and nrepeats are the same. In reality, because the lists that are
+sorted are randomly generated, the actual runtime to sort the lists differ.
 
 Q: Optional: Look at the source code for BubbleSorter to WipingBubbleSorter. After looking at the plots, can you intuitively explain why WipingBubbleSorter is usually 2x as fast as BubbleSorter? (Hint: Consider the immobility of some elements when the swapping passes are single directional (i.e. only going forward), and how this "Wiping" strategy helps deal with that issue.) Can you come up with an example that shows the difference in runtime?
-A:
+A: I think that Wiping BubbleSorter cuts down the amount of elements that need to be sorted in half. With each pass, it finds the smallest and largest remaining element.
+Thus, it doesn't have to make as many passes through the list to sort it.
