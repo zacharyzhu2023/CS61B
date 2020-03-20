@@ -131,7 +131,9 @@ public class ArrayHeapTest {
         for (int item: items) {
             hp.changePriority(item, -1 * item);
         }
+
         for (int i = 0; i < sortedItems.length; i++) {
+            System.out.println(hp.toString());
             assertEquals(String.format("removing %d-th item", i),
                     (Integer) sortedItems[sortedItems.length - 1 - i],
                     hp.removeMin());
