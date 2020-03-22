@@ -22,10 +22,7 @@ class ECHashStringSet implements StringSet {
 
 
     private int hashCodeConverter(String s) {
-        if (s.hashCode() < 0)
-            return (s.hashCode() & 0x7fffffff) % buckets.length;
-        else
-            return s.hashCode();
+        return (s.hashCode() & 0x7fffffff) % buckets.length;
     }
 
     private void resize() {
@@ -48,12 +45,12 @@ class ECHashStringSet implements StringSet {
             resize();
         }
         int hashCode = hashCodeConverter(s);
-        buckets[hashCode % buckets.length].add(s);
+        buckets[hashCode].add(s);
     }
 
     @Override
     public boolean contains(String s) {
-        return buckets[hashCodeConverter(s) % buckets.length].contains(s);
+        return buckets[hashCodeConverter(s)].contains(s);
     }
 
     @Override
