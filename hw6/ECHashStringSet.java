@@ -13,7 +13,7 @@ class ECHashStringSet implements StringSet {
     private int numItems;
 
     public ECHashStringSet () {
-        buckets = new LinkedList[5];
+        buckets = new LinkedList[4];
         for (int i = 0; i < buckets.length; i += 1) {
             buckets[i] = new LinkedList<String>();
         }
