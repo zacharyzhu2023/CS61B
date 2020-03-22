@@ -40,12 +40,12 @@ class ECHashStringSet implements StringSet {
 
     @Override
     public void put(String s) {
-        numItems += 1;
         if (numItems / buckets.length > loadFactorMax) {
             resize();
         }
         int hashCode = hashCodeConverter(s);
         buckets[hashCode].add(s);
+        numItems += 1;
     }
 
     @Override
