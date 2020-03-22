@@ -13,9 +13,9 @@ class ECHashStringSet implements StringSet {
     private int numItems;
 
     public ECHashStringSet () {
-        buckets = new LinkedList[4];
+        buckets = new LinkedList[5];
         for (int i = 0; i < buckets.length; i += 1) {
-            buckets[i] = new LinkedList<String>();
+            buckets[i] = new LinkedList();
         }
         numItems = 0;
     }
@@ -26,19 +26,17 @@ class ECHashStringSet implements StringSet {
     }
 
     private void resize() {
-        LinkedList<String> [] new_buckets = buckets;
-        buckets = new LinkedList[new_buckets.length * 5];
-        for (int i = 0; i < buckets.length; i += 1) {
-            buckets[i] = new LinkedList<String>();
+        LinkedList<String> [] new_buckets = new LinkedList[buckets.length * 5];
+        for (int i = 0; i < new_buckets.length; i += 1) {
+            new_buckets[i] = new LinkedList();
         }
-        numItems = 0;
         for (int i = 0; i < buckets.length; i += 1) {
-            if (buckets[i] != null && buckets[i].size() != 0) {
-                for (String s : buckets[i]) {
-                    put(s);
-                }
+            for (String s: buckets[i]) {
+                int hashCode = (s.hashCode() & 0x7fffffff) % new_buckets.length;
+                new_buckets[hashCode].add(s);
             }
         }
+        buckets = new_buckets;
     }
 
     @Override
