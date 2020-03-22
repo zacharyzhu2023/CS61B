@@ -26,16 +26,17 @@ class ECHashStringSet implements StringSet {
     }
 
     private void resize() {
-        LinkedList<String> [] new_buckets = new LinkedList[buckets.length * 5];
-        for (int i = 0; i < new_buckets.length; i += 1) {
-            new_buckets[i] = new LinkedList<String>();
+        LinkedList<String> [] new_buckets = buckets;
+        buckets = new LinkedList[new_buckets.length * 5];
+        for (int i = 0; i < buckets.length; i += 1) {
+            buckets[i] = new LinkedList<String>();
         }
+        numItems = 0;
         for (int i = 0; i < buckets.length; i += 1) {
             for (String s : buckets[i]) {
-                new_buckets[i].add(s);
+                put(s);
             }
         }
-        buckets = new_buckets;
     }
 
     @Override
