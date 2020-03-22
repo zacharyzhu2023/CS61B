@@ -33,8 +33,10 @@ class ECHashStringSet implements StringSet {
         }
         numItems = 0;
         for (int i = 0; i < buckets.length; i += 1) {
-            for (String s : buckets[i]) {
-                put(s);
+            if (buckets[i] != null && buckets[i].size() != 0) {
+                for (String s : buckets[i]) {
+                    put(s);
+                }
             }
         }
     }
