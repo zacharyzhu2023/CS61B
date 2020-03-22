@@ -35,8 +35,7 @@ class ECHashStringSet implements StringSet {
         }
         for (int i = 0; i < buckets.length; i += 1) {
             for (String s : buckets[i]) {
-                int hashCode = hashCodeConverter(s);
-                new_buckets[hashCode % new_buckets.length].add(s);
+                new_buckets[i].add(s);
             }
         }
         buckets = new_buckets;
