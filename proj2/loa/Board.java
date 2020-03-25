@@ -52,8 +52,17 @@ class Board {
     /** Set my state to CONTENTS with SIDE to move. */
     void initialize(Piece[][] contents, Piece side) {
         // FIXME
+
+        // Set contents of _board to board's squares. Initialize _turn and _moveLimit
+        for (int i = 0; i < contents.length; i += 1) {
+            for (int j = 0; j < contents[i].length; j += 1) {
+                Square sq = sq(i, j);
+                set(sq, contents[i][j]);
+            }
+        }
         _turn = side;
         _moveLimit = DEFAULT_MOVE_LIMIT;
+
     }
 
     /** Set me to the initial configuration. */
@@ -67,6 +76,14 @@ class Board {
             return;
         }
         // FIXME
+        // Set the contents of _board to board's squares
+        for (int i = 0; i < 8; i += 1) {
+            for (int j = 0; j < 8; j += 1) {
+                Square sq = sq(i, j);
+                set(sq, board.get(sq));
+            }
+        }
+
     }
 
     /** Return the contents of the square at SQ. */
@@ -78,6 +95,10 @@ class Board {
      *  to NEXT, if NEXT is not null. */
     void set(Square sq, Piece v, Piece next) {
         // FIXME
+        if (next != null) {
+            _turn = next;
+        }
+        _board[sq.index()] = v;
     }
 
     /** Set the square at SQ to V, without modifying the side that
@@ -97,6 +118,23 @@ class Board {
     void makeMove(Move move) {
         assert isLegal(move);
         // FIXME
+
+        // Setting TO square to FROM value. FROM is now empty
+        _moves.add(move);
+        Square from = move.getFrom();
+        Square to = move.getTo();
+        Piece fromVal = get(from);
+        Piece toVal = get(to);
+        /**
+         * Is this necessary?
+         * Also, why can we assume that isCapture() is false? Will it be implemented elsewhere?
+        if (toVal != EMP) {
+            set(to, EMP);
+        }
+         */
+        set(to, fromVal);
+        set(from, EMP);
+        _turn = _turn.opposite();
     }
 
     /** Retract (unmake) one move, returning to the state immediately before
@@ -104,6 +142,24 @@ class Board {
     void retract() {
         assert movesMade() > 0;
         // FIXME
+
+        // Getting the prev, after, and values there
+        Move lastMove = _moves.remove(_moves.size() - 1);
+        Square prev = lastMove.getFrom();
+        Square after = lastMove.getTo();
+        Piece afterValue = get(after);
+
+        // Revert depending on whether or not it's a capture move--do I need to account for captures?
+        if (lastMove.isCapture()) {
+            set(prev, afterValue);
+            set(after, afterValue.opposite());
+            _turn = afterValue;
+        } else {
+            set(prev, afterValue);
+            set(after, EMP);
+            _turn = afterValue;
+        }
+
     }
 
     /** Return the Piece representing who is next to move. */
@@ -114,7 +170,27 @@ class Board {
     /** Return true iff FROM - TO is a legal move for the player currently on
      *  move. */
     boolean isLegal(Square from, Square to) {
-        return true;   // FIXME
+        // FIXME
+
+        // Wrong direction? Return false
+        if (!from.isValidMove(to)) {
+            return false;
+        }
+
+        // Is blocked? return false -- make sure to check ending squares in blocked
+        if (blocked(from, to)) {
+            return false;
+        }
+
+        // Check to see if it's the right distance in terms of # of pieces
+        int distance = from.distance(to);
+        int direction = from.direction(to);
+        if (distance != 0 && distance == piecesInPath(from, direction)) {
+            return false;
+        }
+
+        // Otherwise, return true
+        return true;
     }
 
     /** Return true iff MOVE is legal for the player currently on move.
@@ -125,7 +201,27 @@ class Board {
 
     /** Return a sequence of all legal moves from this position. */
     List<Move> legalMoves() {
-        return null;  // FIXME
+        // FIXME
+
+        /** Approach: Loop through all the possible boards twice.
+         * If I find a legal move between the two squares and it's
+         * the right turn, then add it to the possible legal moves.
+         */
+        ArrayList<Move> legalMoves = new ArrayList<>();
+        for (int i = 0; i < 8; i += 1) {
+            for (int j = 0; j < 8; j += 1) {
+                for (int k = 0; k < 8; k += 1) {
+                    for (int l = 0; l < 8; l += 1) {
+                        Square sq1 = sq(i, j);
+                        Square sq2 = sq(k, l);
+                        if (isLegal(sq1, sq2) && _turn == get(sq1)) {
+                            legalMoves.add(Move.mv(sq1, sq2));
+                        }
+                    }
+                }
+            }
+        }
+        return legalMoves;
     }
 
     /** Return true iff the game is over (either player has all his
@@ -143,8 +239,32 @@ class Board {
      *  null.  If the game has ended in a tie, returns EMP. */
     Piece winner() {
         if (!_winnerKnown) {
-            // FIXME
-            _winnerKnown = true;
+
+            // Tie game
+            if (!piecesContiguous(BP) && !piecesContiguous(WP) && movesMade() >= _moveLimit) {
+                _winnerKnown = true;
+                _winner = EMP;
+
+            // Winner when both are contiguous
+            } else if (piecesContiguous(BP) && piecesContiguous(WP)) {
+                _winnerKnown = true;
+                _winner = _turn.opposite();
+
+            // Black alone is contiguous
+            } else if (piecesContiguous(BP)) {
+                _winnerKnown = true;
+                _winner = BP;
+
+            // White alone is contiguous
+            } else if (piecesContiguous(WP)) {
+                _winnerKnown = true;
+                _winner = WP;
+
+            // Nobody won yet
+            } else {
+                _winnerKnown = false;
+                _winner = null;
+            }
         }
         return _winner;
     }
@@ -182,10 +302,45 @@ class Board {
         return out.toString();
     }
 
+    /**
+     * Return the number of paths in direction from Square sq.
+     * @param sq for current square
+     * @param direction for direction piece wants to go in
+     * @return int representing number of pieces in direction from Square sq.
+     */
+    private int piecesInPath(Square sq, int direction) {
+        int total = 0;
+        for (int i = -8; i < 8; i += 1) {
+            Square dest = sq.moveDest(direction, i);
+            if (dest != null && get(dest) != EMP) {
+                total += 1;
+            }
+        }
+        return total;
+    }
+
     /** Return true if a move from FROM to TO is blocked by an opposing
      *  piece or by a friendly piece on the target square. */
     private boolean blocked(Square from, Square to) {
-        return false; // FALSE
+        // FIXME
+
+        // TO square is friendly
+        if (get(to) == get(from)) {
+            return true;
+        }
+
+        // Any square from FROM before TO is ENEMY
+        int direction = from.direction(to);
+        int distance = from.distance(to);
+        for (int i = 1; i < distance; i += 1) {
+            Square sq = from.moveDest(direction, i);
+            if (get(sq) == get(from).opposite()) {
+                return true;
+            }
+        }
+
+        // Not blocked
+        return false;
     }
 
     /** Return the size of the as-yet unvisited cluster of squares
@@ -193,8 +348,29 @@ class Board {
      *  have already been processed or are in different clusters.  Update
      *  VISITED to reflect squares counted. */
     private int numContig(Square sq, boolean[][] visited, Piece p) {
-        return 0;  // FIXME
+        // FIXME
+
+        // Note to self: does the visited adjust as desired?
+        int total = 0;
+        if (get(sq) != p) {
+            return 0;
+        } else {
+            int row = sq.row();
+            int col = sq.col();
+            if (!visited[row][col]) {
+                total += 1;
+                visited[row][col] = true;
+                Square[] adjacentSquares = sq.adjacent();
+                for (int i = 0; i < adjacentSquares.length; i += 1) {
+                    Square tempSq = adjacentSquares[i];
+                    total += numContig(tempSq, visited, p);
+                }
+            }
+        }
+        return total;
     }
+
+
 
     /** Set the values of _whiteRegionSizes and _blackRegionSizes. */
     private void computeRegions() {
@@ -203,7 +379,26 @@ class Board {
         }
         _whiteRegionSizes.clear();
         _blackRegionSizes.clear();
+
         // FIXME
+
+        boolean[][] visited = new boolean[8][8];
+        for (int i = 0; i < 8; i += 1) {
+            for (int j = 0; j < 8; j += 1) {
+                Square tempSq = sq(i, j);
+                Piece tempSqPiece = get(tempSq);
+                if (!visited[i][j] &&  tempSqPiece != EMP) {
+                    int regionSize = numContig(tempSq, visited, tempSqPiece);
+                    if (tempSqPiece == WP) {
+                        _whiteRegionSizes.add(regionSize);
+                    } else {
+                        _blackRegionSizes.add(regionSize);
+                    }
+                }
+            }
+        }
+
+        // And what does this do??
         Collections.sort(_whiteRegionSizes, Collections.reverseOrder());
         Collections.sort(_blackRegionSizes, Collections.reverseOrder());
         _subsetsInitialized = true;
@@ -221,6 +416,17 @@ class Board {
     }
 
     // FIXME: Other methods, variables?
+
+
+    // FIXME: I added this method
+    /** Method for getting the current pieces on the board.
+     *
+     * @return the current pieces on the board
+     */
+    Piece[] getBoard() {
+        return _board;
+    }
+
 
     /** The standard initial configuration for Lines of Action (bottom row
      *  first). */
@@ -253,7 +459,7 @@ class Board {
     /** True iff subsets computation is up-to-date. */
     private boolean _subsetsInitialized;
 
-    /** List of the sizes of continguous clusters of pieces, by color. */
+    /** List of the sizes of contiguous clusters of pieces, by color. */
     private final ArrayList<Integer>
         _whiteRegionSizes = new ArrayList<>(),
         _blackRegionSizes = new ArrayList<>();

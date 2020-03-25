@@ -19,7 +19,7 @@ final class Move {
      * As a result the default equality operation (same as ==) will
      * work. */
 
-    /** Return a move denoted S.  When CAPTURE is true, inicates a move
+    /** Return a move denoted S.  When CAPTURE is true, indicates a move
      *  that results in a capture. Returns null if S is not a
      *  valid move. */
     static Move mv(String s, boolean capture) {
