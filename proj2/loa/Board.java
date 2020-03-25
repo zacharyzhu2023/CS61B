@@ -108,10 +108,13 @@ class Board {
         set(sq, v, null);
     }
 
-    /** Set limit on number of moves (before tie results) to LIMIT. */
+    /** Set limit on number of moves by each side that results in a tie to
+     *  LIMIT, where 2 * LIMIT > movesMade(). */
     void setMoveLimit(int limit) {
-        _moveLimit = limit;
-        _winnerKnown = false;
+        if (2 * limit <= movesMade()) {
+            throw new IllegalArgumentException("move limit too small");
+        }
+        _moveLimit = 2 * limit;
     }
 
     /** Assuming isLegal(MOVE), make MOVE. Assumes MOVE.isCapture()
@@ -358,6 +361,7 @@ class Board {
 
         // Not blocked
         return false;
+
     }
 
     /** Return the size of the as-yet unvisited cluster of squares

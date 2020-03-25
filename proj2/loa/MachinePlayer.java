@@ -5,7 +5,14 @@ package loa;
 import static loa.Piece.*;
 
 /** An automated Player.
- *  @author
+ *  @author Zachary Zhu
+ */
+
+/**
+ * Stuff to consider
+ * 1. Some combinations of moves lead to the same board state.
+ * 2. Alpha-beta pruning??
+ * 3.
  */
 class MachinePlayer extends Player {
 
@@ -76,6 +83,23 @@ class MachinePlayer extends Player {
             _foundMove = null; // FIXME
         }
         return 0; // FIXME
+    }
+
+    /**
+     * Method for evaluating the effectiveness of the new move.
+     * @param board referring to state of board
+     * @return a number that refers to how beneficial the new state of board is.
+     */
+    public static int heuristic(Board board) {
+        /** This heuristic should evaluate the efficacy of each potential move.
+         * Must return +INF if winning move for BLACK, -INF if winning move for WHITE.
+         * Characteristics to consider:
+         * 1. Number of pieces (fewer is better?)
+         * 2. Number of regions formed by # of pieces (fewer is better)
+         * 3. Number of possible moves for opponent (fewer is better??)
+         * 4. Number of possible moves for self (fewer is better?)
+         */
+        return 1;
     }
 
     /** Return a search depth for the current position. */
