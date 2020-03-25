@@ -57,7 +57,8 @@ class Board {
         for (int i = 0; i < contents.length; i += 1) {
             for (int j = 0; j < contents[i].length; j += 1) {
                 Square sq = sq(i, j);
-                set(sq, contents[i][j]);
+                Piece toPiece = contents[j][i];
+                set(sq, toPiece);
             }
         }
         _turn = side;
@@ -120,11 +121,14 @@ class Board {
         // FIXME
 
         // Setting TO square to FROM value. FROM is now empty
-        _moves.add(move);
         Square from = move.getFrom();
         Square to = move.getTo();
         Piece fromVal = get(from);
         Piece toVal = get(to);
+        if (fromVal != EMP && fromVal == toVal.opposite()) {
+            move = Move.mv(from, to, true);
+        }
+        _moves.add(move);
         /**
          * Is this necessary?
          * Also, why can we assume that isCapture() is false? Will it be implemented elsewhere?
@@ -185,7 +189,7 @@ class Board {
         // Check to see if it's the right distance in terms of # of pieces
         int distance = from.distance(to);
         int direction = from.direction(to);
-        if (distance != 0 && distance == piecesInPath(from, direction)) {
+        if (distance == 0 || distance != piecesInPath(from, direction)) {
             return false;
         }
 
@@ -295,6 +299,7 @@ class Board {
             out.format("    ");
             for (int c = 0; c < BOARD_SIZE; c += 1) {
                 out.format("%s ", get(sq(c, r)).abbrev());
+
             }
             out.format("%n");
         }
@@ -309,9 +314,21 @@ class Board {
      * @return int representing number of pieces in direction from Square sq.
      */
     private int piecesInPath(Square sq, int direction) {
-        int total = 0;
-        for (int i = -8; i < 8; i += 1) {
+        int total = 1;
+        for (int i = 1; i < 8; i += 1) {
             Square dest = sq.moveDest(direction, i);
+            if (dest != null && get(dest) != EMP) {
+                total += 1;
+            }
+        }
+        int secondDirection;
+        if (direction <= 3) {
+            secondDirection = direction + 4;
+        } else {
+            secondDirection = direction - 4;
+        }
+        for (int i = 1; i < 8; i += 1) {
+            Square dest = sq.moveDest(secondDirection, i);
             if (dest != null && get(dest) != EMP) {
                 total += 1;
             }
@@ -387,7 +404,7 @@ class Board {
             for (int j = 0; j < 8; j += 1) {
                 Square tempSq = sq(i, j);
                 Piece tempSqPiece = get(tempSq);
-                if (!visited[i][j] &&  tempSqPiece != EMP) {
+                if (!visited[j][i] &&  tempSqPiece != EMP) {
                     int regionSize = numContig(tempSq, visited, tempSqPiece);
                     if (tempSqPiece == WP) {
                         _whiteRegionSizes.add(regionSize);
@@ -397,7 +414,6 @@ class Board {
                 }
             }
         }
-
         // And what does this do??
         Collections.sort(_whiteRegionSizes, Collections.reverseOrder());
         Collections.sort(_blackRegionSizes, Collections.reverseOrder());
