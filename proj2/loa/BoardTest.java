@@ -3,6 +3,10 @@
 package loa;
 
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 import static loa.Piece.*;
@@ -125,4 +129,34 @@ public class BoardTest {
                      0, b1.movesMade());
     }
 
+    @Test
+    public void testLegalMoves() {
+        Board b1 = new Board(BOARD1, BP);
+        System.out.println(b1.toString());
+        List<Move> legalMoves1 = b1.legalMoves();
+        for (int i = 0; i < legalMoves1.size(); i += 1) {
+            System.out.println(legalMoves1.get(i).toString());
+        }
+
+        Board b2 = new Board(BOARD1, WP);
+        System.out.println(b2.toString());
+        List<Move> legalMoves2 = b2.legalMoves();
+        for (int i = 0; i < legalMoves2.size(); i += 1) {
+            System.out.println(legalMoves2.get(i).toString());
+        }
+
+        Board b3 = new Board(BOARD2, BP);
+        System.out.println(b3.toString());
+        List<Move> legalMoves3 = b3.legalMoves();
+        for (int i = 0; i < legalMoves3.size(); i += 1) {
+            System.out.println(legalMoves3.get(i).toString());
+        }
+
+        Board b4 = new Board(BOARD2, WP);
+        System.out.println(b4.toString());
+        List<Move> legalMoves4 = b4.legalMoves();
+        for (int i = 0; i < legalMoves4.size(); i += 1) {
+            System.out.println(legalMoves4.get(i).toString());
+        }
+    }
 }

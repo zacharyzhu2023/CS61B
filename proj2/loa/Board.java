@@ -14,7 +14,7 @@ import static loa.Piece.*;
 import static loa.Square.*;
 
 /** Represents the state of a game of Lines of Action.
- *  @author
+ *  @author Zachary Zhu
  */
 class Board {
 
@@ -446,7 +446,6 @@ class Board {
     Piece[] getBoard() {
         return _board;
     }
-
 
     /** The standard initial configuration for Lines of Action (bottom row
      *  first). */

@@ -2,6 +2,8 @@
  * University of California.  All rights reserved. */
 package loa;
 
+import java.util.List;
+
 import static loa.Piece.*;
 
 /** An automated Player.
@@ -78,11 +80,48 @@ class MachinePlayer extends Player {
      *  on BOARD, does not set _foundMove. */
     private int findMove(Board board, int depth, boolean saveMove,
                          int sense, int alpha, int beta) {
-        // FIXME
+
+        // Working with a depth of one
+        List<Move> potentialMoves = board.legalMoves();
+        if (board.turn() == BP) {
+            int minHeuristic = Integer.MAX_VALUE;
+            Move minMove = null;
+            for (int i = 0; i < potentialMoves.size(); i += 1) {
+                board.makeMove(potentialMoves.get(i));
+                int heuristicValue = heuristic(board);
+                if (heuristicValue < minHeuristic) {
+                    minMove = potentialMoves.get(i);
+                    minHeuristic = heuristicValue;
+                }
+                board.retract();
+            }
+            if (minHeuristic != Integer.MIN_VALUE && saveMove) {
+                _foundMove = minMove;
+            }
+            return minHeuristic;
+        } else {
+            int maxHeuristic = Integer.MIN_VALUE;
+            Move maxMove = null;
+            for (int i = 0; i < potentialMoves.size(); i += 1) {
+                board.makeMove(potentialMoves.get(i));
+                int heuristicValue = heuristic(board);
+                if (heuristicValue > maxHeuristic) {
+                    maxMove = potentialMoves.get(i);
+                    maxHeuristic = heuristicValue;
+                }
+                board.retract();
+            }
+            if (maxHeuristic != Integer.MIN_VALUE && saveMove) {
+                _foundMove = maxMove;
+            }
+            return maxHeuristic;
+        }
+        /** Original Code
+         * // FIXME
         if (saveMove) {
             _foundMove = null; // FIXME
         }
-        return 0; // FIXME
+        return 0; // FIXME **/
     }
 
     /**
@@ -92,19 +131,47 @@ class MachinePlayer extends Player {
      */
     public static int heuristic(Board board) {
         /** This heuristic should evaluate the efficacy of each potential move.
-         * Must return +INF if winning move for BLACK, -INF if winning move for WHITE.
+         * Must return -INF if winning move for BLACK, +INF if winning move for WHITE.
          * Characteristics to consider:
-         * 1. Number of pieces (fewer is better?)
-         * 2. Number of regions formed by # of pieces (fewer is better)
-         * 3. Number of possible moves for opponent (fewer is better??)
-         * 4. Number of possible moves for self (fewer is better?)
+         * 1. Difference in number of pieces--(white - black)   (more is better?)
+         * 2. Dif. in number of regions formed by # of pieces--(# white regions - # black regions)   (fewer is better)
+         * 3. Number of possible moves--(more for white/fewer for black is better for white)
          */
-        return 1;
+        int heuristic = 0;
+        if (board.winner() == BP) {
+            return Integer.MIN_VALUE;
+        } else if (board.winner() == WP) {
+            return Integer.MAX_VALUE;
+        } else {
+            List<Integer> whiteRegions = board.getRegionSizes(WP);
+            List<Integer> blackRegions = board.getRegionSizes(BP);
+
+            // Getting total # of black/white pieces
+            int totalWhitePieces = 0, totalBlackPieces = 0;
+            for (int i = 0; i < whiteRegions.size(); i += 1) {
+                totalWhitePieces += whiteRegions.get(i);
+            }
+            for (int i = 0; i < blackRegions.size(); i += 1) {
+                totalBlackPieces += blackRegions.get(i);
+            }
+            // Adding first metric
+            heuristic += totalWhitePieces - totalBlackPieces;
+            // Adding second metric
+            heuristic += blackRegions.size() - whiteRegions.size();
+            // Adding third metric
+            if (board.turn() == WP) {
+                heuristic += board.legalMoves().size();
+            } else if (board.turn() == BP) {
+                heuristic -= board.legalMoves().size();
+            }
+            return heuristic;
+        }
     }
 
     /** Return a search depth for the current position. */
     private int chooseDepth() {
-        return 1;  // FIXME
+        // FIXME -- Need to experiment with the depth
+        return 1;
     }
 
     // FIXME: Other methods, variables here.
