@@ -246,7 +246,6 @@ class Board {
      *  null.  If the game has ended in a tie, returns EMP. */
     Piece winner() {
         if (!_winnerKnown) {
-
             // Tie game
             if (!piecesContiguous(BP) && !piecesContiguous(WP) && movesMade() >= _moveLimit) {
                 _winnerKnown = true;
@@ -395,9 +394,11 @@ class Board {
 
     /** Set the values of _whiteRegionSizes and _blackRegionSizes. */
     private void computeRegions() {
+        /**
         if (_subsetsInitialized) {
             return;
         }
+         **/
         _whiteRegionSizes.clear();
         _blackRegionSizes.clear();
 
