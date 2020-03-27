@@ -69,6 +69,16 @@ class MachinePlayer extends Player {
         } else {
             value = findMove(work, chooseDepth(), true, -1, -INFTY, INFTY);
         }
+
+        // Useful for debugging below
+        System.out.println(getBoard().toString());
+//        List<Move> legalMoves = getBoard().legalMoves();
+//        for (Move mv: legalMoves) {
+//            System.out.print(mv.toString() + " ");
+//        }
+//        System.out.println();
+        System.out.println("VALUE: " + value);
+        System.out.println("CHOSEN MOVE: " + _foundMove.toString());
         return _foundMove;
     }
 
@@ -81,39 +91,41 @@ class MachinePlayer extends Player {
      *  on BOARD, does not set _foundMove. */
     private int findMove(Board board, int depth, boolean saveMove,
                          int sense, int alpha, int beta) {
-
-
-        // Assuming a depth of one
-
-        // Traversing through the possible legal moves--finding max/min heuristics
+        if (depth == 0)  {
+            // return mockHeuristic(board);
+            return heuristic(board);
+        }
+        int bestScore;
+        if (sense == 1) {
+            bestScore = Integer.MIN_VALUE;
+        } else {
+            bestScore = Integer.MAX_VALUE;
+        }
         List<Move> potentialMoves = board.legalMoves();
-        int minHeuristic = Integer.MAX_VALUE, maxHeuristic = Integer.MIN_VALUE;
-        Move minMove = null, maxMove = null;
         for (Move mv: potentialMoves) {
-            board.makeMove(mv);
-            int heuristicValue = heuristic(board);
-            if (heuristicValue < minHeuristic) {
-                minMove = mv;
-                minHeuristic = heuristicValue;
+            Board newBoard = new Board(board);
+            newBoard.makeMove(mv);
+            int score = findMove(newBoard, depth - 1, saveMove, -1 * sense, alpha, beta);
+            if ((score >= bestScore && sense == 1) || (score <= bestScore && sense == -1)) {
+                bestScore = score;
+                if (depth == chooseDepth()) {
+                    _foundMove = mv;
+                }
+            } //else if ((score == bestScore && sense == 1) || (score == bestScore && sense == -1)) {
+//                if (depth == chooseDepth() && new Random().nextInt(1) == 0) {
+//                    _foundMove = mv;
+//                }
+//            }
+            if (sense == 1) {
+                alpha = Math.max(score, alpha);
+            } else {
+                beta = Math.min(score, beta);
             }
-            if (heuristicValue > maxHeuristic) {
-                maxMove = mv;
-                maxHeuristic = heuristicValue;
+            if (alpha >= beta) {
+                break; // Stop looking
             }
         }
-
-        // If we're working with the minimizing heuristic
-        if (sense == -1) {
-            if (minHeuristic != Integer.MIN_VALUE && saveMove) {
-                _foundMove = minMove;
-            }
-            return minHeuristic;
-        } else { // Case of the maximizing heuristic
-            if (maxHeuristic != Integer.MIN_VALUE && saveMove) {
-                _foundMove = maxMove;
-            }
-            return maxHeuristic;
-        }
+        return bestScore;
 
         /** Original Code
          * // FIXME
@@ -130,6 +142,11 @@ class MachinePlayer extends Player {
          * Instead, focus on making sure alpha/beta pruning works
          * Generates random INTEGER from -10 to 10
          */
+        if (board.gameOver() && board.winner() == WP) {
+            return Integer.MAX_VALUE;
+        } else if (board.gameOver() && board.winner() == BP) {
+            return Integer.MIN_VALUE;
+        }
         return new Random().nextInt(20) - 10;
     }
 
@@ -180,7 +197,7 @@ class MachinePlayer extends Player {
     /** Return a search depth for the current position. */
     private int chooseDepth() {
         // FIXME -- Need to experiment with the depth
-        return 1;
+        return 2;
     }
 
     // FIXME: Other methods, variables here.

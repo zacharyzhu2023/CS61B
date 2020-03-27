@@ -84,6 +84,7 @@ class Board {
                 set(sq, board.get(sq));
             }
         }
+        _turn = board.turn();
 
     }
 
@@ -237,7 +238,7 @@ class Board {
         return winner() != null;
     }
 
-    /** Return true iff SIDE's pieces are continguous. */
+    /** Return true iff SIDE's pieces are contiguous. */
     boolean piecesContiguous(Piece side) {
         return getRegionSizes(side).size() == 1;
     }
