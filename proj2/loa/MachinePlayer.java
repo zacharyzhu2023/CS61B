@@ -71,14 +71,14 @@ class MachinePlayer extends Player {
         }
 
         // Useful for debugging below
-        System.out.println(getBoard().toString());
+//        System.out.println(getBoard().toString());
 //        List<Move> legalMoves = getBoard().legalMoves();
 //        for (Move mv: legalMoves) {
 //            System.out.print(mv.toString() + " ");
 //        }
 //        System.out.println();
-        System.out.println("VALUE: " + value);
-        System.out.println("CHOSEN MOVE: " + _foundMove.toString());
+//        System.out.println("VALUE: " + value);
+//        System.out.println("CHOSEN MOVE: " + _foundMove.toString());
         return _foundMove;
     }
 
