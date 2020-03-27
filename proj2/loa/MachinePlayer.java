@@ -3,6 +3,7 @@
 package loa;
 
 import java.util.List;
+import java.util.Random;
 
 import static loa.Piece.*;
 
@@ -81,47 +82,55 @@ class MachinePlayer extends Player {
     private int findMove(Board board, int depth, boolean saveMove,
                          int sense, int alpha, int beta) {
 
-        // Working with a depth of one
+
+        // Assuming a depth of one
+
+        // Traversing through the possible legal moves--finding max/min heuristics
         List<Move> potentialMoves = board.legalMoves();
-        if (board.turn() == BP) {
-            int minHeuristic = Integer.MAX_VALUE;
-            Move minMove = null;
-            for (int i = 0; i < potentialMoves.size(); i += 1) {
-                board.makeMove(potentialMoves.get(i));
-                int heuristicValue = heuristic(board);
-                if (heuristicValue < minHeuristic) {
-                    minMove = potentialMoves.get(i);
-                    minHeuristic = heuristicValue;
-                }
-                board.retract();
+        int minHeuristic = Integer.MAX_VALUE, maxHeuristic = Integer.MIN_VALUE;
+        Move minMove = null, maxMove = null;
+        for (Move mv: potentialMoves) {
+            board.makeMove(mv);
+            int heuristicValue = heuristic(board);
+            if (heuristicValue < minHeuristic) {
+                minMove = mv;
+                minHeuristic = heuristicValue;
             }
+            if (heuristicValue > maxHeuristic) {
+                maxMove = mv;
+                maxHeuristic = heuristicValue;
+            }
+        }
+
+        // If we're working with the minimizing heuristic
+        if (sense == -1) {
             if (minHeuristic != Integer.MIN_VALUE && saveMove) {
                 _foundMove = minMove;
             }
             return minHeuristic;
-        } else {
-            int maxHeuristic = Integer.MIN_VALUE;
-            Move maxMove = null;
-            for (int i = 0; i < potentialMoves.size(); i += 1) {
-                board.makeMove(potentialMoves.get(i));
-                int heuristicValue = heuristic(board);
-                if (heuristicValue > maxHeuristic) {
-                    maxMove = potentialMoves.get(i);
-                    maxHeuristic = heuristicValue;
-                }
-                board.retract();
-            }
+        } else { // Case of the maximizing heuristic
             if (maxHeuristic != Integer.MIN_VALUE && saveMove) {
                 _foundMove = maxMove;
             }
             return maxHeuristic;
         }
+
         /** Original Code
          * // FIXME
         if (saveMove) {
             _foundMove = null; // FIXME
         }
         return 0; // FIXME **/
+    }
+
+    public static int mockHeuristic(Board board) {
+        /**
+         * Use this for testing purposes: generate a random integer
+         * so as to not worry about the calculation method for the heuristic.
+         * Instead, focus on making sure alpha/beta pruning works
+         * Generates random INTEGER from -10 to 10
+         */
+        return new Random().nextInt(20) - 10;
     }
 
     /**
