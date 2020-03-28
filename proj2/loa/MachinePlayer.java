@@ -71,23 +71,23 @@ class MachinePlayer extends Player {
         }
 
         // Useful for debugging below
-        System.out.println(getBoard().toString());
-        List<Move> legalMoves = getBoard().legalMoves();
-        for (Move mv: legalMoves) {
-            System.out.print(mv.toString() + " ");
-//            Board copyBoard = new Board(getBoard());
-//            copyBoard.makeMove(mv);
-//            System.out.println("HEURISTIC: " + heuristic(copyBoard));
-        }
-        System.out.println();
+//        System.out.println(getBoard().toString());
+//        List<Move> legalMoves = getBoard().legalMoves();
+//        for (Move mv: legalMoves) {
+//            System.out.print(mv.toString() + " ");
+////            Board copyBoard = new Board(getBoard());
+////            copyBoard.makeMove(mv);
+////            System.out.println("HEURISTIC: " + heuristic(copyBoard));
+//        }
+//        System.out.println();
 //        Board copyBoard = new Board(getBoard());
 //        System.out.println(copyBoard.toString());
 //        copyBoard.makeMove(_foundMove);
 //        System.out.println("HEURISTIC: " + heuristic(copyBoard));
 //        System.out.println(copyBoard.toString());
 //        System.out.println("PREV HEURISTIC: " + heuristic(getBoard()));
-        System.out.println("VALUE: " + value);
-        System.out.println("CHOSEN MOVE: " + _foundMove.toString());
+//        System.out.println("VALUE: " + value);
+//        System.out.println("CHOSEN MOVE: " + _foundMove.toString());
         return _foundMove;
     }
 
@@ -98,76 +98,38 @@ class MachinePlayer extends Player {
      *  DEPTH levels.  Searching at level 0 simply returns a static estimate
      *  of the board value and does not set _foundMove. If the game is over
      *  on BOARD, does not set _foundMove. */
-
-    /**
     private int findMove(Board board, int depth, boolean saveMove,
                          int sense, int alpha, int beta) {
-        if (board.gameOver() || depth == 0)  {
+        if (depth == 0 || board.gameOver()) {
             return heuristic(board);
         }
-        List<Move> potentialMoves = board.legalMoves();
-        for (Move mv: potentialMoves) {
-            Board newBoard = new Board(board);
-            newBoard.makeMove(mv);
-            int score = findMove(newBoard, depth - 1, depth == chooseDepth(), -1 * sense, alpha, beta);
-            if (score >= alpha && sense == 1) {
-                alpha = score;
-                if (saveMove) {
-                    System.out.println("DEPTH 1: " + depth);
-                    _foundMove = mv;
-                }
-            }
-            if (score <= beta && sense == -1) {
-                beta = score;
-                if (saveMove) {
-                    System.out.println("DEPTH 2: " + depth);
-                    _foundMove = mv;
-                }
-            }
-            if (alpha >= beta) {
-                break; // Stop looking
-            }
-        }
+        int bestScore;
         if (sense == -1) {
-            return beta;
+            bestScore = Integer.MAX_VALUE;
         } else {
-            return alpha;
-        }
-
-    } **/
-
-    private int findMove(Board board, int depth, boolean saveMove,
-                         int sense, int alpha, int beta) {
-        if (board.gameOver() || depth == 0)  {
-            return heuristic(board);
+            bestScore = Integer.MIN_VALUE;
         }
         List<Move> potentialMoves = board.legalMoves();
-        for (Move mv: potentialMoves) {
+        for (Move mv : potentialMoves) {
             Board newBoard = new Board(board);
             newBoard.makeMove(mv);
             int score = findMove(newBoard, depth - 1, saveMove, -1 * sense, alpha, beta);
-            if (score >= alpha && sense == 1) {
-                alpha = score;
+            if ((score >= bestScore && sense == 1) || (score <= bestScore && sense == -1)) {
+                bestScore = score;
                 if (depth == chooseDepth()) {
                     _foundMove = mv;
                 }
             }
-            if (score <= beta && sense == -1) {
-                beta = score;
-                if (depth == chooseDepth()) {
-                    _foundMove = mv;
-                }
+            if (sense == -1) {
+                alpha = Math.max(score, alpha);
+            } else {
+                beta = Math.min(score, beta);
             }
             if (alpha >= beta) {
                 break; // Stop looking
             }
         }
-        if (sense == -1) {
-            return beta;
-        } else {
-            return alpha;
-        }
-
+        return bestScore;
     }
 
     public static int mockHeuristic(Board board) {
@@ -232,7 +194,7 @@ class MachinePlayer extends Player {
     /** Return a search depth for the current position. */
     private int chooseDepth() {
         // FIXME -- Need to experiment with the depth
-        return 3;
+        return 4;
     }
 
     // FIXME: Other methods, variables here.
