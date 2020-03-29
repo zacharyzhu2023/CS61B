@@ -84,7 +84,16 @@ class Board {
                 set(sq, board.get(sq));
             }
         }
-        _turn = board.turn();
+        this._moves.clear();
+        this._moves.addAll(board._moves);
+        this._whiteRegionSizes.clear();
+        this._whiteRegionSizes.addAll(board._whiteRegionSizes);
+        this._blackRegionSizes.clear();
+        this._blackRegionSizes.addAll(board._blackRegionSizes);
+        this._moveLimit = board._moveLimit;
+        this._winnerKnown = board._winnerKnown;
+        this._winner = board._winner;
+        this._turn = board.turn();
 
     }
 
@@ -133,13 +142,6 @@ class Board {
             move = Move.mv(from, to, true);
         }
         _moves.add(move);
-        /**
-         * Is this necessary?
-         * Also, why can we assume that isCapture() is false? Will it be implemented elsewhere?
-        if (toVal != EMP) {
-            set(to, EMP);
-        }
-         */
         set(to, fromVal);
         set(from, EMP);
         _turn = _turn.opposite();
@@ -187,6 +189,16 @@ class Board {
 
         // Is blocked? return false -- make sure to check ending squares in blocked
         if (blocked(from, to)) {
+            return false;
+        }
+
+        // Make sure pieces are valid
+        if (from == null || to == null) {
+            return false;
+        }
+
+        // Make sure it's the right turn
+        if (_board[from.index()] != _turn) {
             return false;
         }
 
@@ -255,7 +267,7 @@ class Board {
             // Winner when both are contiguous
             } else if (piecesContiguous(BP) && piecesContiguous(WP)) {
                 _winnerKnown = true;
-                _winner = _turn.opposite();
+                _winner = _turn.opposite(); // Check to see if correct
 
             // Black alone is contiguous
             } else if (piecesContiguous(BP)) {
