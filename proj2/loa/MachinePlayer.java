@@ -3,7 +3,6 @@
 package loa;
 
 import java.util.List;
-import java.util.Random;
 
 import static loa.Piece.*;
 
@@ -120,14 +119,15 @@ class MachinePlayer extends Player {
          * Use this for testing purposes: generate a random integer
          * so as to not worry about the calculation method for the heuristic.
          * Instead, focus on making sure alpha/beta pruning works
-         * Generates random INTEGER from -10 to 10
+         * Generates random INTEGER from -10 to 10 -- COMPLY with STYLE
          */
         if (board.gameOver() && board.winner() == WP) {
             return INFTY;
         } else if (board.gameOver() && board.winner() == BP) {
             return -1 * INFTY;
         }
-        return getGame().randInt(20) - 10;
+        /* return getGame().randInt(20) - 10; */
+        return 1;
     }
 
     /**
