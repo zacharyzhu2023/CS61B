@@ -70,24 +70,17 @@ class MachinePlayer extends Player {
             value = findMove(work, chooseDepth(), true, -1, -INFTY, INFTY);
         }
 
-        // Useful for debugging below
+//        // Useful for debugging below
 //        System.out.println(getBoard().toString());
-//        List<Move> legalMoves = getBoard().legalMoves();
-//        for (Move mv: legalMoves) {
-//            System.out.print(mv.toString() + " ");
-////            Board copyBoard = new Board(getBoard());
-////            copyBoard.makeMove(mv);
-////            System.out.println("HEURISTIC: " + heuristic(copyBoard));
-//        }
-//        System.out.println();
-//        Board copyBoard = new Board(getBoard());
-//        System.out.println(copyBoard.toString());
-//        copyBoard.makeMove(_foundMove);
-//        System.out.println("HEURISTIC: " + heuristic(copyBoard));
-//        System.out.println(copyBoard.toString());
-//        System.out.println("PREV HEURISTIC: " + heuristic(getBoard()));
+//        System.out.println("FOUND MOVE: " + _foundMove);
 //        System.out.println("VALUE: " + value);
-//        System.out.println("CHOSEN MOVE: " + _foundMove.toString());
+//
+//        // Potential Moves
+//        String movesPossible = "";
+//        for (Move mv: getBoard().legalMoves()) {
+//            movesPossible += mv.toString() + " ";
+//        }
+//        System.out.println("MOVES: " + movesPossible);
         return _foundMove;
     }
 
@@ -111,23 +104,27 @@ class MachinePlayer extends Player {
         }
         List<Move> potentialMoves = board.legalMoves();
         for (Move mv : potentialMoves) {
-            Board newBoard = new Board(board);
-            newBoard.makeMove(mv);
-            int score = findMove(newBoard, depth - 1, saveMove, -1 * sense, alpha, beta);
+//            Board newBoard = new Board(board);
+//            newBoard.makeMove(mv);
+//            int score = findMove(newBoard, depth - 1, false, -1 * sense, alpha, beta);
+            board.makeMove(mv);
+            int score = findMove(board, depth - 1, false, -1 * sense, alpha, beta);
             if ((score >= bestScore && sense == 1) || (score <= bestScore && sense == -1)) {
                 bestScore = score;
-                if (depth == chooseDepth()) {
+                if (saveMove) {
                     _foundMove = mv;
                 }
             }
-            if (sense == -1) {
+            if (sense == 1) {
                 alpha = Math.max(score, alpha);
             } else {
                 beta = Math.min(score, beta);
             }
             if (alpha >= beta) {
+                board.retract();
                 break; // Stop looking
             }
+            board.retract();
         }
         return bestScore;
     }

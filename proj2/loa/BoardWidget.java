@@ -123,6 +123,7 @@ class BoardWidget extends Pad {
     private void mousePressed(Square s) {
         // FIXME
         repaint();
+        //_commands.add();
     }
 
     /** Handle a mouse-button release on S. */
@@ -155,7 +156,7 @@ class BoardWidget extends Pad {
     /** Revise the displayed board according to BOARD. */
     synchronized void update(Board board) {
         _board.copyFrom(board);
-        // FIXME?
+        // FIXME?--Leave as is
         repaint();
     }
 
@@ -164,7 +165,7 @@ class BoardWidget extends Pad {
      *  the board. */
     void setMoveCollection(boolean collecting) {
         _acceptingMoves = collecting;
-        // FIXME?
+        // FIXME?--should be one line
         repaint();
     }
 

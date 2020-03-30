@@ -14,7 +14,7 @@ import static loa.Square.sq;
 import static loa.Move.mv;
 
 /** Tests of the Board class API.
- *  @author
+ *  @author Zachary Zhu
  */
 public class BoardTest {
 

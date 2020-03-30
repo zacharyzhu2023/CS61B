@@ -40,7 +40,9 @@ class GUI extends TopLevel implements View, Reporter {
         super(title, true);
         addMenuButton("Game->New", this::newGame);
         addMenuButton("Game->Quit", this::quit);
+        addMenuButton("Game->Undo", this::undo);
         // FIXME: Other controls?
+        /** Make sure new game starts fresh **/
 
         _widget = new BoardWidget(_pendingCommands);
         add(_widget,
@@ -62,6 +64,11 @@ class GUI extends TopLevel implements View, Reporter {
     /** Response to "New Game" button click. */
     private void newGame(String dummy) {
         _pendingCommands.offer("new");
+    }
+
+    /** Response to "undo" button click. */
+    private void undo(String dummy) {
+        _pendingCommands.offer("undo");
     }
 
     /** Return the next command from our widget, waiting for it as necessary.

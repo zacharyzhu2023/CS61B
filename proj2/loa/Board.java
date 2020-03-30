@@ -51,7 +51,14 @@ class Board {
 
     /** Set my state to CONTENTS with SIDE to move. */
     void initialize(Piece[][] contents, Piece side) {
-        // FIXME
+
+        // Clearing all the fields
+        _moves.clear();
+        _winnerKnown = false;
+        _winner = null;
+        _subsetsInitialized = false;
+        _whiteRegionSizes.clear();
+        _blackRegionSizes.clear();
 
         // Set contents of _board to board's squares. Initialize _turn and _moveLimit
         for (int i = 0; i < contents.length; i += 1) {
@@ -153,6 +160,10 @@ class Board {
         assert movesMade() > 0;
         // FIXME
 
+        if (winner() != null) {
+            _winner = null;
+            _winnerKnown = false;
+        }
         // Getting the prev, after, and values there
         Move lastMove = _moves.remove(_moves.size() - 1);
         Square prev = lastMove.getFrom();
