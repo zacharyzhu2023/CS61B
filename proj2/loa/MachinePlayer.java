@@ -11,12 +11,6 @@ import static loa.Piece.*;
  *  @author Zachary Zhu
  */
 
-/**
- * Stuff to consider
- * 1. Some combinations of moves lead to the same board state.
- * 2. Alpha-beta pruning??
- * 3.
- */
 class MachinePlayer extends Player {
 
     /** A position-score magnitude indicating a win (for white if positive,
@@ -93,8 +87,10 @@ class MachinePlayer extends Player {
         List<Move> potentialMoves = board.legalMoves();
         for (Move mv : potentialMoves) {
             board.makeMove(mv);
-            int score = findMove(board, depth - 1, false, -1 * sense, alpha, beta);
-            if ((score >= bestScore && sense == 1) || (score <= bestScore && sense == -1)) {
+            int score = findMove(board,
+                    depth - 1, false, -1 * sense, alpha, beta);
+            if ((score >= bestScore && sense == 1)
+                    || (score <= bestScore && sense == -1)) {
                 bestScore = score;
                 if (saveMove) {
                     _foundMove = mv;
@@ -136,11 +132,15 @@ class MachinePlayer extends Player {
      */
     public static int heuristic(Board board) {
         /** This heuristic should evaluate the efficacy of each potential move.
-         * Must return -INF if winning move for BLACK, +INF if winning move for WHITE.
+         * Must return -INF if winning move for BLACK, +INF
+         * if winning move for WHITE.
          * Characteristics to consider:
-         * 1. Difference in number of pieces--(white - black)   (more is better?)
-         * 2. Dif. in number of regions formed by # of pieces--(# white regions - # black regions)   (fewer is better)
-         * 3. Number of possible moves--(more for white/fewer for black is better for white)
+         * 1. Difference in number of pieces--(white - black)
+         *      (more is better?)
+         * 2. Dif. in number of regions formed by # of pieces
+         *      (# white regions - # black regions) --> (fewer is better)
+         * 3. Number of possible moves
+         *      (more for white/fewer for black is better for white)
          */
         int heuristic = 0;
         if (board.winner() == BP) {

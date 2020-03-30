@@ -19,7 +19,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import static loa.Piece.*;
 
 /** The GUI controller for a LOA board and buttons.
- *  @author
+ *  @author Zachary Zhu
  */
 class GUI extends TopLevel implements View, Reporter {
 
@@ -46,8 +46,6 @@ class GUI extends TopLevel implements View, Reporter {
         addMenuButton("White Player->Manual", this::manualWhite);
         addMenuButton("White Player->Auto", this::autoWhite);
         addMenuButton("Help->Help", this::helper);
-        // FIXME: Other controls?
-        /** Make sure new game starts fresh **/
 
         _widget = new BoardWidget(_pendingCommands);
         add(_widget,
@@ -58,7 +56,6 @@ class GUI extends TopLevel implements View, Reporter {
                  new LayoutSpec("x", 0, "y", 0,
                                 "height", 1,
                                 "width", 3));
-        // FIXME: Other components?
     }
 
     /** Response to "Quit" button click. */
@@ -132,7 +129,6 @@ class GUI extends TopLevel implements View, Reporter {
 
         boolean manualWhite = controller.manualWhite(),
             manualBlack = controller.manualBlack();
-        // FIXME: More?
     }
 
     /** Display text in resource named TEXTRESOURCE in a new window titled
