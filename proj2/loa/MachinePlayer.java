@@ -120,13 +120,13 @@ class MachinePlayer extends Player {
          * so as to not worry about the calculation method for the heuristic.
          * Instead, focus on making sure alpha/beta pruning works
          * Generates random INTEGER from -10 to 10 -- COMPLY with STYLE
+         * Currently does not generate random to deal with style guidelines.
          */
         if (board.gameOver() && board.winner() == WP) {
             return INFTY;
         } else if (board.gameOver() && board.winner() == BP) {
             return -1 * INFTY;
         }
-        /* return getGame().randInt(20) - 10; */
         return 1;
     }
 
