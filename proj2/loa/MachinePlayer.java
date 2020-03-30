@@ -149,9 +149,9 @@ class MachinePlayer extends Player {
          */
         int heuristic = 0;
         if (board.winner() == BP) {
-            return Integer.MIN_VALUE;
+            return -1 * INFTY;
         } else if (board.winner() == WP) {
-            return Integer.MAX_VALUE;
+            return INFTY;
         } else {
             List<Integer> whiteRegions = board.getRegionSizes(WP);
             List<Integer> blackRegions = board.getRegionSizes(BP);
