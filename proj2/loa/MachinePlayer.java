@@ -112,7 +112,7 @@ class MachinePlayer extends Player {
 
     /**
      * Returns an integer evaluation of the board for testing purposes.
-     * @param board: board to be evaluated.
+     * @param board for the board to be evaluated.
      * @return an integer evaluation of the board
      */
     public static int mockHeuristic(Board board) {
@@ -123,9 +123,9 @@ class MachinePlayer extends Player {
          * Generates random INTEGER from -10 to 10
          */
         if (board.gameOver() && board.winner() == WP) {
-            return Integer.MAX_VALUE;
+            return INFTY;
         } else if (board.gameOver() && board.winner() == BP) {
-            return Integer.MIN_VALUE;
+            return -1 * INFTY;
         }
         return new Random().nextInt(20) - 10;
     }
