@@ -127,7 +127,9 @@ class MachinePlayer extends Player {
         } else if (board.gameOver() && board.winner() == BP) {
             return -1 * INFTY;
         }
-        return new Random().nextInt(20) - 10;
+        Random r = new Random();
+        int randInt = r.nextInt(20) - 10;
+        return randInt;
     }
 
     /**
