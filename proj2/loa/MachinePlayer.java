@@ -115,7 +115,7 @@ class MachinePlayer extends Player {
      * @param board for the board to be evaluated.
      * @return an integer evaluation of the board
      */
-    public static int mockHeuristic(Board board) {
+    public int mockHeuristic(Board board) {
         /**
          * Use this for testing purposes: generate a random integer
          * so as to not worry about the calculation method for the heuristic.
@@ -127,9 +127,7 @@ class MachinePlayer extends Player {
         } else if (board.gameOver() && board.winner() == BP) {
             return -1 * INFTY;
         }
-        Random r = new Random();
-        int randInt = r.nextInt(20) - 10;
-        return randInt;
+        return getGame().randInt(20) - 10;
     }
 
     /**
