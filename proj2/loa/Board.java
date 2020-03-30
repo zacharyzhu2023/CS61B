@@ -51,8 +51,6 @@ class Board {
 
     /** Set my state to CONTENTS with SIDE to move. */
     void initialize(Piece[][] contents, Piece side) {
-
-        // Clearing all the fields
         _moves.clear();
         _winnerKnown = false;
         _winner = null;
@@ -60,7 +58,6 @@ class Board {
         _whiteRegionSizes.clear();
         _blackRegionSizes.clear();
 
-        // Set contents of _board to board's squares. Initialize _turn and _moveLimit
         for (int i = 0; i < contents.length; i += 1) {
             for (int j = 0; j < contents[i].length; j += 1) {
                 Square sq = sq(i, j);
@@ -83,8 +80,6 @@ class Board {
         if (board == this) {
             return;
         }
-        // FIXME
-        // Set the contents of _board to board's squares
         for (int i = 0; i < 8; i += 1) {
             for (int j = 0; j < 8; j += 1) {
                 Square sq = sq(i, j);
@@ -112,7 +107,6 @@ class Board {
     /** Set the square at SQ to V and set the side that is to move next
      *  to NEXT, if NEXT is not null. */
     void set(Square sq, Piece v, Piece next) {
-        // FIXME
         if (next != null) {
             _turn = next;
         }
@@ -138,9 +132,6 @@ class Board {
      *  is false. */
     void makeMove(Move move) {
         assert isLegal(move);
-        // FIXME
-
-        // Setting TO square to FROM value. FROM is now empty
         Square from = move.getFrom();
         Square to = move.getTo();
         Piece fromVal = get(from);
@@ -158,19 +149,16 @@ class Board {
      *  that move.  Requires that movesMade () > 0. */
     void retract() {
         assert movesMade() > 0;
-        // FIXME
-
         if (winner() != null) {
             _winner = null;
             _winnerKnown = false;
         }
-        // Getting the prev, after, and values there
+
         Move lastMove = _moves.remove(_moves.size() - 1);
         Square prev = lastMove.getFrom();
         Square after = lastMove.getTo();
         Piece afterValue = get(after);
 
-        // Revert depending on whether or not it's a capture move--do I need to account for captures?
         if (lastMove.isCapture()) {
             set(prev, afterValue);
             set(after, afterValue.opposite());
@@ -180,7 +168,6 @@ class Board {
             set(after, EMP);
             _turn = afterValue;
         }
-
     }
 
     /** Return the Piece representing who is next to move. */
@@ -191,36 +178,25 @@ class Board {
     /** Return true iff FROM - TO is a legal move for the player currently on
      *  move. */
     boolean isLegal(Square from, Square to) {
-        // FIXME
-
-        // Wrong direction? Return false
         if (!from.isValidMove(to)) {
             return false;
         }
-
-        // Is blocked? return false -- make sure to check ending squares in blocked
         if (blocked(from, to)) {
             return false;
         }
-
-        // Make sure pieces are valid
         if (from == null || to == null) {
             return false;
         }
-
-        // Make sure it's the right turn
         if (_board[from.index()] != _turn) {
             return false;
         }
 
-        // Check to see if it's the right distance in terms of # of pieces
         int distance = from.distance(to);
         int direction = from.direction(to);
         if (distance == 0 || distance != piecesInPath(from, direction)) {
             return false;
         }
 
-        // Otherwise, return true
         return true;
     }
 
@@ -232,12 +208,6 @@ class Board {
 
     /** Return a sequence of all legal moves from this position. */
     List<Move> legalMoves() {
-        // FIXME
-
-        /** Approach: Loop through all the possible boards twice.
-         * If I find a legal move between the two squares and it's
-         * the right turn, then add it to the possible legal moves.
-         */
         ArrayList<Move> legalMoves = new ArrayList<>();
         for (int i = 0; i < 8; i += 1) {
             for (int j = 0; j < 8; j += 1) {
@@ -270,27 +240,18 @@ class Board {
      *  null.  If the game has ended in a tie, returns EMP. */
     Piece winner() {
         if (!_winnerKnown) {
-            // Tie game
             if (!piecesContiguous(BP) && !piecesContiguous(WP) && movesMade() >= _moveLimit) {
                 _winnerKnown = true;
                 _winner = EMP;
-
-            // Winner when both are contiguous
             } else if (piecesContiguous(BP) && piecesContiguous(WP)) {
                 _winnerKnown = true;
-                _winner = _turn.opposite(); // Check to see if correct
-
-            // Black alone is contiguous
+                _winner = _turn.opposite();
             } else if (piecesContiguous(BP)) {
                 _winnerKnown = true;
                 _winner = BP;
-
-            // White alone is contiguous
             } else if (piecesContiguous(WP)) {
                 _winnerKnown = true;
                 _winner = WP;
-
-            // Nobody won yet
             } else {
                 _winnerKnown = false;
                 _winner = null;
@@ -365,14 +326,10 @@ class Board {
     /** Return true if a move from FROM to TO is blocked by an opposing
      *  piece or by a friendly piece on the target square. */
     private boolean blocked(Square from, Square to) {
-        // FIXME
-
-        // TO square is friendly
         if (get(to) == get(from)) {
             return true;
         }
 
-        // Any square from FROM before TO is ENEMY
         int direction = from.direction(to);
         int distance = from.distance(to);
         for (int i = 1; i < distance; i += 1) {
@@ -382,7 +339,6 @@ class Board {
             }
         }
 
-        // Not blocked
         return false;
 
     }
@@ -392,9 +348,6 @@ class Board {
      *  have already been processed or are in different clusters.  Update
      *  VISITED to reflect squares counted. */
     private int numContig(Square sq, boolean[][] visited, Piece p) {
-        // FIXME
-
-        // Note to self: does the visited adjust as desired?
         int total = 0;
         if (get(sq) != p) {
             return 0;
@@ -418,16 +371,8 @@ class Board {
 
     /** Set the values of _whiteRegionSizes and _blackRegionSizes. */
     private void computeRegions() {
-        /**
-        if (_subsetsInitialized) {
-            return;
-        }
-         **/
         _whiteRegionSizes.clear();
         _blackRegionSizes.clear();
-
-        // FIXME
-
         boolean[][] visited = new boolean[8][8];
         for (int i = 0; i < 8; i += 1) {
             for (int j = 0; j < 8; j += 1) {
@@ -443,10 +388,8 @@ class Board {
                 }
             }
         }
-        // And what does this do??
         Collections.sort(_whiteRegionSizes, Collections.reverseOrder());
         Collections.sort(_blackRegionSizes, Collections.reverseOrder());
-        _subsetsInitialized = true;
     }
 
     /** Return the sizes of all the regions in the current union-find
@@ -460,17 +403,6 @@ class Board {
         }
     }
 
-    // FIXME: Other methods, variables?
-
-
-    // FIXME: I added this method
-    /** Method for getting the current pieces on the board.
-     *
-     * @return the current pieces on the board
-     */
-    Piece[] getBoard() {
-        return _board;
-    }
 
     /** The standard initial configuration for Lines of Action (bottom row
      *  first). */

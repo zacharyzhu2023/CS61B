@@ -122,13 +122,17 @@ class BoardWidget extends Pad {
     /** Handle a mouse-button push on S. */
     private void mousePressed(Square s) {
         // FIXME
+        clickedSquare = s;
         repaint();
-        //_commands.add();
     }
 
     /** Handle a mouse-button release on S. */
     private void mouseReleased(Square s) {
         // FIXME
+        if (clickedSquare != null) {
+            _commands.add(clickedSquare.toString() + "-" + s.toString());
+            clickedSquare = null;
+        }
         repaint();
     }
 
@@ -166,6 +170,7 @@ class BoardWidget extends Pad {
     void setMoveCollection(boolean collecting) {
         _acceptingMoves = collecting;
         // FIXME?--should be one line
+        _commands.clear();
         repaint();
     }
 
@@ -200,5 +205,9 @@ class BoardWidget extends Pad {
 
     /** True iff accepting moves from user. */
     private boolean _acceptingMoves;
+
+    /** Clicked Square. */
+    private Square clickedSquare;
+
 
 }

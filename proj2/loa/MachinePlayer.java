@@ -69,18 +69,6 @@ class MachinePlayer extends Player {
         } else {
             value = findMove(work, chooseDepth(), true, -1, -INFTY, INFTY);
         }
-
-//        // Useful for debugging below
-//        System.out.println(getBoard().toString());
-//        System.out.println("FOUND MOVE: " + _foundMove);
-//        System.out.println("VALUE: " + value);
-//
-//        // Potential Moves
-//        String movesPossible = "";
-//        for (Move mv: getBoard().legalMoves()) {
-//            movesPossible += mv.toString() + " ";
-//        }
-//        System.out.println("MOVES: " + movesPossible);
         return _foundMove;
     }
 
@@ -104,9 +92,6 @@ class MachinePlayer extends Player {
         }
         List<Move> potentialMoves = board.legalMoves();
         for (Move mv : potentialMoves) {
-//            Board newBoard = new Board(board);
-//            newBoard.makeMove(mv);
-//            int score = findMove(newBoard, depth - 1, false, -1 * sense, alpha, beta);
             board.makeMove(mv);
             int score = findMove(board, depth - 1, false, -1 * sense, alpha, beta);
             if ((score >= bestScore && sense == 1) || (score <= bestScore && sense == -1)) {
@@ -122,7 +107,7 @@ class MachinePlayer extends Player {
             }
             if (alpha >= beta) {
                 board.retract();
-                break; // Stop looking
+                break;
             }
             board.retract();
         }
@@ -166,7 +151,6 @@ class MachinePlayer extends Player {
             List<Integer> whiteRegions = board.getRegionSizes(WP);
             List<Integer> blackRegions = board.getRegionSizes(BP);
 
-            // Getting total # of black/white pieces
             int totalWhitePieces = 0, totalBlackPieces = 0;
             for (int i = 0; i < whiteRegions.size(); i += 1) {
                 totalWhitePieces += whiteRegions.get(i);
@@ -174,11 +158,11 @@ class MachinePlayer extends Player {
             for (int i = 0; i < blackRegions.size(); i += 1) {
                 totalBlackPieces += blackRegions.get(i);
             }
-            // Adding first metric
+
             heuristic += totalWhitePieces - totalBlackPieces;
-            // Adding second metric
+
             heuristic += blackRegions.size() - whiteRegions.size();
-            // Adding third metric
+
             if (board.turn() == WP) {
                 heuristic += board.legalMoves().size();
             } else if (board.turn() == BP) {
@@ -190,12 +174,8 @@ class MachinePlayer extends Player {
 
     /** Return a search depth for the current position. */
     private int chooseDepth() {
-        // FIXME -- Need to experiment with the depth
         return 3;
     }
-
-
-    // FIXME: Other methods, variables here.
 
     /** Used to convey moves discovered by findMove. */
     private Move _foundMove;

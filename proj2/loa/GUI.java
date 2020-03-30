@@ -41,6 +41,11 @@ class GUI extends TopLevel implements View, Reporter {
         addMenuButton("Game->New", this::newGame);
         addMenuButton("Game->Quit", this::quit);
         addMenuButton("Game->Undo", this::undo);
+        addMenuButton("Black Player->Manual", this::manualBlack);
+        addMenuButton("Black Player->Auto", this::autoBlack);
+        addMenuButton("White Player->Manual", this::manualWhite);
+        addMenuButton("White Player->Auto", this::autoWhite);
+        addMenuButton("Help->Help", this::helper);
         // FIXME: Other controls?
         /** Make sure new game starts fresh **/
 
@@ -69,6 +74,31 @@ class GUI extends TopLevel implements View, Reporter {
     /** Response to "undo" button click. */
     private void undo(String dummy) {
         _pendingCommands.offer("undo");
+    }
+
+    /** Response to "Black Player->Manual" button click. */
+    private void manualBlack(String dummy) {
+        _pendingCommands.offer("manual black");
+    }
+
+    /** Response to "White Player->Manual" button click. */
+    private void manualWhite(String dummy) {
+        _pendingCommands.offer("manual white");
+    }
+
+    /** Response to "Black Player->Auto" button click. */
+    private void autoBlack(String dummy) {
+        _pendingCommands.offer("auto black");
+    }
+
+    /** Response to "Black Player->Manual" button click. */
+    private void autoWhite(String dummy) {
+        _pendingCommands.offer("auto white");
+    }
+
+    /** Response to clicking on HELP. */
+    private void helper(String dummy) {
+        displayText(HELP_TEXT, HELP_TEXT);
     }
 
     /** Return the next command from our widget, waiting for it as necessary.

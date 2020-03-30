@@ -108,6 +108,12 @@ class Game {
             case "dump":
                 System.out.printf("%s%n", _board);
                 break;
+            case "undo":
+                if (_board.movesMade() >= 2) {
+                    _board.retract();
+                    _board.retract();
+                }
+                break;
             case "manual":
                 manualCommand(command.group(2).toLowerCase());
                 break;
@@ -130,6 +136,7 @@ class Game {
             case "?": case "help":
                 help();
                 break;
+
             default:
                 if (!processMove(line)) {
                     error("unknown command: %s%n", line);
