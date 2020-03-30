@@ -110,6 +110,11 @@ class MachinePlayer extends Player {
         return bestScore;
     }
 
+    /**
+     * Returns an integer evaluation of the board for testing purposes.
+     * @param board: board to be evaluated.
+     * @return an integer evaluation of the board
+     */
     public static int mockHeuristic(Board board) {
         /**
          * Use this for testing purposes: generate a random integer

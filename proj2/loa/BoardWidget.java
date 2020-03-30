@@ -15,7 +15,7 @@ import static loa.Piece.*;
 import static loa.Square.sq;
 
 /** A widget that displays a Loa game.
- *  @author
+ *  @author Zachary Zhu
  */
 class BoardWidget extends Pad {
 
