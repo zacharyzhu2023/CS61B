@@ -150,11 +150,135 @@ public class BoardTest {
             System.out.println(legalMoves3.get(i).toString());
         }
 
-        Board b4 = new Board(BOARD2, WP);
+        Board b4 = new Board(Board.INITIAL_PIECES, BP);
         System.out.println(b4.toString());
         List<Move> legalMoves4 = b4.legalMoves();
         for (int i = 0; i < legalMoves4.size(); i += 1) {
             System.out.println(legalMoves4.get(i).toString());
         }
+    }
+
+    @Test
+    public void getTest() {
+        Board b0 = new Board(BOARD1, BP);
+        Square sq0 = sq(0, 0);
+        Square sq1 = sq(1, 1);
+        Square sq2 = sq(2, 2);
+        Square sq3 = sq(5, 4);
+        assertEquals(b0.get(sq0), EMP);
+        assertEquals(b0.get(sq1), EMP);
+        assertEquals(b0.get(sq2), EMP);
+        assertEquals(b0.get(sq3), WP);
+    }
+
+    @Test
+    public void setTest() {
+        Board b0 = new Board(BOARD1, BP);
+        Square sq0 = sq(0, 0);
+        Square sq1 = sq(1, 1);
+        Square sq2 = sq(2, 2);
+        Square sq3 = sq(5, 4);
+        b0.set(sq0, BP);
+        b0.set(sq1, WP);
+        b0.set(sq2, EMP);
+        b0.set(sq3, BP);
+        assertEquals(b0.get(sq0), BP);
+        assertEquals(b0.get(sq1), WP);
+        assertEquals(b0.get(sq2), EMP);
+        assertEquals(b0.get(sq3), BP);
+    }
+
+    @Test
+    public void testGameOver() {
+        Board b0 = new Board(BOARD1, BP);
+        Board b1 = new Board(BOARD2, WP);
+        Board b2 = new Board(BOARD3, BP);
+        assertFalse(b0.gameOver());
+        assertTrue(b1.gameOver());
+        assertTrue(b2.gameOver());
+    }
+
+    @Test
+    public void testWinner() {
+        Board b0 = new Board(BOARD1, BP);
+        Board b1 = new Board(BOARD2, WP);
+        Board b2 = new Board(BOARD3, BP);
+        assertEquals(b0.winner(), null);
+        assertEquals(b1.winner(), BP);
+        assertEquals(b2.winner(), WP);
+    }
+
+    @Test
+    public void testMovesMade() {
+        Board b0 = new Board(BOARD1, BP);
+        b0.makeMove(mv("b1-b3"));
+        b0.makeMove(mv("a2-a7"));
+        b0.makeMove(mv("b3-g3"));
+        assertEquals(b0.movesMade(), 3);
+        Board b1 = new Board(BOARD2, WP);
+        b1.makeMove(mv("d5-a2"));
+        b1.makeMove(mv("b4-b1"));
+        assertEquals(b1.movesMade(), 2);
+    }
+
+    @Test
+    public void retractTest() {
+        Board b0 = new Board(BOARD1, BP);
+        b0.makeMove(mv("b1-b3"));
+        b0.retract();
+        Board b00 = new Board(BOARD1, BP);
+        assertTrue(b0.toString().equals(b00.toString()));
+        assertEquals(b0.movesMade(), 0);
+        b0.makeMove(mv("b1-b3"));
+        b0.makeMove(mv("a2-a7"));
+        b0.retract();
+        b00.makeMove(mv("b1-b3"));
+        assertTrue(b0.toString().equals(b00.toString()));
+        assertEquals(b0.movesMade(), 1);
+    }
+
+    @Test
+    public void clearTest() {
+        Board b0 = new Board(BOARD1, BP);
+        b0.makeMove(mv("b1-b3"));
+        b0.makeMove(mv("a2-a7"));
+        b0.makeMove(mv("b3-g3"));
+        b0.clear();
+        Board b00 = new Board(Board.INITIAL_PIECES, BP);
+        assertTrue(b0.toString().equals(b00.toString()));
+    }
+
+    @Test
+    public void getRegionSizes() {
+        Board b0 = new Board(BOARD1, BP);
+        List<Integer> regionSizesBP0 = b0.getRegionSizes(BP);
+        List<Integer> regionSizesWP0 = b0.getRegionSizes(WP);
+        String sizeBP0 = "";
+        for (int i: regionSizesBP0) {
+            sizeBP0 += i + ", ";
+        }
+        System.out.println(sizeBP0);
+        assertTrue(sizeBP0.equals("3, 2, 2, 2, 1, 1, 1, "));
+        String sizeWP0 = "";
+        for (int i: regionSizesWP0) {
+            sizeWP0 += i + ", ";
+        }
+        assertTrue(sizeWP0.equals("5, 2, 2, 2, 1, "));
+
+        Board b1 = new Board(BOARD3, BP);
+        List<Integer> regionSizesBP1 = b1.getRegionSizes(BP);
+        List<Integer> regionSizesWP1 = b1.getRegionSizes(WP);
+        String sizeBP1 = "";
+        for (int i: regionSizesBP1) {
+            sizeBP1 += i + ", ";
+        }
+        assertTrue(sizeBP1.equals("5, "));
+        String sizeWP1 = "";
+        for (int i: regionSizesWP1) {
+            sizeWP1 += i + ", ";
+        }
+        assertTrue(sizeWP1.equals("11, "));
+
+
     }
 }
