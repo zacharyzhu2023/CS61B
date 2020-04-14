@@ -49,19 +49,18 @@ public class RedBlackTree<T extends Comparable<T>> {
         if (node == null || node.left == null) {
             return node;
         } else {
-//            RBTreeNode newLeft = node.left.left;
-//            RBTreeNode oldLeftRight = node.left.right;
-//            RBTreeNode oldRight = node.right;
-//            RBTreeNode newNode = node.left;
-//            newNode.left = newLeft;
-//            newNode.right = node;
-//            newNode.right.left = oldLeftRight;
-//            newNode.right.right = oldRight;
-//            newNode.isBlack = node.isBlack;
-//            newNode.right.isBlack = false;
-            System.out.println("CALLED1");
+            RBTreeNode newLeft = node.left.left;
+            RBTreeNode oldLeftRight = node.left.right;
+            RBTreeNode oldRight = node.right;
             RBTreeNode newNode = node.left;
-            return newNode;
+            newNode.left = newLeft;
+            newNode.right = node;
+            newNode.right.left = oldLeftRight;
+            newNode.right.right = oldRight;
+            newNode.isBlack = node.isBlack;
+            newNode.right.isBlack = false;
+            node = newNode;
+            return node;
         }
     }
 
@@ -78,20 +77,18 @@ public class RedBlackTree<T extends Comparable<T>> {
         if (node == null || node.right == null) {
             return node;
         } else {
-//            RBTreeNode newRight = node.right.right;
-//            RBTreeNode oldRightLeft = node.right.left;
-//            RBTreeNode oldLeft = node.left;
-//            RBTreeNode newNode = node.right;
-//            newNode.right = newRight;
-//            newNode.left = node;
-//            newNode.left.right = oldRightLeft;
-//            newNode.left.left = oldLeft;
-//            newNode.isBlack = node.isBlack;
-//            newNode.left.isBlack = false;
-//            return newNode;
-            System.out.println("CALLED2");
+            RBTreeNode newRight = node.right.right;
+            RBTreeNode oldRightLeft = node.right.left;
+            RBTreeNode oldLeft = node.left;
             RBTreeNode newNode = node.right;
-            return newNode;
+            newNode.right = newRight;
+            newNode.left = node;
+            newNode.left.right = oldRightLeft;
+            newNode.left.left = oldLeft;
+            newNode.isBlack = node.isBlack;
+            newNode.left.isBlack = false;
+            node = newNode;
+            return node;
         }
     }
 
@@ -151,34 +148,29 @@ public class RedBlackTree<T extends Comparable<T>> {
             return node; // do nothing.
         } else if (comp < 0) {
             // YOUR CODE HERE
-            insert(node.left, item);
+            node.left = insert(node.left, item);
 
         } else {
             // YOUR CODE HERE
-            insert(node.right, item);
+            node.right = insert(node.right, item);
         }
 
-        System.out.println("CALLED3");
         // handle case C and "Right-leaning" situation.
         if (isRed(node.right) && !isRed(node.left)) {
             // YOUR CODE HERE
             rotateLeft(node.left);
-
         }
 
         // handle case B
         if (isRed(node.left) && isRed(node.left.left)) {
             // YOUR CODE HERE
             rotateRight(node);
-
         }
 
         // handle case A
         if (isRed(node.left) && isRed(node.right)) {
             // YOUR CODE HERE
             flipColors(node);
-
-
         }
         return node;
     }
