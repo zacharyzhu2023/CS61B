@@ -46,7 +46,21 @@ public class RedBlackTree<T extends Comparable<T>> {
      */
     RBTreeNode<T> rotateRight(RBTreeNode<T> node) {
         // YOUR CODE HERE
-        return null;
+        if (node == null || node.left == null) {
+            return node;
+        } else {
+            RBTreeNode newLeft = node.left.left;
+            RBTreeNode oldLeftRight = node.left.right;
+            RBTreeNode oldRight = node.right;
+            RBTreeNode newNode = node.left;
+            newNode.left = newLeft;
+            newNode.right = node;
+            newNode.right.left = oldLeftRight;
+            newNode.right.right = oldRight;
+            newNode.isBlack = node.isBlack;
+            newNode.right.isBlack = false;
+            return newNode;
+        }
     }
 
     /**
@@ -59,7 +73,21 @@ public class RedBlackTree<T extends Comparable<T>> {
      */
     RBTreeNode<T> rotateLeft(RBTreeNode<T> node) {
         // YOUR CODE HERE
-        return null;
+        if (node == null || node.right == null) {
+            return node;
+        } else {
+            RBTreeNode newRight = node.right.right;
+            RBTreeNode oldRightLeft = node.right.left;
+            RBTreeNode oldLeft = node.left;
+            RBTreeNode newNode = node.right;
+            newNode.right = newRight;
+            newNode.left = node;
+            newNode.left.right = oldRightLeft;
+            newNode.left.left = oldLeft;
+            newNode.isBlack = node.isBlack;
+            newNode.left.isBlack = false;
+            return newNode;
+        }
     }
 
     /**
@@ -109,7 +137,7 @@ public class RedBlackTree<T extends Comparable<T>> {
         // Insert (return) new red leaf node.
         if (node == null) {
             // YOUR CODE HERE
-
+            return new RBTreeNode<T>(false, item, null, null);
         }
 
         // Handle normal binary search tree insertion.
@@ -118,27 +146,32 @@ public class RedBlackTree<T extends Comparable<T>> {
             return node; // do nothing.
         } else if (comp < 0) {
             // YOUR CODE HERE
+            insert(node.left, item);
 
         } else {
             // YOUR CODE HERE
-
+            insert(node.right, item);
         }
 
         // handle case C and "Right-leaning" situation.
         if (isRed(node.right) && !isRed(node.left)) {
             // YOUR CODE HERE
+            rotateLeft(node.left);
 
         }
 
         // handle case B
         if (isRed(node.left) && isRed(node.left.left)) {
             // YOUR CODE HERE
+            rotateRight(node);
 
         }
 
         // handle case A
         if (isRed(node.left) && isRed(node.right)) {
             // YOUR CODE HERE
+            flipColors(node);
+
 
         }
         return node;
