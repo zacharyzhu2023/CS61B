@@ -49,16 +49,17 @@ public class RedBlackTree<T extends Comparable<T>> {
         if (node == null || node.left == null) {
             return node;
         } else {
-            RBTreeNode newLeft = node.left.left;
-            RBTreeNode oldLeftRight = node.left.right;
-            RBTreeNode oldRight = node.right;
+//            RBTreeNode newLeft = node.left.left;
+//            RBTreeNode oldLeftRight = node.left.right;
+//            RBTreeNode oldRight = node.right;
+//            RBTreeNode newNode = node.left;
+//            newNode.left = newLeft;
+//            newNode.right = node;
+//            newNode.right.left = oldLeftRight;
+//            newNode.right.right = oldRight;
+//            newNode.isBlack = node.isBlack;
+//            newNode.right.isBlack = false;
             RBTreeNode newNode = node.left;
-            newNode.left = newLeft;
-            newNode.right = node;
-            newNode.right.left = oldLeftRight;
-            newNode.right.right = oldRight;
-            newNode.isBlack = node.isBlack;
-            newNode.right.isBlack = false;
             return newNode;
         }
     }
@@ -76,16 +77,18 @@ public class RedBlackTree<T extends Comparable<T>> {
         if (node == null || node.right == null) {
             return node;
         } else {
-            RBTreeNode newRight = node.right.right;
-            RBTreeNode oldRightLeft = node.right.left;
-            RBTreeNode oldLeft = node.left;
+//            RBTreeNode newRight = node.right.right;
+//            RBTreeNode oldRightLeft = node.right.left;
+//            RBTreeNode oldLeft = node.left;
+//            RBTreeNode newNode = node.right;
+//            newNode.right = newRight;
+//            newNode.left = node;
+//            newNode.left.right = oldRightLeft;
+//            newNode.left.left = oldLeft;
+//            newNode.isBlack = node.isBlack;
+//            newNode.left.isBlack = false;
+//            return newNode;
             RBTreeNode newNode = node.right;
-            newNode.right = newRight;
-            newNode.left = node;
-            newNode.left.right = oldRightLeft;
-            newNode.left.left = oldLeft;
-            newNode.isBlack = node.isBlack;
-            newNode.left.isBlack = false;
             return newNode;
         }
     }
