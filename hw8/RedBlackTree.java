@@ -59,6 +59,7 @@ public class RedBlackTree<T extends Comparable<T>> {
 //            newNode.right.right = oldRight;
 //            newNode.isBlack = node.isBlack;
 //            newNode.right.isBlack = false;
+            System.out.println("CALLED1");
             RBTreeNode newNode = node.left;
             return newNode;
         }
@@ -88,6 +89,7 @@ public class RedBlackTree<T extends Comparable<T>> {
 //            newNode.isBlack = node.isBlack;
 //            newNode.left.isBlack = false;
 //            return newNode;
+            System.out.println("CALLED2");
             RBTreeNode newNode = node.right;
             return newNode;
         }
@@ -156,6 +158,7 @@ public class RedBlackTree<T extends Comparable<T>> {
             insert(node.right, item);
         }
 
+        System.out.println("CALLED3");
         // handle case C and "Right-leaning" situation.
         if (isRed(node.right) && !isRed(node.left)) {
             // YOUR CODE HERE
