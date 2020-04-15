@@ -26,15 +26,18 @@ This class contains information/command for saving files in staging area to trac
 
 **Fields**
 1. Stage stage: The current stage that contains all the files to be committed.
-2. Date date: variable that contains date/time a commit is made.
-3. String commitMessage: refers to message user provides when committing.
-4. String idString: SHA-1 ID that's unique to each commit. This will contain files, date, message, & parent.
-5. LinkedList<Commit> bCommitList: LinkedList of commits in current branch (not sure if here's where to put it)
+2. File[] filesArray: Contains the files present in directory--existing & modified, excluding removed.
+    * May want to modify into an ArrayList or different data structure
+    * Perhaps can be represented with just the ID's?
+3. Date date: variable that contains date/time a commit is made.
+4. String commitMessage: refers to message user provides when committing.
+5. String idString: SHA-1 ID that's unique to each commit. This will contain files, date, message, & parent.
+6. LinkedList<Commit> bCommitList: LinkedList of commits in current branch (not sure if here's where to put it)
     * Will be placed in a HashMap of commitLists with <Key, Value> --> <branchName, commitList>
-6. Commit head: Reference to commitList for the head of the current commit for the given branch.
+7. Commit head: Reference to commitList for the head of the current commit for the given branch.
     * How could this be integrated into the HashMap structure?
-7. LinkedList<Commit> allCommitList: LinkedList of all commits ever made for all eternity.
-8. Branch currentBranch: Pull the current working branch from the branch class.
+8. LinkedList<Commit> allCommitList: LinkedList of all commits ever made for all eternity.
+9. Branch currentBranch: Pull the current working branch from the branch class.
 
 ## Remove
 This class unstages file for addition.
@@ -171,7 +174,7 @@ Has the ability to run all the commands.
    unique, then addFile() will add the file to the stage.
 3. Commit: Check to see that stage contains > 0 files, whether for adding or removal. Then, <br/>
    hasMessage() will check to make sure that a valid commit message is entered. If so, carry <br/>
-   out commitFiles() which will call save current staged version of files in stage added, remove <br/>
+   out commitFiles() which will call save current staged version of files in stage added to filesArray, remove <br/>
    those as neccessary. Track date/time/message with commit, hashContents() to obtain unique identifier <br/>
    for version of the commit, and add Commit object to commitList, moving head to point to most recent commit. <br/>
    * Note: May also want to save branch info--look into further
@@ -184,9 +187,18 @@ Has the ability to run all the commands.
    a matching message exists. Print all all that matches criteria.
 8. Status: status() will call branch's findCurrentBranch() method, stage's stagedForAdditionFiles() and <br/>
    stagedForRemovalFiles() to display the current working status.
-9. Checkout
-10. Branch
-11. RemoveBranch
+9. Checkout: checkoutFile()--check if file is present in commit head's filesArray. If it is, pull contents & override. <br/>
+   checkoutIDFile()--check if file is present at given commit ID (as referenced by globalCommits), and if it is present, <br/>
+   overwrite existing file's contents with this one. checkoutBranch() will overwrite files in CWD with branch's commit head's <br/>
+   version of the files. If file isn't present in CWD, add them (track them with some List structure). Make checked out branch <br/>
+   the current branch in Branch, and any files originally present that aren't in the checked out branch are deleted. <br/>
+   Must check to make sure file name & branch name exists, inherited respectively from those classes: FILE & BRANCH.
+10. Branch--createBranch() will call hashFunction() to provide an identifier for commit. allBranches() should provide an ArrayList <br/>
+    of allBranches present. Will contain a reference to commits made while this branch is currentBranch, without being affected by <br/>
+    the other branches.
+    * What kind of structure is necessary to implement this?--How does it relate to commits?
+11. RemoveBranch--removeBranch() will check to make sure branch is present with allBranches() from Branch class. Then, if it is <br/>
+    present, simply remove it from the ArrayList allBranches. Removes pointer--not file
 12. Reset
 13. Merge
 14. Stage
