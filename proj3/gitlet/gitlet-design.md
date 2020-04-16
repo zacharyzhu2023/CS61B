@@ -34,8 +34,8 @@ This class contains information/command for saving files in staging area to trac
 5. String idString: SHA-1 ID that's unique to each commit. This will contain files, date, message, & parent.
 6. LinkedList<Commit> bCommitList: LinkedList of commits in current branch (not sure if here's where to put it)
     * Will be placed in a HashMap of commitLists with <Key, Value> --> <branchName, commitList>
-7. Commit head: Reference to commitList for the head of the current commit for the given branch.
-    * How could this be integrated into the HashMap structure?
+7. boolean isHead: Determined by commitList for the head of the current commit for the given branch.
+    * Can be true in 1 of 2 ways: either is the most recent commit, or checkout is invoked
 8. LinkedList<Commit> allCommitList: LinkedList of all commits ever made for all eternity.
 9. Branch currentBranch: Pull the current working branch from the branch class.
 
@@ -139,7 +139,8 @@ This class allows for the merging of files of a given branch into current branch
 This class contains the files to be added in the Gitlet directory through a commit.
 
 **Fields**
-1. ArrayList<File> filesAdded: An ArrayList of files to be committed.
+1. ArrayList<File> filesAdded: An ArrayList of files to be added when committed.
+2. ArrayList<File> filesDeleted: An ArrayList of files to be deleted when committed.
 
 ## File/Blob--File will likely extent or implement Blob
 This class contains the necessary information about each file/object.
@@ -169,8 +170,8 @@ Has the ability to run all the commands.
    createGitletDirectory() which will track existing files & commit with date & message.
 2. Add: fileExists() to check to make sure that the file exists in current directory. <br />
    Then, check to make sure that the file isn't present on stage in Stage class. If both <br/>
-   conditions are satisfied, check to make sure that file's contents are different using File </br>
-   class's hashContents() function. If it isn't unique, REMOVE file from staging area. If it is </br>
+   conditions are satisfied, check to make sure that file's contents are different using File <br/>
+   class's hashContents() function. If it isn't unique, REMOVE file from staging area. If it is <br/>
    unique, then addFile() will add the file to the stage.
 3. Commit: Check to see that stage contains > 0 files, whether for adding or removal. Then, <br/>
    hasMessage() will check to make sure that a valid commit message is entered. If so, carry <br/>
@@ -193,17 +194,67 @@ Has the ability to run all the commands.
    version of the files. If file isn't present in CWD, add them (track them with some List structure). Make checked out branch <br/>
    the current branch in Branch, and any files originally present that aren't in the checked out branch are deleted. <br/>
    Must check to make sure file name & branch name exists, inherited respectively from those classes: FILE & BRANCH.
-10. Branch--createBranch() will call hashFunction() to provide an identifier for commit. allBranches() should provide an ArrayList <br/>
+10. Branch: createBranch() will call hashFunction() to provide an identifier for commit. allBranches() should provide an ArrayList <br/>
     of allBranches present. Will contain a reference to commits made while this branch is currentBranch, without being affected by <br/>
     the other branches.
     * What kind of structure is necessary to implement this?--How does it relate to commits?
-11. RemoveBranch--removeBranch() will check to make sure branch is present with allBranches() from Branch class. Then, if it is <br/>
+    * How will commits be tracked? Through a linked list of commits or just their ID's?
+11. RemoveBranch: removeBranch() will check to make sure branch is present with allBranches() from Branch class. Then, if it is <br/>
     present, simply remove it from the ArrayList allBranches. Removes pointer--not file
-12. Reset
-13. Merge
-14. Stage
-15. File/Blob
+12. Reset: reset() will search through Commit.java's allCommitList to search for a commit with the desired ID. If it is found, <br/>
+    then perform checkout with that ID, only counting it as a new commit (this "commit" becomes the head of the branch). <br/>
+    Before resetting, check to make sure that all files in current branch are tracked. 
+    * Question to consider: should all files contain info about whether or not they are tracked? Where/how would that be done?
+13. Merge-checkMergePossible() will ensure that a merge is possible between the two branches. That is, both names must exist <br/>
+    and be unique, stage must be clear (no files staged for addition/removal), and no file is untracked. If all these conditions <br/>
+    are met, then merge() will do the following (define split as last common ancestor):
+    1. Files modified in GIVEN but not in CURRENT since split is checked out from GIVEN & changes, then ADD changes.
+    2. Files modified in CURRENT but not in GIVEN since split: do nothing.
+    3. Files modified samely in GIVEN/CURRENT since split: do nothing.
+    4. Files present in CURRENT but not GIVEN since split: do nothing.
+    5. Files not present in CURRENT but in GIVEN since split: checkout & add.
+    6. Files in CURRENT & unmodified & absent in GIVEN since split: remove.
+    7. Files not in CURRENT & unmodified in GIVEN since split: do nothing (don't add).
+    8. Files modified in CURRENT and GIVEN since split in different ways OR <br/>
+       File modified in either CURRENT or GIVEN but deleted in the other OR <br/>
+       File not present in CURRENT nor GIVEN at split & have different contents post-split <br/>
+       THEN: replace contents of file with the message indicated in SPEC & add. Afterward, <br/>
+       attempt to merge() again.
+    * Merge() will also commit(), taking CURRENT/GIVEN head into account in message. allBranches <br/>
+    removes the GIVEN branch from existence
+        * Will using RemoveBranch cause a problem?
+    * IMPORTANT NOTE: If there are multiple possibilities for latest common ancestor, <br/>
+    choose commit closest to head of current path in the linked list path for SPLIT
+        * That is to say, whichever merge is the fewest "links" away from the CURRENT branch's head
+        * If multiple have same distance, any SPLIT point would work
+14. Stage: getFilesForAddition() would reference filesAdded that can be pulled for the other operations. getFilesForDeletion() would <br/>
+    reference filesDeleted variable that can be pulled for other operations. clearStage() should have the ability to remove all elements <br/>
+    in both deleted/added files variables.
+    * Think about: How would the files that have not been changed be affected? Would they need to be included in the bundle?
+        * I think they should be included via commits unless they are to be deleted (delete the reference/hashContents?)
+15. File/Blob: hashFile() would provide the ID for a file. Blob would have a hashContents() function that would provide a generic <br/>
+    representation for objects in this system that need to be hashed. For example, this would apply to commits, branches, files, <br/>
+    and any other "things" that may need to be represented properly. Under this representation, everything needs to extend blob.
+16. Main: main() have the ability to run all commands--interpret user input & translate it to the appropriate command (if it exists).
+    * Consideration: Should there be another file that interprets/adds/plays with commands?
 
 
 # Persistence
+## Main Points
+1. General structure: there will be a CWD and a .gitlet directory. When COMMIT is called, make sure that <br/>
+   the Utils file is utilized to writeContents() of file to be saved in its current location.
+   * Would likely be beneficial to "hash" to ensure that files in CWD/PRESENT branch aren't edited willy nilly
+2. Any time ADD is called, place file (or just its info?) in the Stage. REMOVE adds to other ArrayList in Stage.java.
+3. Init will generate the path/directory structure if it isn't already present.
 
+## Side Points
+1. Separation of the branches: when committing in one branch, make sure that it doesn't affect the files/commit hierarchy <br/>
+   in any other branch.
+2. Behavior of Commit: when committing a file, make sure that commit contains the files that aren't modified as well. <br/>
+   The only files that shouldn't be present are those staged for removal upon commit.
+3. Behavior of Branch Removal: Make sure that removing a branch doesn't remove/modify any of the files present in the <br/>
+   branch. Rather, we just lose access to the pointer.
+4. Hashing Behavior: when a file's contents are unmodified, then it should hash to the same string. Compare object equality <br/>
+   using the output of the hashing function. Each commit definitely needs a unique hash & abbreviation. Branches likely will too.
+   * How does "unhashing" fall into this if at all? Is it necessary?
+   * Can branches exclusively be referred to by name? Or do they need the hash as an identifier? 
