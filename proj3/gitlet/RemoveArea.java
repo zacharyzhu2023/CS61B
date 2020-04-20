@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class RemoveArea implements Serializable {
     private ArrayList<String> removeFiles; // Name
     public RemoveArea() {
-        removeFiles = new ArrayList();
+        removeFiles = new ArrayList<String>();
     }
     void add(String fileName) {
         removeFiles.add(fileName);

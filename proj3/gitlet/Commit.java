@@ -17,7 +17,7 @@ public class Commit implements Serializable {
 
     // Init Commit
     public Commit() {
-        this._dateTime = "Thu Jan 1 1970 00:00:00 UTC";
+        this._dateTime = "Wed Dec 31 17:00:00 1969 -0700";
         this._message = "initial commit";
         this._parentID = null;
         this._commitID = makeID();
@@ -34,7 +34,7 @@ public class Commit implements Serializable {
     // Get the current date
     public String getDate() {
         Date today = Calendar.getInstance().getTime();
-        SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss.SSS zzz");
+        SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy ZZZZZ");
         return format.format(today);
     }
 

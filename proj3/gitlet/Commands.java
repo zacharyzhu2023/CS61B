@@ -124,7 +124,6 @@ public class Commands implements Serializable {
                 for (String s: addFiles.keySet()) {
                     headTrackedFiles.put(s, addFiles.get(s));
                     File path = Utils.join(".gitlet", "files", addFiles.get(s));
-                    System.out.println(addFiles.get(s));
                     File stageVersion = Utils.join(".gitlet", "stage", s);
 
                     Utils.writeContents(path, Utils.readContentsAsString(stageVersion));
@@ -161,12 +160,13 @@ public class Commands implements Serializable {
             if (addFiles.containsKey(name)) {
                 addFiles.remove(name);
                 File stagedFile = Utils.join(Utils.join(".gitlet", "stage"), name);
-                Utils.restrictedDelete(stagedFile);
+                stagedFile.delete();
             }
 
             if (headCommit.getFiles().containsKey(name)) {
                 removeFiles.add(name);
-                Utils.restrictedDelete(file);
+                File stagedFile = Utils.join(Utils.join(".gitlet", "stage"), name);
+                stagedFile.delete();
             }
 
             Utils.writeObject(Utils.join(".gitlet", "add"), aa);
@@ -178,9 +178,11 @@ public class Commands implements Serializable {
         Commit headCommit = getHeadCommit();
         Commit pointer = headCommit;
         while (pointer.getParentID() != null) {
+            System.out.println("===");
             System.out.println(pointer.toString());
             pointer = Utils.readObject(Utils.join(".gitlet", "commits", pointer.getParentID()), Commit.class);
         }
+        System.out.println("===");
         System.out.println(pointer.toString());
 
     }
@@ -254,7 +256,7 @@ public class Commands implements Serializable {
         Commit headCommit = getHeadCommit();
         if (headCommit.getFiles().containsKey(name)) {
             String fID = headCommit.getFiles().get(name);
-            File f = Utils.join(Utils.join(".gitlet", "remove"), fID);
+            File f = Utils.join(Utils.join(".gitlet", "files"), fID);
             if (f.exists()) {
                 Utils.writeContents(new File(name), Utils.readContentsAsString(f));
             }
@@ -273,11 +275,10 @@ public class Commands implements Serializable {
                 theOne = Utils.readObject(f, Commit.class);
             }
         }
-
         if (theOne != null) {
             if (theOne.getFiles().containsKey(name)) {
                 String fID = theOne.getFiles().get(name);
-                File f = Utils.join(Utils.join(".gitlet", "commits"), fID);
+                File f = Utils.join(Utils.join(".gitlet", "files"), fID);
                 if (f.exists()) {
                     Utils.writeContents(new File(name), Utils.readContentsAsString(f));
                 }
