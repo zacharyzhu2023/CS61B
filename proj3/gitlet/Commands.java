@@ -78,7 +78,7 @@ public class Commands implements Serializable {
             HashMap<String, String> currentFiles = headCommit.getFiles();
 
             // The head commit contains the same contents
-            if (currentFiles != null && (currentFiles.get(name)).equals(fileID)) {
+            if (currentFiles != null && currentFiles.get(name) != null && (currentFiles.get(name)).equals(fileID)) {
                 addArea.remove(name);
                 removeArea.remove(name);
                 stageFile.delete();
@@ -157,16 +157,15 @@ public class Commands implements Serializable {
             System.out.println("No reason to remove the file");
             throw new GitletException();
         } else {
+
             if (addFiles.containsKey(name)) {
                 addFiles.remove(name);
                 File stagedFile = Utils.join(Utils.join(".gitlet", "stage"), name);
                 stagedFile.delete();
             }
-
             if (headCommit.getFiles().containsKey(name)) {
                 removeFiles.add(name);
-                File stagedFile = Utils.join(Utils.join(".gitlet", "stage"), name);
-                stagedFile.delete();
+                file.delete();
             }
 
             Utils.writeObject(Utils.join(".gitlet", "add"), aa);
@@ -191,6 +190,7 @@ public class Commands implements Serializable {
         File[] commitList = Utils.join(".gitlet", "commits").listFiles();
         assert commitList != null;
         for (File f: commitList) {
+            System.out.println("===");
             Commit c = getCommit(f.getName());
             System.out.println(c.toString());
         }
@@ -233,23 +233,24 @@ public class Commands implements Serializable {
         HashMap<String, String> addFiles = aa.getAddedFiles();
         ArrayList<String> removeFiles = ra.getRemoveFiles();
         System.out.println("\n=== Staged Files ===");
-        List<String> addedKeys = new ArrayList(addFiles.keySet());
-        Collections.sort(addedKeys);
-        for (String s: addedKeys) {
-            System.out.println(s);
+        if (addFiles != null && addFiles.size() != 0) {
+            List<String> addedKeys = new ArrayList(addFiles.keySet());
+            Collections.sort(addedKeys);
+            for (String s: addedKeys) {
+                System.out.println(s);
+            }
         }
 
-        List<String> removedKeys = List.copyOf(removeFiles);
-        Collections.sort(removedKeys);
         System.out.println("\n=== Removed Files ===");
-        for (String s: removedKeys) {
-            System.out.println(s);
+        if (removeFiles != null && removeFiles.size() != 0) {
+            List<String> removedKeys = List.copyOf(removeFiles);
+            Collections.sort(removedKeys);
+            for (String s: removedKeys) {
+                System.out.println(s);
+            }
         }
-
         System.out.println("\n=== Modifications Not Staged For Commit ===");
-        System.out.println();
         System.out.println("\n=== Untracked Files ===");
-        System.out.println();
     }
 
     public void checkoutFile(String name) {
