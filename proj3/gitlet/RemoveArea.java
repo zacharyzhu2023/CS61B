@@ -12,7 +12,9 @@ public class RemoveArea implements Serializable {
         removeFiles.add(fileName);
     }
     void remove(String fileName) {
-        removeFiles.remove(fileName);
+        if (removeFiles.contains(fileName)) {
+            removeFiles.remove(fileName);
+        }
     }
     ArrayList<String> getRemoveFiles() {
         return removeFiles;
