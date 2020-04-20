@@ -8,7 +8,6 @@ import java.io.File;
 public class Main {
     /** Current Working Directory. */
     static final File CWD = new File(".");
-
     /** Main metadata folder. */
     static final File CAPERS_FOLDER = CWD; // FIXME
 
