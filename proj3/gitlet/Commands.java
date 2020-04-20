@@ -12,14 +12,14 @@ public class Commands implements Serializable {
     private File stagingDirectory; // Stores files staged for addition
     private File commitsDirectory; // Stores all commitID --> Commits
     private File filesDirectory; // Stores the fileID --> contents
-    private File branchDirectory; // Stores branch names--> headCommit
+    private File branchDirectory; // Stores branchNames variable
     private File addDirectory; // Stores AddArea object
     private File removeDirectory; // Stores RemoveArea object
-    private File currentBranchDirectory; // Tracks the current branch
+    private File currentBranchDirectory;
+
     private AddArea addArea;
     private RemoveArea removeArea;
-    private ArrayList<String> branchNames; // Name of branches
-    private File allBranchNames;
+    private HashMap<String, String> branchHeads; // BranchName --> headCommitID
     private String currentBranch;
 
     // Init method
@@ -35,32 +35,29 @@ public class Commands implements Serializable {
             filesDirectory = Utils.join(gitletDirectory, "files");
             filesDirectory.mkdir();
             addDirectory = Utils.join(gitletDirectory, "add");
-            addDirectory.mkdir();
+            //addDirectory.mkdir();
             removeDirectory = Utils.join(gitletDirectory, "remove");
-            removeDirectory.mkdir();
+            //removeDirectory.mkdir();
+            branchDirectory = Utils.join(gitletDirectory, "branch");
+            //branchDirectory.mkdir();
             currentBranchDirectory = Utils.join(gitletDirectory, "current");
-            currentBranchDirectory.mkdir();
-            allBranchNames = Utils.join(gitletDirectory, "branch names");
-            allBranchNames.mkdir();
-            
+            //currentBranchDirectory.mkdir();
 
             // Make Adding and Removing Area
             addArea = new AddArea();
             removeArea = new RemoveArea();
             Utils.writeObject(addDirectory, addArea);
+
             Utils.writeObject(removeDirectory, removeArea);
 
             // Making Master Branch + Initial Commit
-
             currentBranch = "master";
-            branchNames = new ArrayList<String>();
-            branchNames.add("master");
-            Utils.writeObject(allBranchNames, branchNames); // Saving ArrayList of Branch Names
-            Utils.writeObject(currentBranchDirectory, currentBranch); // Create a current branch
+            Utils.writeContents(currentBranchDirectory, currentBranch);
+            branchHeads = new HashMap<String, String>();
             Commit initial = new Commit();
-            Utils.writeObject(commitsDirectory, initial); // Add Commit to ALL commits
-            Utils.join(commitsDirectory, currentBranch).mkdir();
-            Utils.writeObject(Utils.join(commitsDirectory, currentBranch), initial); // Add Commit to current branch commits
+            Utils.writeObject(Utils.join(commitsDirectory, initial.getID()), initial); // Add Commit to ALL commits
+            branchHeads.put("master", initial.getID());
+            Utils.writeObject(branchDirectory, branchHeads);// Save new commit --> branchHeads
 
 
         } else {
@@ -117,6 +114,7 @@ public class Commands implements Serializable {
         }
 
         Commit headCommit = getHeadCommit();
+        HashMap<String, String> headIDs = Utils.readObject(branchDirectory, HashMap.class);
         String currentBranch = Utils.readContentsAsString(currentBranchDirectory);
         HashMap<String, String> headTrackedFiles = headCommit.getFiles();
         AddArea aa = Utils.readObject(addDirectory, AddArea.class);
@@ -131,9 +129,9 @@ public class Commands implements Serializable {
 
         // Saving the staged for addition files
         for (String s: addFiles.keySet()) {
-            headTrackedFiles.put(s, stagedFiles.get(s));
-            File f = Utils.join(filesDirectory, stagedFiles.get(s)); // filesDirectory/stagedFileID
-            File stageVersion = Utils.join(stagingDirectory, stagedFiles.get(s)); // StagingDirectory/fileID
+            headTrackedFiles.put(s, addFiles.get(s));
+            File f = Utils.join(filesDirectory, addFiles.get(s)); // filesDirectory/stagedFileID
+            File stageVersion = Utils.join(stagingDirectory, addFiles.get(s)); // StagingDirectory/fileID
             Utils.writeContents(f, Utils.readContentsAsString(stageVersion)); // Put staged version in file directory
         }
         // Getting rid of the staged for removal files
@@ -145,8 +143,8 @@ public class Commands implements Serializable {
         Commit newHead = new Commit(message, headTrackedFiles, headCommit.getID()); // Create new Commit
         File allCommitsFile = Utils.join(commitsDirectory, newHead.getID());
         Utils.writeObject(allCommitsFile, newHead); // Adding to all commits
-        File branchHeadFile = Utils.join(branchDirectory, currentBranch);
-        Utils.writeObject(branchHeadFile, newHead); // Adding as current Branch Head
+        headIDs.put(currentBranch, newHead.getID());
+        Utils.writeObject(branchDirectory, headIDs); // Adding as current Branch Head
 
 
         // Clearing staged for addition/removal
@@ -157,7 +155,7 @@ public class Commands implements Serializable {
     public void remove(String name) {
         File file = new File(name);
         Commit headCommit = getHeadCommit();
-        HashMap<String, String> headTrackedFiles = headCommit.getFiles();
+
         AddArea aa = Utils.readObject(addDirectory, AddArea.class);
         RemoveArea ra = Utils.readObject(removeDirectory, RemoveArea.class);
         HashMap<String, String> addFiles = aa.getAddedFiles();
@@ -218,11 +216,12 @@ public class Commands implements Serializable {
         }
     }
 
-    // FIXME: Adjust for the revolucion
     public void status() {
 
         System.out.println("=== Branches ===");
-        ArrayList<String> branchKeys = Utils.readObject(allBranchNames, ArrayList.class);
+        HashMap<String, String> branchHeads = Utils.readObject(branchDirectory, HashMap.class);
+        ArrayList<String> branchKeys = new ArrayList<String>(branchHeads.keySet());
+        String currentBranch = Utils.readContentsAsString(currentBranchDirectory);
         Collections.sort(branchKeys);
         for (String s: branchKeys) {
             if (s.equals(currentBranch)) {
@@ -295,7 +294,14 @@ public class Commands implements Serializable {
     }
 
     public void checkoutBranch(String name) throws IOException {
-        ArrayList<String> branches = Utils.readObject(allBranchNames, ArrayList.class);
+        HashMap<String, String> branchHeads = Utils.readObject(branchDirectory, HashMap.class);
+        ArrayList<String> branches = new ArrayList<String>(branchHeads.keySet());
+        AddArea aa = Utils.readObject(addDirectory, AddArea.class);
+        RemoveArea ra = Utils.readObject(removeDirectory, RemoveArea.class);
+        HashMap<String, String> addFiles = aa.getAddedFiles();
+        ArrayList<String> removeFiles = ra.getRemoveFiles();
+        String currentBranch = Utils.readContentsAsString(currentBranchDirectory);
+
         if (!branches.contains(name)) {
             System.out.println("No such branch exists");
             throw new GitletException();
@@ -306,40 +312,26 @@ public class Commands implements Serializable {
             // FIXME: CHECK TO SEE IF THERE IS AN UNTRACKED FILE
 
             // Assuming there's no untracked file
-            Commit branchHead = Utils.readObject(branchDirectory, )
-            HashMap<String, String> newFiles = branchHead.getFiles();
-            for (String f: newFiles.keySet()) {
-                // FIXME: Obtain the proper file
-                File file = new File(f);
-                if (file.exists()) {
-                    Utils.writeContents(file, newFiles.get(f));
-                } else {
-                    file.createNewFile();
-                }
-            }
-            currentBranch = name;
-            stage.getRemovedFiles().clear();
-            stage.getAddedFiles().clear();
-            Utils.writeObject(stagingDirectory, stage);
+
+            String branchHeadID = branchHeads.get(name);
+            HashMap<String, String> desiredFiles = Utils.readObject(Utils.join(commitsDirectory, branchHeadID), Commit.class).getFiles();
+            // FIXME: Do more
         }
     }
 
-    public boolean checkTracked(String name) {
-        Commit commitHead = getHeadCommit();
-        Set<String> allFileNames = commitHead.getFiles().keySet();
-
-    }
     public void branch(String name) {
+        HashMap<String, String> branches = Utils.readObject(branchDirectory, HashMap.class);
         if (branches.containsKey(name)) {
             System.out.println("A branch with that name already exists.");
             throw new GitletException();
         } else {
             branches.put(name, branches.get(currentBranch));
-            Utils.join(commitsDirectory, name).mkdir();
+            Utils.writeObject(branchDirectory, branches);
         }
     }
 
     public void removeBranch(String name) {
+        HashMap<String, String> branches = Utils.readObject(branchDirectory, HashMap.class);
         if (!branches.containsKey(name)) {
             System.out.println("A branch name with that name does not exist.");
             throw new GitletException();
@@ -348,7 +340,7 @@ public class Commands implements Serializable {
             throw new GitletException();
         } else {
             branches.remove(name);
-            Utils.restrictedDelete(Utils.join(commitsDirectory, name));
+            Utils.writeObject(branchDirectory, branches);
         }
     }
 
@@ -374,11 +366,20 @@ public class Commands implements Serializable {
     }
 
     public Commit getHeadCommit() {
-        String headBranch = Utils.readObject(currentBranchDirectory, String.class);
+        String headBranch = Utils.readContentsAsString(currentBranchDirectory);
         HashMap<String, String> branchHeads = Utils.readObject(branchDirectory, HashMap.class);
         String headCommitID = branchHeads.get(headBranch);
         return getCommit(headCommitID);
     }
+
+    public boolean staged() {
+        return true;
+    }
+
+    public boolean tracked() {
+        return true;
+    }
+
 
 
 }
