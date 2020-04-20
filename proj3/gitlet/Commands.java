@@ -309,8 +309,18 @@ public class Commands implements Serializable {
             System.out.println("No need to checkout the current branch.");
             throw new GitletException();
         } else {
-            String branchHeadID = branchHeads.get(name);
-            HashMap<String, String> fixThis = Utils.readObject(Utils.join(Utils.join(".gitlet", "commits"), branchHeadID), Commit.class).getFiles();
+            List<String> CWDfileNames = Utils.plainFilenamesIn(new File(System.getProperty("user.dir")));
+            for (String cwdName: CWDfileNames) {
+                File pathway = Utils.join(".", cwdName);
+                String pathwayID = Utils.sha1(Utils.readContentsAsString(pathway));
+                if (!tracked(pathwayID)) {
+                    System.out.println("There is an untracked file in the way; delete it or add it first.");
+                    throw new GitletException();
+                }
+            }
+            // FIXME: ASSUME NO UNTRACKED FILES
+            
+
         }
     }
 
@@ -320,7 +330,7 @@ public class Commands implements Serializable {
             System.out.println("A branch with that name already exists.");
             throw new GitletException();
         } else {
-            branches.put(name, branches.get(Utils.join(".gitlet", "current")));
+            branches.put(name, getHeadCommit().getID());
             Utils.writeObject(Utils.join(".gitlet", "branch"), branches);
         }
     }
@@ -362,11 +372,23 @@ public class Commands implements Serializable {
         return getCommit(headCommitID);
     }
 
-    public boolean staged() {
-        return true;
+    public boolean staged(String fileName) {
+        List<String> stageFileNames = Utils.plainFilenamesIn(Utils.join(".gitlet", "stage"));
+        for (String s: stageFileNames) {
+            if (s.equals(fileName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public boolean tracked() {
-        return true;
+    // FIXME: What is a "tracked" file?--do I need to keep the name into account?
+    public boolean tracked(String fileID) {
+        Commit headCommit = getHeadCommit();
+        HashMap<String, String> headFiles = headCommit.getFiles();
+        if (headFiles.values().contains(fileID)) {
+            return true;
+        }
+        return false;
     }
 }
