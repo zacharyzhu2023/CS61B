@@ -176,14 +176,12 @@ public class Commands implements Serializable {
 
     public void log() {
         Commit headCommit = getHeadCommit();
-
-        File parentFile;
-        for(Commit pointer = headCommit; pointer != null; pointer = (Commit)Utils.readObject(parentFile, Commit.class)) {
-            System.out.println("===");
+        Commit pointer = headCommit;
+        while (pointer.getParentID() != null) {
             System.out.println(pointer.toString());
-            String parentID = pointer.getParentID();
-            parentFile = Utils.join(Utils.join(".gitlet", "commits"), parentID);
+            pointer = Utils.readObject(Utils.join(".gitlet", "commits", pointer.getParentID()), Commit.class);
         }
+        System.out.println(pointer.toString());
 
     }
 
