@@ -59,7 +59,7 @@ public class Commands implements Serializable {
             Utils.writeObject(branchDirectory, branchHeads);
         } else {
             System.out.println(" A Gitlet version-control system already exists in the current directory.");
-            throw new GitletException();
+            System.exit(0);
         }
     }
 
@@ -69,7 +69,7 @@ public class Commands implements Serializable {
         RemoveArea removeArea = Utils.readObject(Utils.join(".gitlet", "remove"), RemoveArea.class);
         if (!file.exists()) {
             System.out.println("File does not exist");
-            throw new GitletException();
+            System.exit(0);
         } else {
             String fileContents = Utils.readContentsAsString(file);
             String fileID = Utils.sha1(fileContents);
@@ -79,9 +79,8 @@ public class Commands implements Serializable {
 
             // The head commit contains the same contents
             if (currentFiles != null && currentFiles.get(name) != null && (currentFiles.get(name)).equals(fileID)) {
-                addArea.remove(name);
-                removeArea.remove(name);
-                stageFile.delete();
+                clearStage();
+                System.exit(0);
             }
 
             // If the stage file already exists
@@ -101,7 +100,7 @@ public class Commands implements Serializable {
     public void commit(String message) {
         if (message.equals("")) {
             System.out.println("Please enter a commit message.");
-            throw new GitletException();
+            System.exit(0);
         } else {
             Commit headCommit = getHeadCommit();
             HashMap<String, String> headIDs = Utils.readObject(Utils.join(".gitlet", "branch"), HashMap.class);
@@ -117,7 +116,7 @@ public class Commands implements Serializable {
 
             if (addFiles.size() == 0 && removeFiles.size() == 0) {
                 System.out.println("No changes added to the commit");
-                throw new GitletException();
+                System.exit(0);
             } else {
 
                 // Save added files
@@ -152,21 +151,24 @@ public class Commands implements Serializable {
         AddArea aa = Utils.readObject(Utils.join(".gitlet", "add"), AddArea.class);
         RemoveArea ra = Utils.readObject(Utils.join(".gitlet", "remove"), RemoveArea.class);
         HashMap<String, String> addFiles = aa.getAddedFiles();
-        ArrayList<String> removeFiles = ra.getRemoveFiles();
+        if ((addFiles == null || addFiles.size() == 0) && (headCommit.getFiles() == null || headCommit.getFiles().size() == 0)) {
+            System.out.println("No reason to remove the file");
+            System.exit(0);
+        }
         if (!addFiles.containsKey(name) && !headCommit.getFiles().containsKey(name)) {
             System.out.println("No reason to remove the file");
-            throw new GitletException();
+            System.exit(0);
         } else {
-
-            if (addFiles.containsKey(name)) {
-                addFiles.remove(name);
+            if (addFiles != null && addFiles.size() != 0 && addFiles.containsKey(name)) {
+                aa.remove(name);
                 File stagedFile = Utils.join(Utils.join(".gitlet", "stage"), name);
                 stagedFile.delete();
             }
-            if (headCommit.getFiles().containsKey(name)) {
-                removeFiles.add(name);
+            if (headCommit.getFiles() != null && headCommit.getFiles().size() != 0 && headCommit.getFiles().containsKey(name)) {
+                ra.add(name);
                 file.delete();
             }
+
 
             Utils.writeObject(Utils.join(".gitlet", "add"), aa);
             Utils.writeObject(Utils.join(".gitlet", "remove"), ra);
@@ -210,7 +212,7 @@ public class Commands implements Serializable {
         }
         if (count == 0) {
             System.out.println("Found no commit with that message");
-            throw new GitletException();
+            System.exit(0);
         }
     }
 
@@ -243,9 +245,8 @@ public class Commands implements Serializable {
 
         System.out.println("\n=== Removed Files ===");
         if (removeFiles != null && removeFiles.size() != 0) {
-            List<String> removedKeys = List.copyOf(removeFiles);
-            Collections.sort(removedKeys);
-            for (String s: removedKeys) {
+            Collections.sort(removeFiles);
+            for (String s: removeFiles) {
                 System.out.println(s);
             }
         }
@@ -264,7 +265,7 @@ public class Commands implements Serializable {
 
         } else {
             System.out.println("File does not exist in that commit.");
-            throw new GitletException();
+            System.exit(0);
         }
     }
 
@@ -280,11 +281,11 @@ public class Commands implements Serializable {
 
             } else {
                 System.out.println("File does not exist in that commit.");
-                throw new GitletException();
+                System.exit(0);
             }
         } else {
             System.out.println("No commit with that id exists.");
-            throw new GitletException();
+            System.exit(0);
         }
     }
 
@@ -294,14 +295,14 @@ public class Commands implements Serializable {
         String currentBranch = Utils.readContentsAsString(Utils.join(".gitlet", "current"));
         if (!branches.contains(name)) {
             System.out.println("No such branch exists");
-            throw new GitletException();
+            System.exit(0);
         } else if (currentBranch.equals(name)) {
             System.out.println("No need to checkout the current branch.");
-            throw new GitletException();
+            System.exit(0);
         } else {
             if (hasUntracked()) {
                 System.out.println("There is an untracked file in the way; delete it or add it first.");
-                throw new GitletException();
+                System.exit(0);
             }
             List<String> CWDfileNames = Utils.plainFilenamesIn(new File(System.getProperty("user.dir")));
             if (CWDfileNames != null && CWDfileNames.size() != 0) {
@@ -311,26 +312,28 @@ public class Commands implements Serializable {
                 HashMap<String, String> bCommitFiles = bCommit.getFiles();
                 Commit currentHeadCommit = getHeadCommit();
                 HashMap<String, String> cHeadCommitFiles = currentHeadCommit.getFiles();
-                for (String fName: bCommitFiles.keySet()) {
-                    // Overwriting the contents or creating a new file in CWD
-                    File currentFile = new File(fName);
-                    File savedFile = Utils.join(".gitlet", "files", bCommitFiles.get(fName));
-                    Utils.writeContents(currentFile, Utils.readContentsAsString(savedFile));
-                }
-                // Getting rid of files in CWD tracked by current head commit but not tracked by checked out branch head commit
-                for (String cwdName: CWDfileNames) {
-                    if (tracked(cwdName) && cHeadCommitFiles.containsKey(cwdName) && !bCommitFiles.containsKey(cwdName)) {
-                        File currentFile = new File(cwdName);
-                        currentFile.delete();
+                if (bCommitFiles != null && bCommitFiles.size() != 0) {
+                    for (String fName: bCommitFiles.keySet()) {
+                        // Overwriting the contents or creating a new file in CWD
+                        File currentFile = new File(fName);
+                        File savedFile = Utils.join(".gitlet", "files", bCommitFiles.get(fName));
+                        Utils.writeContents(currentFile, Utils.readContentsAsString(savedFile));
                     }
                 }
-
-                // Clear the Stage & Removal Area
-                clearStage();
-                // Move the current branch
-                Utils.writeContents(Utils.join(".gitlet", "current"), name);
+                // Getting rid of files in CWD tracked by current head commit but not tracked by checked out branch head commit
+                if (CWDfileNames != null && CWDfileNames.size() != 0) {
+                    for (String cwdName: CWDfileNames) {
+                        if (tracked(cwdName) && cHeadCommitFiles.containsKey(cwdName) && (bCommitFiles == null || !bCommitFiles.containsKey(cwdName))) {
+                            File currentFile = new File(cwdName);
+                            currentFile.delete();
+                        }
+                    }
+                }
             }
-
+            // Clear the Stage & Removal Area
+            clearStage();
+            // Move the current branch
+            Utils.writeContents(Utils.join(".gitlet", "current"), name);
 
         }
     }
@@ -339,7 +342,7 @@ public class Commands implements Serializable {
         HashMap<String, String> branches = Utils.readObject(Utils.join(".gitlet", "branch"), HashMap.class);
         if (branches.containsKey(name)) {
             System.out.println("A branch with that name already exists.");
-            throw new GitletException();
+            System.exit(0);
         } else {
             branches.put(name, getHeadCommit().getID());
             Utils.writeObject(Utils.join(".gitlet", "branch"), branches);
@@ -349,11 +352,11 @@ public class Commands implements Serializable {
     public void removeBranch(String name) {
         HashMap<String, String> branches = Utils.readObject(Utils.join(".gitlet", "branch"), HashMap.class);
         if (!branches.containsKey(name)) {
-            System.out.println("A branch name with that name does not exist.");
-            throw new GitletException();
-        } else if (Utils.join(".gitlet", "current").equals(name)) {
-            System.out.println("Cannot remove the current branch");
-            throw new GitletException();
+            System.out.println("A branch with that name does not exist.");
+            System.exit(0);
+        } else if (Utils.readContentsAsString(Utils.join(".gitlet", "current")).equals(name)) {
+            System.out.println("Cannot remove the current branch.");
+            System.exit(0);
         } else {
             branches.remove(name);
             Utils.writeObject(Utils.join(".gitlet", "branch"), branches);
@@ -367,7 +370,7 @@ public class Commands implements Serializable {
                 for (String cwdFileName : CWDfileNames) {
                     if (!tracked(cwdFileName)) {
                         System.out.println("There is an untracked file in the way; delete it or add it first.");
-                        throw new GitletException();
+                        System.exit(0);
                     }
                 }
             }
@@ -395,7 +398,7 @@ public class Commands implements Serializable {
             clearStage();
         } else {
             System.out.println("No commit with that id exists");
-            throw new GitletException();
+            System.exit(0);
         }
     }
 
@@ -404,17 +407,17 @@ public class Commands implements Serializable {
         if ((getAddArea().getAddedFiles() == null || getAddArea().getAddedFiles().size() == 0) ||
             getRemoveArea().getRemoveFiles() == null || getRemoveArea().getRemoveFiles().size() == 0) {
             System.out.println("You have uncommited changes.");
-            throw new GitletException();
+            System.exit(0);
         }
         // Branch name doesn't exist
         if (!getBranchHeads().containsKey(branchName)) {
             System.out.println("A branch with that name does not exist.");
-            throw new GitletException();
+            System.exit(0);
         }
         // Branch merging with itself
         if (getCurrentBranchName().equals(branchName)) {
             System.out.println("Cannot merge a branch with itself");
-            throw new GitletException();
+            System.exit(0);
         }
         // Untracked file present
         if (hasUntracked()) {
@@ -514,7 +517,7 @@ public class Commands implements Serializable {
     public boolean tracked(String fileName) {
         Commit headCommit = getHeadCommit();
         HashMap<String, String> headFiles = headCommit.getFiles();
-        if (headFiles.keySet().contains(fileName)) {
+        if (headFiles != null && headFiles.keySet().contains(fileName)) {
             return true;
         }
         return false;

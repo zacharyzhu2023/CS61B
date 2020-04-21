@@ -35,6 +35,10 @@ public class Main {
             commands.status();
         } else if (args[0].equals("checkout")){
             if (args.length == 4) {
+                if (!args[2].equals("--")) {
+                    System.out.println("Incorrect operands.");
+                    System.exit(0);
+                }
                 commands.checkoutIDFile(args[1], args[3]);
             } else if (args.length == 2) {
                 commands.checkoutBranch(args[1]);
@@ -52,7 +56,7 @@ public class Main {
         }
         else {
             System.out.println("No command with that name exists.");
-            throw new GitletException();
+            System.exit(0);
         }
     }
 
