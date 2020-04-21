@@ -8,10 +8,7 @@ package gitlet;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Commands implements Serializable {
     private File gitletDirectory;
@@ -301,7 +298,7 @@ public class Commands implements Serializable {
             System.exit(0);
         } else {
             if (hasUntracked()) {
-                System.out.println("There is an untracked file in the way; delete it or add it first.");
+                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
                 System.exit(0);
             }
             List<String> CWDfileNames = Utils.plainFilenamesIn(new File(System.getProperty("user.dir")));
@@ -524,9 +521,9 @@ public class Commands implements Serializable {
     }
 
     public boolean hasUntracked() {
-        List<String> CWDfileNames = Utils.plainFilenamesIn(new File(System.getProperty("user.dir")));
+        List<String> CWDfileNames = Utils.plainFilenamesIn(new File("."));
         for (String cwdName: CWDfileNames) {
-            if (tracked(cwdName) && tracked(cwdName) && !getHeadCommit().getFiles().containsKey(cwdName)) {
+            if (!tracked(cwdName)) {
                 return true;
             }
         }
