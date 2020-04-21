@@ -15,7 +15,8 @@ public class Main {
         Commands commands =new Commands();
 
         if (args.length == 0) {
-            System.out.println("No command provided");
+            System.out.println("Please enter a command");
+            throw new GitletException();
         } else if (args[0].equals("init")) {
             commands.init();
         } else if (args[0].equals("add")) {
@@ -50,7 +51,8 @@ public class Main {
             commands.merge(args[1]);
         }
         else {
-            System.out.println("Invalid command");
+            System.out.println("No command with that name exists.");
+            throw new GitletException();
         }
     }
 
