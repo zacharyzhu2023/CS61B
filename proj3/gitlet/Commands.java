@@ -269,13 +269,7 @@ public class Commands implements Serializable {
     }
 
     public void checkoutIDFile(String commitID, String name) {
-        Commit theOne = null;
-        File[] logFiles = Utils.join(".gitlet", "commits").listFiles();
-        for (File f: logFiles) {
-            if ((Utils.readObject(f, Commit.class)).getID().equals(commitID)) {
-                theOne = Utils.readObject(f, Commit.class);
-            }
-        }
+        Commit theOne = getCommitID(commitID);
         if (theOne != null) {
             if (theOne.getFiles().containsKey(name)) {
                 String fID = theOne.getFiles().get(name);
@@ -294,13 +288,9 @@ public class Commands implements Serializable {
         }
     }
 
-    public void checkoutBranch(String name) throws IOException {
+    public void checkoutBranch(String name) {
         HashMap<String, String> branchHeads = Utils.readObject(Utils.join(".gitlet", "branch"), HashMap.class);
         ArrayList<String> branches = new ArrayList<String>(branchHeads.keySet());
-        AddArea aa = Utils.readObject(Utils.join(".gitlet", "add"), AddArea.class);
-        RemoveArea ra = Utils.readObject(Utils.join(".gitlet", "remove"), RemoveArea.class);
-        HashMap<String, String> addFiles = aa.getAddedFiles();
-        ArrayList<String> removeFiles = ra.getRemoveFiles();
         String currentBranch = Utils.readContentsAsString(Utils.join(".gitlet", "current"));
         if (!branches.contains(name)) {
             System.out.println("No such branch exists");
@@ -310,16 +300,40 @@ public class Commands implements Serializable {
             throw new GitletException();
         } else {
             List<String> CWDfileNames = Utils.plainFilenamesIn(new File(System.getProperty("user.dir")));
-            for (String cwdName: CWDfileNames) {
-                File pathway = Utils.join(".", cwdName);
-                String pathwayID = Utils.sha1(Utils.readContentsAsString(pathway));
-                if (!tracked(pathwayID)) {
-                    System.out.println("There is an untracked file in the way; delete it or add it first.");
-                    throw new GitletException();
+            if (CWDfileNames != null && CWDfileNames.size() != 0) {
+                for (String cwdFileName: CWDfileNames) {
+                    if (!tracked(cwdFileName)) {
+                        System.out.println("There is an untracked file in the way; delete it or add it first.");
+                        throw new GitletException();
+                    }
                 }
+                // FIXME: ASSUME NO UNTRACKED FILES
+                String branchHeadCommitID = branchHeads.get(name);
+                Commit bCommit = getCommit(branchHeadCommitID);
+                HashMap<String, String> bCommitFiles = bCommit.getFiles();
+                Commit currentHeadCommit = getHeadCommit();
+                HashMap<String, String> cHeadCommitFiles = currentHeadCommit.getFiles();
+                for (String fName: bCommitFiles.keySet()) {
+                    // Overwriting the contents or creating a new file in CWD
+                    File currentFile = new File(fName);
+                    File savedFile = Utils.join(".gitlet", "files", bCommitFiles.get(fName));
+                    Utils.writeContents(currentFile, Utils.readContentsAsString(savedFile));
+                }
+                // Getting rid of files in CWD tracked by current head commit but not tracked by checked out branch head commit
+                for (String cwdName: CWDfileNames) {
+                    if (tracked(cwdName) && cHeadCommitFiles.containsKey(cwdName) && !bCommitFiles.containsKey(cwdName)) {
+                        File currentFile = new File(cwdName);
+                        currentFile.delete();
+                    }
+                }
+
+                // Clear the Stage & Removal Area
+                // FIXME: Do I need to clear removed files?
+                clearStage();
+                // Move the current branch
+                Utils.writeContents(Utils.join(".gitlet", "current"), name);
             }
-            // FIXME: ASSUME NO UNTRACKED FILES
-            
+
 
         }
     }
@@ -350,6 +364,42 @@ public class Commands implements Serializable {
     }
 
     public void reset(String ID) {
+        if (getCommitID(ID) != null) {
+            List<String> CWDfileNames = Utils.plainFilenamesIn(new File(System.getProperty("user.dir")));
+            if (CWDfileNames != null && CWDfileNames.size() != 0) {
+                for (String cwdFileName : CWDfileNames) {
+                    if (!tracked(cwdFileName)) {
+                        System.out.println("There is an untracked file in the way; delete it or add it first.");
+                        throw new GitletException();
+                    }
+                }
+            }
+            Commit workingCommit = getCommitID(ID);
+            HashMap<String, String> workingCommitFiles = workingCommit.getFiles();
+            // Checkout all files from commit
+            for (String wcfName: workingCommitFiles.keySet()) {
+
+            }
+            // Remove files in CWD tracked by CURRENT head not present in GIVEN commit
+            for (String cwdName: CWDfileNames) {
+                if (tracked(cwdName) && tracked(cwdName) && !workingCommitFiles.containsKey(cwdName)) {
+                    File currentFile = new File(cwdName);
+                    currentFile.delete();
+                }
+            }
+            // Move current branch head's pointer to this ID
+            File branchPath = Utils.join(".gitlet", "branch");
+            HashMap<String, String> branchHeads = getBranchHeads();
+            branchHeads.put(getCurrentBranchName(), ID);
+            Utils.writeObject(branchPath, branchHeads);
+
+
+            // Clear the staging area
+            clearStage();
+        } else {
+            System.out.println("No commit with that id exists");
+            throw new GitletException();
+        }
     }
 
     public void merge(String branchName) {
@@ -366,8 +416,8 @@ public class Commands implements Serializable {
     }
 
     public Commit getHeadCommit() {
-        String headBranch = Utils.readContentsAsString(Utils.join(".gitlet", "current"));
-        HashMap<String, String> branchHeads = Utils.readObject(Utils.join(".gitlet", "branch"), HashMap.class);
+        String headBranch = getCurrentBranchName();
+        HashMap<String, String> branchHeads = getBranchHeads();
         String headCommitID = branchHeads.get(headBranch);
         return getCommit(headCommitID);
     }
@@ -382,13 +432,53 @@ public class Commands implements Serializable {
         return false;
     }
 
-    // FIXME: What is a "tracked" file?--do I need to keep the name into account?
-    public boolean tracked(String fileID) {
+    public boolean tracked(String fileName) {
         Commit headCommit = getHeadCommit();
         HashMap<String, String> headFiles = headCommit.getFiles();
-        if (headFiles.values().contains(fileID)) {
+        if (headFiles.keySet().contains(fileName)) {
             return true;
         }
         return false;
     }
+
+    public String getCurrentBranchName() {
+        return Utils.readContentsAsString(Utils.join(".gitlet", "current"));
+    }
+
+    public HashMap<String, String> getBranchHeads() {
+        return Utils.readObject(Utils.join(".gitlet", "branch"), HashMap.class);
+    }
+
+    public List<String> getCommitsList() {
+        return Utils.plainFilenamesIn(Utils.join(".gitlet", "commits"));
+    }
+
+    public void clearStage() {
+        Utils.writeObject(Utils.join(".gitlet", "add"), new AddArea());
+        Utils.writeObject(Utils.join(".gitlet", "remove"), new RemoveArea());
+        List<String> stageFileNames = Utils.plainFilenamesIn(Utils.join(".gitlet", "stage"));
+        if (stageFileNames != null && stageFileNames.size() != 0) {
+            for (String sName: stageFileNames) {
+                File stageFile = Utils.join(".gitlet", "stage", sName);
+                stageFile.delete();
+            }
+        }
+    }
+
+    public Commit getCommitID(String ID) {
+        List<String> commitIDs = getCommitsList();
+        String fullID = "";
+        int total = 0;
+        for (String cID: commitIDs) {
+            if (cID.substring(0, ID.length()).equals(ID)) {
+                fullID = cID;
+                total += 1;
+            }
+        }
+        if (total == 1) {
+            return getCommit(fullID);
+        }
+        return null;
+    }
+    
 }
