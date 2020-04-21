@@ -31,6 +31,13 @@ public class Commit implements Serializable {
         this._parentID = parentID;
     }
 
+    // Generate a mergeCommit
+    public Commit(HashMap<String, String> files, String givenBranchName, String currentBranchName, boolean mergeConflict) {
+        this._message = "Merged " + givenBranchName + " into " + givenBranchName;
+        this._dateTime = getDate();
+
+    }
+
     // Get the current date
     public String getDate() {
         Date today = Calendar.getInstance().getTime();

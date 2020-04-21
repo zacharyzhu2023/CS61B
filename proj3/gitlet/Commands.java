@@ -299,14 +299,12 @@ public class Commands implements Serializable {
             System.out.println("No need to checkout the current branch.");
             throw new GitletException();
         } else {
+            if (hasUntracked()) {
+                System.out.println("There is an untracked file in the way; delete it or add it first.");
+                throw new GitletException();
+            }
             List<String> CWDfileNames = Utils.plainFilenamesIn(new File(System.getProperty("user.dir")));
             if (CWDfileNames != null && CWDfileNames.size() != 0) {
-                for (String cwdFileName: CWDfileNames) {
-                    if (!tracked(cwdFileName)) {
-                        System.out.println("There is an untracked file in the way; delete it or add it first.");
-                        throw new GitletException();
-                    }
-                }
                 // FIXME: ASSUME NO UNTRACKED FILES
                 String branchHeadCommitID = branchHeads.get(name);
                 Commit bCommit = getCommit(branchHeadCommitID);
@@ -328,7 +326,6 @@ public class Commands implements Serializable {
                 }
 
                 // Clear the Stage & Removal Area
-                // FIXME: Do I need to clear removed files?
                 clearStage();
                 // Move the current branch
                 Utils.writeContents(Utils.join(".gitlet", "current"), name);
@@ -378,7 +375,7 @@ public class Commands implements Serializable {
             HashMap<String, String> workingCommitFiles = workingCommit.getFiles();
             // Checkout all files from commit
             for (String wcfName: workingCommitFiles.keySet()) {
-
+                checkoutIDFile(ID, wcfName);
             }
             // Remove files in CWD tracked by CURRENT head not present in GIVEN commit
             for (String cwdName: CWDfileNames) {
@@ -402,7 +399,89 @@ public class Commands implements Serializable {
         }
     }
 
-    public void merge(String branchName) {
+    public void merge(String branchName) throws IOException {
+        // Uncommitted changes present--staged additions/removal
+        if ((getAddArea().getAddedFiles() == null || getAddArea().getAddedFiles().size() == 0) ||
+            getRemoveArea().getRemoveFiles() == null || getRemoveArea().getRemoveFiles().size() == 0) {
+            System.out.println("You have uncommited changes.");
+            throw new GitletException();
+        }
+        // Branch name doesn't exist
+        if (!getBranchHeads().containsKey(branchName)) {
+            System.out.println("A branch with that name does not exist.");
+            throw new GitletException();
+        }
+        // Branch merging with itself
+        if (getCurrentBranchName().equals(branchName)) {
+            System.out.println("Cannot merge a branch with itself");
+            throw new GitletException();
+        }
+        // Untracked file present
+        if (hasUntracked()) {
+            System.out.println("There is an untracked file in the way; delete it or add it first.");
+        }
+
+        // Failure cases have been accounted for
+        /**
+         *     1. Files modified in GIVEN but not in CURRENT since split is checked out from GIVEN & changes, then ADD changes.
+         *     2. Files modified in CURRENT but not in GIVEN since split: do nothing.
+         *     3. Files modified samely in GIVEN/CURRENT since split: do nothing.
+         *     4. Files present in CURRENT but not GIVEN since split: do nothing.
+         *     5. Files not present in CURRENT but in GIVEN since split: checkout & add.
+         *     6. Files in CURRENT & unmodified & absent in GIVEN since split: remove.
+         *     7. Files not in CURRENT & unmodified in GIVEN since split: do nothing (don't add).
+         *     8. Files modified in CURRENT and GIVEN since split in different ways OR <br/>
+         *        File modified in either CURRENT or GIVEN but deleted in the other OR <br/>
+         *        File not present in CURRENT nor GIVEN at split & have different contents post-split <br/>
+         *        THEN: replace contents of file with the message indicated in SPEC & add. Afterward, <br/>
+         *        attempt to merge() again.
+         */
+        Commit currentHead = getHeadCommit();
+        HashMap<String, String> currentFiles = currentHead.getFiles();
+        Commit givenHead = getCommit(getBranchHeads().get(branchName));
+        HashMap<String, String> givenFiles = givenHead.getFiles();
+        Commit splitPoint = getSplitPoint(getCurrentBranchName(), branchName);
+        HashMap<String, String> splitFiles = splitPoint.getFiles();
+        for (String splitFile: splitFiles.keySet()) {
+            // Case 1: File inGiven() && inCurrent() && inSplit() && currentFile == splitFile && givenFile != splitFile --> checkout givenFile & stage for addition
+            if (containsFile(currentHead, splitFile) && containsFile(givenHead, splitFile) &&
+                Utils.sha1(splitFile).equals(currentFiles.get(splitFile)) &&
+                    Utils.sha1(splitFile).equals(givenFiles.get(splitFile))) {
+                checkoutIDFile(givenHead.getID(), splitFile);
+                // FIXME: correctly added??
+                add(splitFile);
+
+            }
+            // Case 2: File inGiven() && inCurrent() && inSplit() && currentFile != splitFile && givenFile == splitFile --> do nothing
+            // Case 3: File inGiven() && inCurrent() && inSplit() && currentFile == splitFile && givenFile == splitFile --> do nothing
+                // Case 3.5: File !inGiven() && !inCurrent() && inSplit() --> do nothing
+            // Case 6: File atSplit() && inGiven() && givenFile == splitFile && !inCurrent() --> do nothing
+            // Case 7: File atSplit() && inCurrent() && currentFile == splitFile && !inGiven() --> Remove & Untrack
+            // Case 8a: File inGiven() && inCurrent() && inSplit() && currentFile != splitFile && givenFile != splitFile && givenFile != currentFile
+            // Case 8b: File atSplit() && inGiven() && splitFile != givenFile && !inCurrent()
+            // Case 8c: File atSplit() && inCurrent() && splitFile != currentFile && !inGiven()
+            // Case 8d: File !atSplit() && inCurrent() && inGiven() && currentFile != givenFile
+            /** Add the following--> treat deleted File as empty File
+             * <<<<<<< HEAD
+             * contents of file in current branch
+             * =======
+             * contents of file in given branch
+             * >>>>>>>
+             */
+            // For all case 8's --> stage file to be added
+        }
+        // Case 4: File !atSplit() && !inGiven() && inCurrent() --> do nothing
+        // Case 5: File !atSplit() && inGiven() && !inCurrent() --> Checkout & Stage givenFile
+        for (String givenFile: givenFiles.keySet()) {
+            if (containsFile(splitPoint, givenFile) && !containsFile(currentHead, givenFile)) {
+                checkoutIDFile(givenHead.getID(), givenFile);
+                // FIXME: correctly added??
+                add(givenFile);
+            }
+        }
+
+        // Commit the merge
+            // Print: "Encountered a merge conflict" if case 8 is invoked
     }
 
     public boolean hasGitletRepository() {
@@ -441,9 +520,20 @@ public class Commands implements Serializable {
         return false;
     }
 
+    public boolean hasUntracked() {
+        List<String> CWDfileNames = Utils.plainFilenamesIn(new File(System.getProperty("user.dir")));
+        for (String cwdName: CWDfileNames) {
+            if (tracked(cwdName) && tracked(cwdName) && !getHeadCommit().getFiles().containsKey(cwdName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public String getCurrentBranchName() {
         return Utils.readContentsAsString(Utils.join(".gitlet", "current"));
     }
+
 
     public HashMap<String, String> getBranchHeads() {
         return Utils.readObject(Utils.join(".gitlet", "branch"), HashMap.class);
@@ -465,6 +555,15 @@ public class Commands implements Serializable {
         }
     }
 
+    public AddArea getAddArea() {
+        return Utils.readObject(Utils.join(".gitlet", "add"), AddArea.class);
+    }
+
+    public RemoveArea getRemoveArea() {
+        return Utils.readObject(Utils.join(".gitlet", "remove"), RemoveArea.class);
+    }
+
+
     public Commit getCommitID(String ID) {
         List<String> commitIDs = getCommitsList();
         String fullID = "";
@@ -480,5 +579,14 @@ public class Commands implements Serializable {
         }
         return null;
     }
-    
+
+    // FIXME
+    public Commit getSplitPoint(String currBranch, String givenBranch) {
+        // Filler for the time being
+        return getCommit(getHeadCommit().getParentID());
+    }
+
+    public boolean containsFile(Commit c, String fileName) {
+        return c.getFiles().containsKey(fileName);
+    }
 }
