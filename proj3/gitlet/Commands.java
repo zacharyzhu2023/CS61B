@@ -423,6 +423,16 @@ public class Commands implements Serializable {
         Commit givenHead = getCommit(getBranchHeads().get(branchName));
         HashMap<String, String> givenFiles = givenHead.getFiles();
         Commit splitPoint = getSplitPoint(getCurrentBranchName(), branchName);
+        // splitPoint is given's head
+        if (splitPoint.getID().equals(givenHead.getID())) {
+            System.out.println("Given branch is an ancestor of the current branch.");
+            System.exit(0);
+        }
+        // splitPoint is current's head
+        if (splitPoint.getID().equals(currentHead.getID())) {
+            System.out.println("Current branch fast-forwarded.");
+            System.exit(0);
+        }
         HashMap<String, String> splitFiles = splitPoint.getFiles();
         // Untracked file present
         for (String cwdName: CWDfileNames) {
@@ -553,15 +563,6 @@ public class Commands implements Serializable {
         return false;
     }
 
-    public boolean hasUntracked() {
-        List<String> CWDfileNames = Utils.plainFilenamesIn(new File("."));
-        for (String cwdName: CWDfileNames) {
-            if (!tracked(cwdName)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public String getCurrentBranchName() {
         return Utils.readContentsAsString(Utils.join(".gitlet", "current"));
@@ -617,6 +618,10 @@ public class Commands implements Serializable {
     public Commit getSplitPoint(String currBranch, String givenBranch) {
         // Filler for the time being
         return getCommit(getHeadCommit().getParentID());
+    }
+
+    public int distToCurrHead(String cID) {
+        return Integer.MAX_VALUE;
     }
 
     public String writeMergeConflict(String currID, String givenID) {
