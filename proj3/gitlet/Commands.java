@@ -463,9 +463,10 @@ public class Commands implements Serializable {
         Commit splitPoint = getSplitPoint(branchName);
         HashMap<String, String> splitFiles = splitPoint.getFiles();
 
-//        System.out.println(currentFiles == null);
-//        System.out.println(givenFiles == null);
-//        System.out.println(splitFiles == null);
+//        if (branchName.equals("given")) {
+//            System.out.println(currentFiles == null);
+//            System.out.println(givenFiles == null);
+//        }
 //        if (branchName.equals("given")) {
 //            ArrayList<String> keys = new ArrayList<>();
 //            for (String s: splitFiles.keySet()) {
@@ -483,18 +484,18 @@ public class Commands implements Serializable {
 //                    Arrays.toString(keys2.toArray()) + " "
 //                    + Arrays.toString(keys3.toArray()));
 //        }
-        if (branchName.equals("given")) {
-            ArrayList<String> keys2 = new ArrayList<>();
-            for (String s: currentFiles.keySet()) {
-                keys2.add(s);
-            }
-            ArrayList<String> keys3 = new ArrayList<>();
-            for (String s: givenFiles.keySet()) {
-                keys3.add(s);
-            }
-            System.out.println(Arrays.toString(keys2.toArray()) + " "
-                    + Arrays.toString(keys3.toArray()));
-        }
+//        if (branchName.equals("given")) {
+//            ArrayList<String> keys2 = new ArrayList<>();
+//            for (String s: currentFiles.keySet()) {
+//                keys2.add(s);
+//            }
+//            ArrayList<String> keys3 = new ArrayList<>();
+//            for (String s: givenFiles.keySet()) {
+//                keys3.add(s);
+//            }
+//            System.out.println(Arrays.toString(keys2.toArray()) + " "
+//                    + Arrays.toString(keys3.toArray()));
+//        }
 
 
         // splitPoint is given's head
@@ -537,7 +538,7 @@ public class Commands implements Serializable {
                         Utils.writeContents(f, mergeContents);
                         mergeConflict = true;
                         add(splitFile);
-//                        if (branchName.equals("B")) {
+//                        if (branchName.equals("given")) {
 //                            System.out.println(mergeContents);
 //                        }
                     }
@@ -600,19 +601,17 @@ public class Commands implements Serializable {
                     Utils.writeContents(f, mergeContents);
                     mergeConflict = true;
                     add(givenFile);
-                    if (branchName.equals("given")) {
-                        System.out.println(mergeContents);
-                    }
+//                    if (branchName.equals("given")) {
+//                        System.out.println(mergeContents);
+//                    }
                 }
             }
         }
-
-        // Commit the merge
-        HashMap<String, String> trackedFiles = getHeadCommit().getFiles();
         // Print: "Encountered a merge conflict" if case 8 is invoked
         if (mergeConflict) {
             System.out.println("Encountered a merge conflict.");
         }
+        // Commit the merge
         String message = "Merged " + getCurrentBranchName() + " into " + branchName;
         mergeCommit(message, givenHead.getID());
     }
