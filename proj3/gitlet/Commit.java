@@ -69,9 +69,16 @@ public class Commit implements Serializable {
 
     // String Format to print a commit--nonmerge
     public String toString() {
-        return "commit " + _commitID
-                + "\nDate: " + _dateTime
-                + "\n" + _message + "\n";
+        if (getParent2ID() == null) {
+            return "commit " + _commitID
+                    + "\nDate: " + _dateTime
+                    + "\n" + _message + "\n";
+        } else {
+            return "commit " + _commitID
+                    + "\nMerge: " + _parentID.substring(0, 7) + " " + _secondParentID.substring(0, 7)
+                    + "\nDate: " + _dateTime
+                    + "\n" + _message + "\n";
+        }
     }
 
 

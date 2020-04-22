@@ -617,11 +617,48 @@ public class Commands implements Serializable {
     // FIXME
     public Commit getSplitPoint(String currBranch, String givenBranch) {
         // Filler for the time being
-        return getCommit(getHeadCommit().getParentID());
+        HashMap<String, Integer> ancestorValues = new HashMap<String, Integer>();
+        Commit gBranchCommit = getCommit(getBranchHeads().get(givenBranch));
+        traverseAllPaths(gBranchCommit, ancestorValues, 0);
+        int lowVal = Integer.MAX_VALUE;
+        Commit c = null;
+        for (String s: ancestorValues.keySet()) {
+            if (ancestorValues.get(s) < lowVal) {
+                c = getCommit(s);
+                lowVal = ancestorValues.get(s);
+            }
+        }
+        return c;
     }
 
-    public int distToCurrHead(String cID) {
-        return Integer.MAX_VALUE;
+    public void traverseAllPaths(Commit c, HashMap<String, Integer> allPaths, int totalSoFar) {
+        if (c != null) {
+            ArrayList<String> ancestors = new ArrayList<>();
+            findAllAncestors(c, ancestors);
+            if (ancestors.contains(c.getID())) {
+                allPaths.put(c.getID(), totalSoFar);
+            } else {
+                if (c.getParentID() != null) {
+                    traverseAllPaths(getCommit(c.getParentID()), allPaths, totalSoFar + 1);
+                }
+                if (c.getParent2ID() != null) {
+                    traverseAllPaths(getCommit(c.getParent2ID()), allPaths, totalSoFar + 1);
+                }
+            }
+        }
+    }
+
+
+    public void findAllAncestors(Commit c, ArrayList<String> ancestors) {
+        if (c != null) {
+            ancestors.add(c.getID());
+            if (c.getParentID() != null) {
+                findAllAncestors(getCommit(c.getParentID()), ancestors);
+            }
+            if (c.getParent2ID() != null) {
+                findAllAncestors(getCommit(c.getParentID()), ancestors);
+            }
+        }
     }
 
     public String writeMergeConflict(String currID, String givenID) {
