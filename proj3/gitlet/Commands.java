@@ -612,7 +612,7 @@ public class Commands implements Serializable {
             System.out.println("Encountered a merge conflict.");
         }
         // Commit the merge
-        String message = "Merged " + getCurrentBranchName() + " into " + branchName;
+        String message = "Merged " + branchName + " into " + getCurrentBranchName();
         mergeCommit(message, givenHead.getID());
     }
 
