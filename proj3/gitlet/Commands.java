@@ -297,18 +297,22 @@ public class Commands implements Serializable {
             System.out.println("No need to checkout the current branch.");
             System.exit(0);
         } else {
-            if (hasUntracked()) {
-                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
-                System.exit(0);
-            }
             List<String> CWDfileNames = Utils.plainFilenamesIn(new File(System.getProperty("user.dir")));
+            String branchHeadCommitID = branchHeads.get(name);
+            Commit bCommit = getCommit(branchHeadCommitID);
+            HashMap<String, String> bCommitFiles = bCommit.getFiles();
+            Commit currentHeadCommit = getHeadCommit();
+            HashMap<String, String> cHeadCommitFiles = currentHeadCommit.getFiles();
             if (CWDfileNames != null && CWDfileNames.size() != 0) {
-                // FIXME: ASSUME NO UNTRACKED FILES
-                String branchHeadCommitID = branchHeads.get(name);
-                Commit bCommit = getCommit(branchHeadCommitID);
-                HashMap<String, String> bCommitFiles = bCommit.getFiles();
-                Commit currentHeadCommit = getHeadCommit();
-                HashMap<String, String> cHeadCommitFiles = currentHeadCommit.getFiles();
+
+                // Check for untracked files
+                for (String cwdName: CWDfileNames) {
+                    if (!tracked(cwdName) && bCommitFiles.containsKey(cwdName)) {
+                        System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                        System.exit(0);
+                    }
+                }
+                // No untracked files
                 if (bCommitFiles != null && bCommitFiles.size() != 0) {
                     for (String fName: bCommitFiles.keySet()) {
                         // Overwriting the contents or creating a new file in CWD
@@ -363,25 +367,22 @@ public class Commands implements Serializable {
     public void reset(String ID) {
         if (getCommitID(ID) != null) {
             List<String> CWDfileNames = Utils.plainFilenamesIn(new File(System.getProperty("user.dir")));
-            if (CWDfileNames != null && CWDfileNames.size() != 0) {
-                for (String cwdFileName : CWDfileNames) {
-                    if (!tracked(cwdFileName)) {
-                        System.out.println("There is an untracked file in the way; delete it or add it first.");
-                        System.exit(0);
-                    }
-                }
-            }
             Commit workingCommit = getCommitID(ID);
             HashMap<String, String> workingCommitFiles = workingCommit.getFiles();
             // Checkout all files from commit
             for (String wcfName: workingCommitFiles.keySet()) {
                 checkoutIDFile(ID, wcfName);
             }
-            // Remove files in CWD tracked by CURRENT head not present in GIVEN commit
             for (String cwdName: CWDfileNames) {
+                // Remove files in CWD tracked by CURRENT head not present in GIVEN commit
                 if (tracked(cwdName) && tracked(cwdName) && !workingCommitFiles.containsKey(cwdName)) {
                     File currentFile = new File(cwdName);
                     currentFile.delete();
+                }
+                // Raise error is file isn't tracked by CURRENT head and is in GIVEN + CWD
+                if (!tracked(cwdName) && workingCommitFiles.containsKey(cwdName)) {
+                    System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                    System.exit(0);
                 }
             }
             // Move current branch head's pointer to this ID
@@ -416,72 +417,104 @@ public class Commands implements Serializable {
             System.out.println("Cannot merge a branch with itself");
             System.exit(0);
         }
-        // Untracked file present
-        if (hasUntracked()) {
-            System.out.println("There is an untracked file in the way; delete it or add it first.");
-        }
-
-        // Failure cases have been accounted for
-        /**
-         *     1. Files modified in GIVEN but not in CURRENT since split is checked out from GIVEN & changes, then ADD changes.
-         *     2. Files modified in CURRENT but not in GIVEN since split: do nothing.
-         *     3. Files modified samely in GIVEN/CURRENT since split: do nothing.
-         *     4. Files present in CURRENT but not GIVEN since split: do nothing.
-         *     5. Files not present in CURRENT but in GIVEN since split: checkout & add.
-         *     6. Files in CURRENT & unmodified & absent in GIVEN since split: remove.
-         *     7. Files not in CURRENT & unmodified in GIVEN since split: do nothing (don't add).
-         *     8. Files modified in CURRENT and GIVEN since split in different ways OR <br/>
-         *        File modified in either CURRENT or GIVEN but deleted in the other OR <br/>
-         *        File not present in CURRENT nor GIVEN at split & have different contents post-split <br/>
-         *        THEN: replace contents of file with the message indicated in SPEC & add. Afterward, <br/>
-         *        attempt to merge() again.
-         */
+        List<String> CWDfileNames = Utils.plainFilenamesIn(new File(System.getProperty("user.dir")));
         Commit currentHead = getHeadCommit();
         HashMap<String, String> currentFiles = currentHead.getFiles();
         Commit givenHead = getCommit(getBranchHeads().get(branchName));
         HashMap<String, String> givenFiles = givenHead.getFiles();
         Commit splitPoint = getSplitPoint(getCurrentBranchName(), branchName);
         HashMap<String, String> splitFiles = splitPoint.getFiles();
+        // Untracked file present
+        for (String cwdName: CWDfileNames) {
+            // File will be overwritten
+            if (!tracked(cwdName) && givenFiles.containsKey(cwdName)) {
+                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                System.exit(0);
+            }
+        }
+        // Failure cases have been accounted for
+        boolean mergeConflict = false;
         for (String splitFile: splitFiles.keySet()) {
-            // Case 1: File inGiven() && inCurrent() && inSplit() && currentFile == splitFile && givenFile != splitFile --> checkout givenFile & stage for addition
-            if (containsFile(currentHead, splitFile) && containsFile(givenHead, splitFile) &&
-                Utils.sha1(splitFile).equals(currentFiles.get(splitFile)) &&
-                    Utils.sha1(splitFile).equals(givenFiles.get(splitFile))) {
-                checkoutIDFile(givenHead.getID(), splitFile);
-                // FIXME: correctly added??
-                add(splitFile);
+            // Cases where inGiven() && inCurrent() && inSplit()
+            if (containsFile(currentHead, splitFile) && containsFile(givenHead, splitFile)) {
+                // Case 1: File inGiven() && inCurrent() && inSplit() && currentFile == splitFile && givenFile != splitFile --> checkout givenFile & stage for addition
+                if (splitFiles.get(splitFile).equals(currentFiles.get(splitFile)) &&
+                        !givenFiles.get(splitFile).equals(splitFiles.get(splitFile))) {
+                    checkoutIDFile(givenHead.getID(), splitFile);
+                    add(splitFile);
+                }
+                // Case 8a: File atSplit() && inGiven() && inCurrent() && currentFile != splitFile && givenFile != splitFile && givenFile != currentFile
+                if (!splitFiles.get(splitFile).equals(currentFiles.get(splitFile)) &&
+                        !givenFiles.get(splitFile).equals(splitFiles.get(splitFile)) &&
+                        !givenFiles.get(splitFile).equals(currentFiles.get(splitFile))) {
+                    String mergeContents = writeMergeConflict(currentFiles.get(splitFile), givenFiles.get(splitFile));
+                    File f = Utils.join(".", splitFile);
+                    Utils.writeContents(f, mergeContents);
+                    mergeConflict = true;
+                    add(splitFile);
+                }
 
             }
             // Case 2: File inGiven() && inCurrent() && inSplit() && currentFile != splitFile && givenFile == splitFile --> do nothing
             // Case 3: File inGiven() && inCurrent() && inSplit() && currentFile == splitFile && givenFile == splitFile --> do nothing
                 // Case 3.5: File !inGiven() && !inCurrent() && inSplit() --> do nothing
             // Case 6: File atSplit() && inGiven() && givenFile == splitFile && !inCurrent() --> do nothing
+
             // Case 7: File atSplit() && inCurrent() && currentFile == splitFile && !inGiven() --> Remove & Untrack
-            // Case 8a: File inGiven() && inCurrent() && inSplit() && currentFile != splitFile && givenFile != splitFile && givenFile != currentFile
+            if (containsFile(currentHead, splitFile)
+                    && splitFiles.get(splitFile).equals(currentFiles.get(splitFile))
+                    && !containsFile(givenHead, splitFile)) {
+                File file; // Create pathway later
+                remove(splitFile);
+            }
             // Case 8b: File atSplit() && inGiven() && splitFile != givenFile && !inCurrent()
+            if (containsFile(givenHead, splitFile)
+                    && !splitFiles.get(splitFile).equals(givenFiles.get(splitFile))
+                    && !containsFile(currentHead, splitFile)) {
+                String mergeContents = writeMergeConflict(null, givenFiles.get(splitFile));
+                File f = Utils.join(".", splitFile);
+                Utils.writeContents(f, mergeContents);
+                mergeConflict = true;
+                add(splitFile);
+            }
             // Case 8c: File atSplit() && inCurrent() && splitFile != currentFile && !inGiven()
-            // Case 8d: File !atSplit() && inCurrent() && inGiven() && currentFile != givenFile
-            /** Add the following--> treat deleted File as empty File
-             * <<<<<<< HEAD
-             * contents of file in current branch
-             * =======
-             * contents of file in given branch
-             * >>>>>>>
-             */
+            if (containsFile(currentHead, splitFile)
+                    && !splitFiles.get(splitFile).equals(currentFiles.get(splitFile))
+                    && !containsFile(currentHead, splitFile)) {
+                String mergeContents = writeMergeConflict(currentFiles.get(splitFile), null);
+                File f = Utils.join(".", splitFile);
+                Utils.writeContents(f, mergeContents);
+                mergeConflict = true;
+                add(splitFile);
+            }
             // For all case 8's --> stage file to be added
         }
-        // Case 4: File !atSplit() && !inGiven() && inCurrent() --> do nothing
-        // Case 5: File !atSplit() && inGiven() && !inCurrent() --> Checkout & Stage givenFile
         for (String givenFile: givenFiles.keySet()) {
-            if (containsFile(splitPoint, givenFile) && !containsFile(currentHead, givenFile)) {
+            // Case 4: File !atSplit() && !inGiven() && inCurrent() --> do nothing
+            // Case 5: File !atSplit() && inGiven() && !inCurrent() --> Checkout & Stage givenFile
+            if (!containsFile(splitPoint, givenFile) && !containsFile(currentHead, givenFile)) {
                 checkoutIDFile(givenHead.getID(), givenFile);
-                // FIXME: correctly added??
+                add(givenFile);
+            }
+            // Case 8d: File !atSplit() && inCurrent() && inGiven() && currentFile != givenFile
+            if (!containsFile(splitPoint, givenFile) && containsFile(currentHead, givenFile)
+                    && !givenFiles.get(givenFile).equals(currentFiles.get(givenFile))) {
+                String mergeContents = writeMergeConflict(currentFiles.get(givenFile), givenFiles.get(givenFile));
+                File f = Utils.join(".", givenFile);
+                Utils.writeContents(f, mergeContents);
+                mergeConflict = true;
                 add(givenFile);
             }
         }
 
         // Commit the merge
+        HashMap<String, String> trackedFiles = getHeadCommit().getFiles();
+        Commit merge = new Commit(trackedFiles, branchName, getCurrentBranchName(), getHeadCommit().getID(), getBranchHeads().get(branchName));
+        commit(merge.getMessage());
             // Print: "Encountered a merge conflict" if case 8 is invoked
+        if (mergeConflict) {
+            System.out.println("Encountered a merge conflict.");
+        }
     }
 
     public boolean hasGitletRepository() {
@@ -584,6 +617,30 @@ public class Commands implements Serializable {
     public Commit getSplitPoint(String currBranch, String givenBranch) {
         // Filler for the time being
         return getCommit(getHeadCommit().getParentID());
+    }
+
+    public String writeMergeConflict(String currID, String givenID) {
+        /** Add the following--> treat deleted File as empty File
+         * <<<<<<< HEAD
+         * contents of file in current branch
+         * =======
+         * contents of file in given branch
+         * >>>>>>>
+         */
+        String cContents = "";
+        String gContents = "";
+        if (currID != null) {
+            File currFile = Utils.join(".gitlet", "files", currID);
+            cContents = Utils.readContentsAsString(currFile);
+        }
+        if (givenID != null){
+            File givenFile = Utils.join(".gitlet", "files", givenID);
+            gContents = Utils.readContentsAsString(givenFile);
+        }
+        String finalContents = "<<<<<<< HEAD\n" + cContents +
+                "contents of file in current branch=======\n" + gContents +
+                "contents of file in given branch>>>>>>>";
+        return finalContents;
     }
 
     public boolean containsFile(Commit c, String fileName) {

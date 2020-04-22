@@ -12,6 +12,7 @@ public class Commit implements Serializable {
     private String _message;
     private String _dateTime;
     private String _parentID;
+    private String _secondParentID;
     private String _commitID;
     private HashMap<String, String> _files; // Key: Name, Value: commitID
 
@@ -32,10 +33,13 @@ public class Commit implements Serializable {
     }
 
     // Generate a mergeCommit
-    public Commit(HashMap<String, String> files, String givenBranchName, String currentBranchName, boolean mergeConflict) {
-        this._message = "Merged " + givenBranchName + " into " + givenBranchName;
+    public Commit(HashMap<String, String> files, String givenBranchName, String currentBranchName, String parentID, String secondParentID) {
+        this._message = "Merged " + currentBranchName + " into " + givenBranchName;
+        this._files = files;
         this._dateTime = getDate();
-
+        this._commitID = makeID();
+        this._parentID = parentID;
+        this._secondParentID = secondParentID;
     }
 
     // Get the current date
@@ -49,8 +53,10 @@ public class Commit implements Serializable {
     public String makeID() {
         if (this._parentID == null) {
             return Utils.sha1(_message, _dateTime);
+        } else if (this._secondParentID == null) {
+            return Utils.sha1(_message, _files.toString(), _dateTime, _parentID);
         }
-        return Utils.sha1(_message, _files.toString(), _dateTime, _parentID);
+        return Utils.sha1(_message, _files.toString(), _dateTime, _parentID, _secondParentID);
     }
 
     public void addFile(String fileName, String fileID) {
@@ -76,6 +82,8 @@ public class Commit implements Serializable {
     public String getParentID() {
         return this._parentID;
     }
+
+    public String getParent2ID() {return this._secondParentID;}
 
     public String getMessage() {
         return _message;
