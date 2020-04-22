@@ -33,8 +33,8 @@ public class Commit implements Serializable {
     }
 
     // Generate a mergeCommit
-    public Commit(HashMap<String, String> files, String givenBranchName, String currentBranchName, String parentID, String secondParentID) {
-        this._message = "Merged " + currentBranchName + " into " + givenBranchName;
+    public Commit(String message, HashMap<String, String> files, String parentID, String secondParentID) {
+        this._message = message;
         this._files = files;
         this._dateTime = getDate();
         this._commitID = makeID();

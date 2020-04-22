@@ -1,7 +1,7 @@
 # Create two branches and merge other into master.
 I setup2.inc
 > branch other
- <<<
+<<<
 + h.txt wug2.txt
 > add h.txt
 <<<

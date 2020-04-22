@@ -1,0 +1,3 @@
+<<<<<<< HEAD
+irrelevant contentscontents of file in current branch=======
+contents of file in given branch>>>>>>>
