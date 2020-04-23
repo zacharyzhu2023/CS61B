@@ -79,18 +79,15 @@ public class Commands implements Serializable {
             File stageFile = Utils.join(".gitlet", "stage", name);
             Commit headCommit = help.getHeadCommit();
             HashMap<String, String> currentFiles = headCommit.getFiles();
-
-            // The head commit contains the same contents
             if (currentFiles != null && currentFiles.get(name) != null
                     && (currentFiles.get(name)).equals(fileID)) {
                 help.clearStage();
                 System.exit(0);
             }
-            // If the stage file already exists
             if (stageFile.exists()) {
                 Utils.writeContents(stageFile, fileContents);
                 addArea.add(name, fileID);
-            } else { // If it doesn't exist
+            } else {
                 Utils.writeContents(stageFile, fileContents);
                 addArea.add(name, fileID);
             }
@@ -127,7 +124,6 @@ public class Commands implements Serializable {
                 System.out.println("No changes added to the commit");
                 System.exit(0);
             } else {
-                // Save added files
                 for (String s: addFiles.keySet()) {
                     headTrackedFiles.put(s, addFiles.get(s));
                     File path = Utils.join(".gitlet", "files", addFiles.get(s));
@@ -137,7 +133,6 @@ public class Commands implements Serializable {
                             Utils.readContentsAsString(stageVersion));
                     stageVersion.delete();
                 }
-                // Remove Deleted Files
                 for (String name: removeFiles) {
                     headTrackedFiles.remove(name);
                 }
@@ -376,7 +371,6 @@ public class Commands implements Serializable {
             HashMap<String, String> cHeadCommitFiles =
                     currentHeadCommit.getFiles();
             if (cwdFileNames != null) {
-                // Check for untracked files
                 for (String cwdName: cwdFileNames) {
                     if (!help.tracked(cwdName)
                             && bCommitFiles.containsKey(cwdName)) {
@@ -388,8 +382,6 @@ public class Commands implements Serializable {
                 }
                 if (bCommitFiles != null) {
                     for (String fName: bCommitFiles.keySet()) {
-                        // Overwriting the contents or creating
-                        // a new file in CWD
                         File currentFile = new File(fName);
                         File savedFile = Utils.join(".gitlet", "files",
                                 bCommitFiles.get(fName));
@@ -397,8 +389,6 @@ public class Commands implements Serializable {
                                 Utils.readContentsAsString(savedFile));
                     }
                 }
-                // Getting rid of files in CWD tracked by current head
-                // commit but not tracked by checked out branch head commit
                 for (String cwdName: cwdFileNames) {
                     if (help.tracked(cwdName)
                             && cHeadCommitFiles.containsKey(cwdName)
@@ -409,9 +399,7 @@ public class Commands implements Serializable {
                     }
                 }
             }
-            // Clear the Stage & Removal Area
             help.clearStage();
-            // Move the current branch
             Utils.writeContents(
                     Utils.join(".gitlet", "current"), name);
 
@@ -463,20 +451,15 @@ public class Commands implements Serializable {
             Commit workingCommit = help.getCommitID(stringID);
             HashMap<String, String> workingCommitFiles =
                     workingCommit.getFiles();
-            // Checkout all files from commit
             for (String wcfName: workingCommitFiles.keySet()) {
                 checkoutIDFile(stringID, wcfName);
             }
             for (String cwdName: cwdFileNames) {
-                // Remove files in CWD tracked by
-                // CURRENT head not present in GIVEN commit
                 if (help.tracked(cwdName) && help.tracked(cwdName)
                         && !workingCommitFiles.containsKey(cwdName)) {
                     File currentFile = new File(cwdName);
                     currentFile.delete();
                 }
-                // Raise error is file isn't tracked by
-                // CURRENT head and is in GIVEN + CWD
                 if (!help.tracked(cwdName)
                         && workingCommitFiles.containsKey(cwdName)) {
                     System.out.println("There is an untracked file in the way; "
@@ -484,13 +467,10 @@ public class Commands implements Serializable {
                     System.exit(0);
                 }
             }
-            // Move current branch head's pointer to this ID
             File branchPath = Utils.join(".gitlet", "branch");
             HashMap<String, String> branchHeads = help.getBranchHeads();
             branchHeads.put(help.getCurrentBranchName(), stringID);
             Utils.writeObject(branchPath, branchHeads);
-
-            // Clear the staging area
             help.clearStage();
         } else {
             System.out.println("No commit with that id exists");
@@ -503,7 +483,6 @@ public class Commands implements Serializable {
      * @param branchName name of branch
      */
     public void mergeCheck(String branchName) {
-        // Uncommitted changes present--staged additions/removal
         if ((help.getAddArea().getAddedFiles() != null
                 && help.getAddArea().getAddedFiles().size() != 0)
                 || help.getRemoveArea().getRemoveFiles() != null
@@ -511,12 +490,10 @@ public class Commands implements Serializable {
             System.out.println("You have uncommited changes.");
             System.exit(0);
         }
-        // Branch name doesn't exist
         if (!help.getBranchHeads().containsKey(branchName)) {
             System.out.println("A branch with that name does not exist.");
             System.exit(0);
         }
-        // Branch merging with itself
         if (help.getCurrentBranchName().equals(branchName)) {
             System.out.println("Cannot merge a branch with itself");
             System.exit(0);
@@ -528,21 +505,17 @@ public class Commands implements Serializable {
         HashMap<String, String> givenFiles = givenHead.getFiles();
         Commit splitPoint = help.getSplitPoint(branchName);
         List<String> cwdFileNames = help.getCWDFiles();
-
-        // splitPoint is given's head
         if (splitPoint.getID().equals(givenHead.getID())) {
             System.out.println("Given branch is an "
                     + "ancestor of the current branch.");
             System.exit(0);
         }
-        // splitPoint is current's head
         if (splitPoint.getID().equals(currentHead.getID())) {
             checkoutBranch(branchName);
             System.out.println("Current branch fast-forwarded.");
             System.exit(0);
         }
         for (String cwdName: cwdFileNames) {
-            // File will be overwritten
             if (!help.tracked(cwdName) && givenFiles.containsKey(cwdName)) {
                 System.out.println("There is an untracked file in the way; "
                         + "delete it, or add and commit it first.");
@@ -556,117 +529,71 @@ public class Commands implements Serializable {
      * @throws IOException
      */
     public void merge(String branchName) throws IOException {
-        mergeCheck(branchName);
-        List<String> cwdFileNames = help.getCWDFiles();
+        mergeCheck(branchName); boolean mergeConflict = false;
         Commit currentHead = help.getHeadCommit();
-        HashMap<String, String> currentFiles = currentHead.getFiles();
+        HashMap<String, String> cFiles = currentHead.getFiles();
         Commit givenHead = help.getCommit(
                 help.getBranchHeads().get(branchName));
-        HashMap<String, String> givenFiles = givenHead.getFiles();
+        HashMap<String, String> gFiles = givenHead.getFiles();
         Commit splitPoint = help.getSplitPoint(branchName);
-        HashMap<String, String> splitFiles = splitPoint.getFiles();
-
-        // Failure cases have been accounted for
-        boolean mergeConflict = false;
-        if (splitFiles != null) {
-            for (String splitFile: splitFiles.keySet()) {
-                // Cases where inGiven() && inCurrent() && inSplit()
-                if (help.containsFile(currentHead, splitFile)
-                        && help.containsFile(givenHead, splitFile)) {
-                    // Case 1: File inGiven() && inCurrent() && inSplit()
-                    // && currentFile == splitFile && givenFile != splitFile
-                    // --> checkout givenFile & stage for addition
-                    if (splitFiles.get(splitFile).equals(
-                            currentFiles.get(splitFile))
-                            && !givenFiles.get(splitFile).
-                                    equals(splitFiles.get(splitFile))) {
-                        checkoutIDFile(givenHead.getID(), splitFile);
-                        add(splitFile);
+        HashMap<String, String> sFiles = splitPoint.getFiles();
+        if (sFiles != null) {
+            for (String sFile: sFiles.keySet()) {
+                if (help.containsFile(currentHead, sFile)
+                        && help.containsFile(givenHead, sFile)) {
+                    if (sFiles.get(sFile).equals(cFiles.get(sFile))
+                            && !gFiles.get(sFile).equals(sFiles.get(sFile))) {
+                        checkoutIDFile(givenHead.getID(), sFile); add(sFile);
                     }
-                    // Case 8a: File atSplit() && inGiven() && inCurrent()
-                    // && currentFile != splitFile && givenFile != splitFile
-                    // && givenFile != currentFile
-                    if (!splitFiles.get(splitFile).
-                            equals(currentFiles.get(splitFile))
-                            && !givenFiles.get(splitFile).
-                            equals(splitFiles.get(splitFile))
-                            && !givenFiles.get(splitFile).
-                            equals(currentFiles.get(splitFile))) {
-                        String mergeContents = help.writeMergeConflict(
-                                currentFiles.get(splitFile),
-                                givenFiles.get(splitFile));
-                        File f = Utils.join(".", splitFile);
-                        Utils.writeContents(f, mergeContents);
-                        mergeConflict = true;
-                        add(splitFile);
-                        //System.out.println(mergeContents);
+                    if (!sFiles.get(sFile).equals(cFiles.get(sFile))
+                            && !gFiles.get(sFile).equals(sFiles.get(sFile))
+                            && !gFiles.get(sFile).equals(cFiles.get(sFile))) {
+                        String mergeContents = help.writeMergeConflict(cFiles.
+                                        get(sFile), gFiles.get(sFile));
+                        Utils.writeContents(
+                                Utils.join(".", sFile), mergeContents);
+                        mergeConflict = true; add(sFile);
                     }
-
                 }
-                // Case 2: File inGiven() && inCurrent() && inSplit()
-                // && currentFile != splitFile && givenFile == splitFile
-                // --> do nothing
-                // Case 3: File inGiven() && inCurrent() && inSplit()
-                // && currentFile == splitFile && givenFile == splitFile
-                // --> do nothing
-                // Case 3.5: File !inGiven() && !inCurrent()
-                // && inSplit() --> do nothing
-                // Case 6: File atSplit() && inGiven() && givenFile == splitFile
-                // && !inCurrent() --> do nothing
-
-                // Case 7: File atSplit() && inCurrent()
-                // && currentFile == splitFile
-                // && !inGiven() --> Remove & Untrack
-                if (help.containsFile(currentHead, splitFile)
-                        && splitFiles.get(splitFile).
-                        equals(currentFiles.get(splitFile))
-                        && !help.containsFile(givenHead, splitFile)) {
-                    remove(splitFile);
+                if (help.containsFile(currentHead, sFile)
+                        && sFiles.get(sFile).equals(cFiles.get(sFile))
+                        && !help.containsFile(givenHead, sFile)) {
+                    remove(sFile);
                 }
-                // Case 8b: File atSplit() && inGiven()
-                // && splitFile != givenFile
-                // && !inCurrent() --> Stage
-                if (help.containsFile(givenHead, splitFile)
-                        && !splitFiles.get(splitFile).
-                        equals(givenFiles.get(splitFile))
-                        && !help.containsFile(currentHead, splitFile)) {
+                if (help.containsFile(givenHead, sFile)
+                        && !sFiles.get(sFile).
+                        equals(gFiles.get(sFile))
+                        && !help.containsFile(currentHead, sFile)) {
                     String mergeContents = help.writeMergeConflict(null,
-                            givenFiles.get(splitFile));
-                    File f = Utils.join(".", splitFile);
-                    Utils.writeContents(f, mergeContents);
-                    mergeConflict = true;
-                    add(splitFile);
-                    //System.out.println(mergeContents);
+                            gFiles.get(sFile));
+                    Utils.writeContents(Utils.join(".", sFile), mergeContents);
+                    mergeConflict = true; add(sFile);
                 }
-                // Case 8c: File atSplit() && inCurrent()
-                // && splitFile != currentFile && !inGiven() --> Stage
-                if (help.containsFile(currentHead, splitFile)
-                        && !splitFiles.get(splitFile).
-                        equals(currentFiles.get(splitFile))
-                        && !help.containsFile(givenHead, splitFile)) {
+                if (help.containsFile(currentHead, sFile)
+                        && !sFiles.get(sFile).equals(cFiles.get(sFile))
+                        && !help.containsFile(givenHead, sFile)) {
                     String mergeContents = help.writeMergeConflict(
-                            currentFiles.get(splitFile), null);
-                    File f = Utils.join(".", splitFile);
-                    Utils.writeContents(f, mergeContents);
-                    mergeConflict = true;
-                    add(splitFile);
-                    //System.out.println(mergeContents);
+                            cFiles.get(sFile), null);
+                    Utils.writeContents(Utils.join(".", sFile), mergeContents);
+                    mergeConflict = true; add(sFile);
                 }
             }
         }
-        if (!mergeConflict) {
-            mergeConflict = mergeGiven(branchName);
-        } else {
-            mergeGiven(branchName);
-        }
-        // Print: "Encountered a merge conflict" if case 8 is invoked
-        if (mergeConflict) {
-            System.out.println("Encountered a merge conflict.");
-        }
-        // Commit the merge
+        mergeConflict = mergeGiven(branchName) || mergeConflict;
+        printMerge(mergeConflict);
         String message = "Merged " + branchName + " into "
                 + help.getCurrentBranchName() + ".";
         help.mergeCommit(message, givenHead.getID());
+    }
+
+    /**
+     * Prints depending on whether encountered conflict.
+     * @param conflict boolean
+     */
+    public void printMerge(boolean conflict) {
+        if (conflict) {
+            System.out.println("Encountered a merge conflict.");
+        }
     }
 
     /**
@@ -687,18 +614,12 @@ public class Commands implements Serializable {
         HashMap<String, String> splitFiles = splitPoint.getFiles();
         if (givenFiles != null) {
             for (String givenFile: givenFiles.keySet()) {
-                // Case 4: File !atSplit() && !inGiven()
-                // && inCurrent() --> do nothing
-                // Case 5: File !atSplit() && inGiven()
-                // && !inCurrent() --> Checkout & Stage givenFile
                 if ((splitFiles == null
                         || !help.containsFile(splitPoint, givenFile))
                         && !help.containsFile(currentHead, givenFile)) {
                     checkoutIDFile(givenHead.getID(), givenFile);
                     add(givenFile);
                 }
-                // Case 8d: File !atSplit() && inCurrent()
-                // && inGiven() && currentFile != givenFile
                 if ((splitFiles == null || !help.containsFile(splitPoint,
                         givenFile)) && help.containsFile(currentHead, givenFile)
                         && !givenFiles.get(givenFile).
@@ -710,7 +631,6 @@ public class Commands implements Serializable {
                     Utils.writeContents(f, mergeContents);
                     mergeConflict = true;
                     add(givenFile);
-                    //System.out.println(mergeContents);
                 }
             }
         }

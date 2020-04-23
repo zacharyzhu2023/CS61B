@@ -93,7 +93,6 @@ public class HelperMethods {
         ArrayList<String> modNotStaged = new ArrayList<String>();
         if (cwdfileNames != null) {
             for (String name: cwdfileNames) {
-                // Tracked in headCommit, changed in CWD, not staged
                 File stageFile = Utils.join(".gitlet", "stage", name);
                 String cwdID = Utils.sha1(
                         Utils.readContentsAsString(new File(name)));
@@ -111,14 +110,12 @@ public class HelperMethods {
                 Utils.join(".gitlet", "stage"));
         if (stageFileNames != null) {
             for (String name: stageFileNames) {
-                // In stage, deleted from CWD
                 File cwdFile = Utils.join(".", name);
                 if (!cwdFile.exists()) {
                     modNotStaged.add(name + " (deleted)");
                 }
             }
         }
-        // Not staged for removal, Tracked by headCommit, deleted from CWD
         if (getHeadCommit() != null) {
             List<String> removedFiles = new ArrayList<String>();
             if (getRemoveArea() != null) {
@@ -368,7 +365,6 @@ public class HelperMethods {
                 System.exit(0);
             } else {
 
-                // Save added files
                 for (String s: addFiles.keySet()) {
                     headTrackedFiles.put(s, addFiles.get(s));
                     File path = Utils.join(".gitlet",
@@ -381,7 +377,7 @@ public class HelperMethods {
                     stageVersion.delete();
                 }
 
-                // Remove Deleted Files
+
                 for (String name: removeFiles) {
                     headTrackedFiles.remove(name);
                 }
