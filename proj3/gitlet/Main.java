@@ -10,10 +10,7 @@ public class Main {
     /** Usage: java gitlet.Main ARGS, where ARGS contains
      *  <COMMAND> <OPERAND> .... */
     public static void main(String... args) throws IOException {
-        // FILL THIS IN
-
-        Commands commands =new Commands();
-
+        Commands commands = new Commands();
         if (args.length == 0) {
             System.out.println("Please enter a command");
             System.exit(0);
@@ -38,7 +35,7 @@ public class Main {
                 commands.find(args[1]);
             } else if (args[0].equals("status")) {
                 commands.status();
-            } else if (args[0].equals("checkout")){
+            } else if (args[0].equals("checkout")) {
                 if (args.length == 4) {
                     if (!args[2].equals("--")) {
                         System.out.println("Incorrect operands.");

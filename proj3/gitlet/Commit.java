@@ -6,24 +6,40 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+/** Commit: a class for the representation of a git commit.
+ *  @author Zachary Zhu
+ */
+
 public class Commit implements Serializable {
-
-    // Instance Variables
+    /** Commit message. */
     private String _message;
+    /** DateTime created. */
     private String _dateTime;
+    /** ID of the parent. */
     private String _parentID;
+    /** ID of the second parent. */
     private String _secondParentID;
+    /** ID of a commit. */
     private String _commitID;
-    private HashMap<String, String> _files; // Key: Name, Value: commitID
+    /** Tracked Files. */
+    private HashMap<String, String> _files;
 
-    // Init Commit
+    /**
+     * Init Commit.
+     */
     public Commit() {
         this._dateTime = "Wed Dec 31 17:00:00 1969 -0700";
         this._message = "initial commit";
         this._parentID = null;
         this._commitID = makeID();
     }
-    // Generic Commit--NOT merge
+
+    /**
+     * Generate a non-merge commit.
+     * @param message
+     * @param files
+     * @param parentID
+     */
     public Commit(String message, HashMap<String, String> files, String parentID) {
         this._message = message;
         this._files = files;
@@ -32,7 +48,13 @@ public class Commit implements Serializable {
         this._parentID = parentID;
     }
 
-    // Generate a mergeCommit
+    /**
+     * Generate a merged commit.
+     * @param message
+     * @param files
+     * @param parentID
+     * @param secondParentID
+     */
     public Commit(String message, HashMap<String, String> files, String parentID, String secondParentID) {
         this._message = message;
         this._files = files;
@@ -42,14 +64,20 @@ public class Commit implements Serializable {
         this._secondParentID = secondParentID;
     }
 
-    // Get the current date
+    /**
+     * Get the current date.
+     * @return String representation of a date.
+     */
     public String getDate() {
         Date today = Calendar.getInstance().getTime();
         SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy ZZZZZ");
         return format.format(today);
     }
 
-    // Hash Representation of a Commit
+    /**
+     * Make hashRepresentation of a Commit.
+     * @return String representation
+     */
     public String makeID() {
         if (this._parentID == null) {
             return Utils.sha1(_message, _dateTime);
@@ -59,15 +87,10 @@ public class Commit implements Serializable {
         return Utils.sha1(_message, _files.toString(), _dateTime, _parentID, _secondParentID);
     }
 
-    public void addFile(String fileName, String fileID) {
-        _files.put(fileName, fileID);
-    }
-
-    public void removeFile(String fileName) {
-        _files.remove(fileName);
-    }
-
-    // String Format to print a commit--nonmerge
+    /**
+     * Method that creates string representation of commit.
+     * @return toString representation.
+     */
     public String toString() {
         if (getParent2ID() == null) {
             return "commit " + _commitID
@@ -81,21 +104,40 @@ public class Commit implements Serializable {
         }
     }
 
-
+    /**
+     * Accessor methods for files.
+     * @return files
+     */
     public HashMap<String, String> getFiles() {
         return _files;
     }
 
+    /**
+     * Accessor method for parentID.
+     * @return parentID
+     */
     public String getParentID() {
         return this._parentID;
     }
 
+    /**
+     * Accessor method for secondParentID.
+     * @return secondParentID
+     */
     public String getParent2ID() {return this._secondParentID;}
 
+    /**
+     * Accessor method for the message.
+     * @return message
+     */
     public String getMessage() {
         return _message;
     }
 
+    /**
+     * Accessor method for current ID.
+     * @return Commit's ID
+     */
     public String getID() {
         return _commitID;
     }
