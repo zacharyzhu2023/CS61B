@@ -19,11 +19,11 @@ public class HelperMethods {
 
     /**
      * Method returns commit given ID.
-     * @param ID
+     * @param id ID of commit
      * @return Commit of ID
      */
-    public Commit getCommit(String ID) {
-        File f = Utils.join(".gitlet", "commits", ID);
+    public Commit getCommit(String id) {
+        File f = Utils.join(".gitlet", "commits", id);
         return Utils.readObject(f, Commit.class);
     }
 
@@ -40,11 +40,12 @@ public class HelperMethods {
 
     /**
      * Determine whether or not a file is staged for addition.
-     * @param fileName
+     * @param fileName name of file
      * @return true or false value
      */
     public boolean staged(String fileName) {
-        List<String> stageFileNames = Utils.plainFilenamesIn(Utils.join(".gitlet", "stage"));
+        List<String> stageFileNames = Utils.plainFilenamesIn(
+                Utils.join(".gitlet", "stage"));
         for (String s: stageFileNames) {
             if (s.equals(fileName)) {
                 return true;
@@ -55,13 +56,14 @@ public class HelperMethods {
 
     /**
      * Determine whether or not a file is tracked in headCommit.
-     * @param fileName
+     * @param fileName name of file
      * @return true or false value
      */
     public boolean tracked(String fileName) {
         Commit headCommit = getHeadCommit();
         HashMap<String, String> headFiles = headCommit.getFiles();
-        if (headFiles != null && headFiles.keySet().contains(fileName)) {
+        if (headFiles != null
+                && headFiles.keySet().contains(fileName)) {
             return true;
         }
         return false;
@@ -72,10 +74,10 @@ public class HelperMethods {
      * @return Names of all untracked files.
      */
     public ArrayList<String> untrackedFiles() {
-        List<String> CWDfileNames = Utils.plainFilenamesIn(new File(System.getProperty("user.dir")));
+        List<String> cwdFileNames = getCWDFiles();
         ArrayList<String> untrackedFiles = new ArrayList<String>();
-        for (String name: CWDfileNames) {
-            if(!tracked(name) && !staged(name)) {
+        for (String name: cwdFileNames) {
+            if (!tracked(name) && !staged(name)) {
                 untrackedFiles.add(name);
             }
         }
@@ -87,23 +89,26 @@ public class HelperMethods {
      * @return list of file names
      */
     public ArrayList<String> modifiedNotStaged() {
-        List<String> CWDfileNames = Utils.plainFilenamesIn(new File(System.getProperty("user.dir")));
+        List<String> cwdfileNames = getCWDFiles();
         ArrayList<String> modNotStaged = new ArrayList<String>();
-        if (CWDfileNames != null) {
-            for (String name: CWDfileNames) {
+        if (cwdfileNames != null) {
+            for (String name: cwdfileNames) {
                 // Tracked in headCommit, changed in CWD, not staged
                 File stageFile = Utils.join(".gitlet", "stage", name);
-                String cwdID = Utils.sha1(Utils.readContentsAsString(new File(name)));
+                String cwdID = Utils.sha1(
+                        Utils.readContentsAsString(new File(name)));
                 String headID = "";
                 if (getHeadCommit().getFiles() != null) {
                     headID = getHeadCommit().getFiles().get(name);
                 }
-                if (tracked(name) && !stageFile.exists() && !cwdID.equals(headID)) {
+                if (tracked(name) && !stageFile.exists()
+                        && !cwdID.equals(headID)) {
                     modNotStaged.add(name + " (modified)");
                 }
             }
         }
-        List<String> stageFileNames = Utils.plainFilenamesIn(Utils.join(".gitlet", "stage"));
+        List<String> stageFileNames = Utils.plainFilenamesIn(
+                Utils.join(".gitlet", "stage"));
         if (stageFileNames != null) {
             for (String name: stageFileNames) {
                 // In stage, deleted from CWD
@@ -122,10 +127,12 @@ public class HelperMethods {
 
             ArrayList<String> trackedFiles = new ArrayList<>();
             if (getHeadCommit().getFiles() != null) {
-                trackedFiles = new ArrayList<String>(getHeadCommit().getFiles().keySet());
+                trackedFiles = new ArrayList<String>(
+                        getHeadCommit().getFiles().keySet());
             }
             for (String name: trackedFiles) {
-                if (!removedFiles.contains(name) && (CWDfileNames == null || !CWDfileNames.contains(name))) {
+                if (!removedFiles.contains(name) && (cwdfileNames == null
+                        || !cwdfileNames.contains(name))) {
                     modNotStaged.add(name + " (deleted)");
                 }
             }
@@ -138,7 +145,8 @@ public class HelperMethods {
      * @return current branch's name
      */
     public String getCurrentBranchName() {
-        return Utils.readContentsAsString(Utils.join(".gitlet", "current"));
+        return Utils.readContentsAsString(
+                Utils.join(".gitlet", "current"));
     }
 
     /**
@@ -146,7 +154,9 @@ public class HelperMethods {
      * @return HashMap of branch --> headCommitID
      */
     public HashMap<String, String> getBranchHeads() {
-        return Utils.readObject(Utils.join(".gitlet", "branch"), HashMap.class);
+        return Utils.readObject(Utils.join(
+                ".gitlet", "branch"),
+                HashMap.class);
     }
 
     /**
@@ -154,16 +164,20 @@ public class HelperMethods {
      * @return List of commit IDs.
      */
     public List<String> getCommitsList() {
-        return Utils.plainFilenamesIn(Utils.join(".gitlet", "commits"));
+        return Utils.plainFilenamesIn(
+                Utils.join(".gitlet", "commits"));
     }
 
     /**
      * Method that clears stage of removal/addition.
      */
     public void clearStage() {
-        Utils.writeObject(Utils.join(".gitlet", "add"), new AddArea());
-        Utils.writeObject(Utils.join(".gitlet", "remove"), new RemoveArea());
-        List<String> stageFileNames = Utils.plainFilenamesIn(Utils.join(".gitlet", "stage"));
+        Utils.writeObject(Utils.join(".gitlet", "add"),
+                new AddArea());
+        Utils.writeObject(Utils.join(".gitlet", "remove"),
+                new RemoveArea());
+        List<String> stageFileNames = Utils.plainFilenamesIn(
+                Utils.join(".gitlet", "stage"));
         if (stageFileNames != null && stageFileNames.size() != 0) {
             for (String sName: stageFileNames) {
                 File stageFile = Utils.join(".gitlet", "stage", sName);
@@ -177,7 +191,8 @@ public class HelperMethods {
      * @return AddArea object.
      */
     public AddArea getAddArea() {
-        return Utils.readObject(Utils.join(".gitlet", "add"), AddArea.class);
+        return Utils.readObject(Utils.join(".gitlet", "add"),
+                AddArea.class);
     }
 
     /**
@@ -185,21 +200,22 @@ public class HelperMethods {
      * @return RemoveArea Object
      */
     public RemoveArea getRemoveArea() {
-        return Utils.readObject(Utils.join(".gitlet", "remove"), RemoveArea.class);
+        return Utils.readObject(Utils.join(".gitlet", "remove"),
+                RemoveArea.class);
     }
 
 
     /**
      * The commit of a given ID (allows for abridged ID).
-     * @param ID
-     * @return
+     * @param id String ID of object
+     * @return return commit's ID
      */
-    public Commit getCommitID(String ID) {
+    public Commit getCommitID(String id) {
         List<String> commitIDs = getCommitsList();
         String fullID = "";
         int total = 0;
         for (String cID: commitIDs) {
-            if (cID.substring(0, ID.length()).equals(ID)) {
+            if (cID.substring(0, id.length()).equals(id)) {
                 fullID = cID;
                 total += 1;
             }
@@ -213,15 +229,18 @@ public class HelperMethods {
 
     /**
      * Method finds the splitPoint for a given branch name.
-     * @param givenBranch
+     * @param givenBranch name of branch
      * @return the Commit of the branch.
      */
     public Commit getSplitPoint(String givenBranch) {
-        HashMap<String, Integer> ancestorValues = new HashMap<String, Integer>();
-        Commit gBranchCommit = getCommit(getBranchHeads().get(givenBranch));
+        HashMap<String, Integer>
+                ancestorValues = new HashMap<String, Integer>();
+        Commit gBranchCommit = getCommit(
+                getBranchHeads().get(givenBranch));
         ArrayList<String> allAncestors = new ArrayList<>();
         findAllAncestors(gBranchCommit, allAncestors);
-        traverseAllPaths(getHeadCommit(), ancestorValues, 0, allAncestors);
+        traverseAllPaths(getHeadCommit(),
+                ancestorValues, 0, allAncestors);
         int lowVal = Integer.MAX_VALUE;
         Commit c = null;
         for (String s: ancestorValues.keySet()) {
@@ -235,21 +254,25 @@ public class HelperMethods {
 
     /**
      * Method that finds all ancestors & distance to head commit.
-     * @param c
-     * @param allPaths
-     * @param totalSoFar
-     * @param ancestors
+     * @param c given commit
+     * @param allPaths valid paths
+     * @param totalSoFar total distance
+     * @param ancestors all ancestors of branch
      */
-    public void traverseAllPaths(Commit c, HashMap<String, Integer> allPaths, int totalSoFar, ArrayList<String> ancestors) {
+    public void traverseAllPaths(Commit c,
+                                 HashMap<String, Integer> allPaths,
+                                 int totalSoFar, ArrayList<String> ancestors) {
         if (c != null) {
             if (ancestors.contains(c.getID())) {
                 allPaths.put(c.getID(), totalSoFar);
             } else {
                 if (c.getParentID() != null) {
-                    traverseAllPaths(getCommit(c.getParentID()), allPaths, totalSoFar + 1, ancestors);
+                    traverseAllPaths(getCommit(c.getParentID()), allPaths,
+                            totalSoFar + 1, ancestors);
                 }
                 if (c.getParent2ID() != null) {
-                    traverseAllPaths(getCommit(c.getParent2ID()), allPaths, totalSoFar + 1, ancestors);
+                    traverseAllPaths(getCommit(c.getParent2ID()), allPaths,
+                            totalSoFar + 1, ancestors);
                 }
             }
         }
@@ -257,8 +280,8 @@ public class HelperMethods {
 
     /**
      * Method that finds all the ancestors of a commit.
-     * @param c
-     * @param ancestors
+     * @param c A given commit
+     * @param ancestors all its ancestors at the end of method
      */
     public void findAllAncestors(Commit c, ArrayList<String> ancestors) {
         if (c != null) {
@@ -273,9 +296,18 @@ public class HelperMethods {
     }
 
     /**
+     * Accessor methods for files in CWD.
+     * @return files in CWD.
+     */
+    public List<String> getCWDFiles() {
+        return Utils.plainFilenamesIn(
+                new File(System.getProperty("user.dir")));
+    }
+
+    /**
      * Method writes out merge conflict.
-     * @param currID
-     * @param givenID
+     * @param currID current branch's ID
+     * @param givenID conflicting branch's ID
      * @return String representation of merged file.
      */
     public String writeMergeConflict(String currID, String givenID) {
@@ -285,21 +317,21 @@ public class HelperMethods {
             File currFile = Utils.join(".gitlet", "files", currID);
             cContents = Utils.readContentsAsString(currFile);
         }
-        if (givenID != null){
+        if (givenID != null) {
             File givenFile = Utils.join(".gitlet", "files", givenID);
             gContents = Utils.readContentsAsString(givenFile);
         }
-        String finalContents = "<<<<<<< HEAD\n" + cContents +
-                "contents of file in current branch=======\n" + gContents +
-                "contents of file in given branch>>>>>>>";
+        String finalContents = "<<<<<<< HEAD\n" + cContents
+                + "=======\n" + gContents
+                + ">>>>>>>\n";
         return finalContents;
     }
 
     /**
      * Method that checks if a given commit contains a filename.
-     * @param c
-     * @param fileName
-     * @return
+     * @param c commit
+     * @param fileName name of file
+     * @return whether or not a commit contains the file.
      */
     public boolean containsFile(Commit c, String fileName) {
         if (c.getFiles() == null) {
@@ -310,8 +342,8 @@ public class HelperMethods {
 
     /**
      * Method that creates a merge version of commit.
-     * @param message
-     * @param secondParentID
+     * @param message message of a commit
+     * @param secondParentID the second parent's ID
      */
     public void mergeCommit(String message, String secondParentID) {
         if (message.equals("")) {
@@ -319,11 +351,12 @@ public class HelperMethods {
             System.exit(0);
         } else {
             Commit headCommit = getHeadCommit();
-            HashMap<String, String> headIDs = Utils.readObject(Utils.join(".gitlet", "branch"), HashMap.class);
-            String currentBranch = Utils.readContentsAsString(Utils.join(".gitlet", "current"));
+            HashMap<String, String> headIDs = getBranchHeads();
+            String currentBranch = Utils.readContentsAsString(
+                    Utils.join(".gitlet", "current"));
             HashMap<String, String> headTrackedFiles = headCommit.getFiles();
-            AddArea aa = Utils.readObject(Utils.join(".gitlet", "add"), AddArea.class);
-            RemoveArea ra = Utils.readObject(Utils.join(".gitlet", "remove"), RemoveArea.class);
+            AddArea aa = getAddArea();
+            RemoveArea ra = getRemoveArea();
             HashMap<String, String> addFiles = aa.getAddedFiles();
             ArrayList<String> removeFiles = ra.getRemoveFiles();
             if (headTrackedFiles == null) {
@@ -338,10 +371,13 @@ public class HelperMethods {
                 // Save added files
                 for (String s: addFiles.keySet()) {
                     headTrackedFiles.put(s, addFiles.get(s));
-                    File path = Utils.join(".gitlet", "files", addFiles.get(s));
-                    File stageVersion = Utils.join(".gitlet", "stage", s);
+                    File path = Utils.join(".gitlet",
+                            "files", addFiles.get(s));
+                    File stageVersion = Utils.join(
+                            ".gitlet", "stage", s);
 
-                    Utils.writeContents(path, Utils.readContentsAsString(stageVersion));
+                    Utils.writeContents(path,
+                            Utils.readContentsAsString(stageVersion));
                     stageVersion.delete();
                 }
 
@@ -349,13 +385,19 @@ public class HelperMethods {
                 for (String name: removeFiles) {
                     headTrackedFiles.remove(name);
                 }
-                Commit newHead = new Commit(message, headTrackedFiles, headCommit.getID(), secondParentID);
-                File allCommitsFile = Utils.join(".gitlet", "commits", newHead.getID());
+                Commit newHead = new Commit(message,
+                        headTrackedFiles, headCommit.getID(),
+                        secondParentID);
+                File allCommitsFile = Utils.join(
+                        ".gitlet", "commits", newHead.getID());
                 Utils.writeObject(allCommitsFile, newHead);
                 headIDs.put(currentBranch, newHead.getID());
-                Utils.writeObject(Utils.join(".gitlet", "branch"), headIDs);
-                Utils.writeObject(Utils.join(".gitlet", "add"), new AddArea());
-                Utils.writeObject(Utils.join(".gitlet", "remove"), new RemoveArea());
+                Utils.writeObject(Utils.join(".gitlet", "branch"),
+                        headIDs);
+                Utils.writeObject(Utils.join(".gitlet", "add"),
+                        new AddArea());
+                Utils.writeObject(Utils.join(".gitlet", "remove"),
+                        new RemoveArea());
             }
         }
     }

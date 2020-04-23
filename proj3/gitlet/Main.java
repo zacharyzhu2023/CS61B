@@ -55,8 +55,7 @@ public class Main {
                 commands.reset(args[1]);
             } else if (args[0].equals("merge")) {
                 commands.merge(args[1]);
-            }
-            else {
+            } else {
                 System.out.println("No command with that name exists.");
                 System.exit(0);
             }

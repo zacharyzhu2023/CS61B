@@ -1,4 +1,4 @@
 <<<<<<< HEAD
-irrelevant contentscontents of file in current branch=======
+irrelevant contents=======
 This is not a wug.
-contents of file in given branch>>>>>>>
+>>>>>>>

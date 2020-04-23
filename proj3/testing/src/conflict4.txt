@@ -1,5 +1,5 @@
 <<<<<<< HEAD
 This is a wug.
-contents of file in current branch=======
+=======
 This is not a wug.
-contents of file in given branch>>>>>>>
+>>>>>>>

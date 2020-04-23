@@ -20,7 +20,7 @@ public class RemoveArea implements Serializable {
 
     /**
      * Add a file.
-     * @param fileName
+     * @param fileName name of file
      */
     void add(String fileName) {
         removeFiles.add(fileName);

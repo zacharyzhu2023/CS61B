@@ -36,11 +36,12 @@ public class Commit implements Serializable {
 
     /**
      * Generate a non-merge commit.
-     * @param message
-     * @param files
-     * @param parentID
+     * @param message message of commit
+     * @param files tracked files
+     * @param parentID ID of the parent
      */
-    public Commit(String message, HashMap<String, String> files, String parentID) {
+    public Commit(String message, HashMap<String, String> files,
+                  String parentID) {
         this._message = message;
         this._files = files;
         this._dateTime = getDate();
@@ -50,12 +51,13 @@ public class Commit implements Serializable {
 
     /**
      * Generate a merged commit.
-     * @param message
-     * @param files
-     * @param parentID
-     * @param secondParentID
+     * @param message message of commit
+     * @param files files to be added
+     * @param parentID ID of the parent
+     * @param secondParentID ID of the second parent
      */
-    public Commit(String message, HashMap<String, String> files, String parentID, String secondParentID) {
+    public Commit(String message, HashMap<String, String> files,
+                  String parentID, String secondParentID) {
         this._message = message;
         this._files = files;
         this._dateTime = getDate();
@@ -70,7 +72,8 @@ public class Commit implements Serializable {
      */
     public String getDate() {
         Date today = Calendar.getInstance().getTime();
-        SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy ZZZZZ");
+        SimpleDateFormat format = new SimpleDateFormat(
+                "EEE MMM dd HH:mm:ss yyyy ZZZZZ");
         return format.format(today);
     }
 
@@ -82,9 +85,11 @@ public class Commit implements Serializable {
         if (this._parentID == null) {
             return Utils.sha1(_message, _dateTime);
         } else if (this._secondParentID == null) {
-            return Utils.sha1(_message, _files.toString(), _dateTime, _parentID);
+            return Utils.sha1(_message, _files.toString(),
+                    _dateTime, _parentID);
         }
-        return Utils.sha1(_message, _files.toString(), _dateTime, _parentID, _secondParentID);
+        return Utils.sha1(_message, _files.toString(),
+                _dateTime, _parentID, _secondParentID);
     }
 
     /**
@@ -98,7 +103,8 @@ public class Commit implements Serializable {
                     + "\n" + _message + "\n";
         } else {
             return "commit " + _commitID
-                    + "\nMerge: " + _parentID.substring(0, 7) + " " + _secondParentID.substring(0, 7)
+                    + "\nMerge: " + _parentID.substring(0, 7) + " "
+                    + _secondParentID.substring(0, 7)
                     + "\nDate: " + _dateTime
                     + "\n" + _message + "\n";
         }
@@ -124,7 +130,9 @@ public class Commit implements Serializable {
      * Accessor method for secondParentID.
      * @return secondParentID
      */
-    public String getParent2ID() {return this._secondParentID;}
+    public String getParent2ID() {
+        return this._secondParentID;
+    }
 
     /**
      * Accessor method for the message.
