@@ -10,14 +10,25 @@ public class UnionFind {
 
     /** A union-find structure consisting of the sets { 1 }, { 2 }, ... { N }.
      */
+    private int[] _parents;
+    private int[] _sizes;
     public UnionFind(int N) {
         // FIXME
+        _parents = new int[N + 1];
+        _sizes = new int[N + 1];
+        for (int i = 1; i <= N; i += 1) {
+            _parents[i] = i;
+            _sizes[i] = 1;
+        }
     }
 
     /** Return the representative of the set currently containing V.
      *  Assumes V is contained in one of the sets.  */
     public int find(int v) {
-        return 0;  // FIXME
+        while (_parents[v] != v) {
+            v = _parents[v];
+        }
+        return v;
     }
 
     /** Return true iff U and V are in the same set. */
@@ -27,8 +38,19 @@ public class UnionFind {
 
     /** Union U and V into a single set, returning its representative. */
     public int union(int u, int v) {
-        return 0;  // FIXME
+        int rootU = find(u);
+        int rootV = find(v);
+        int sizeU = _sizes[rootU];
+        int sizeV = _sizes[rootV];
+        if (sizeU >= sizeV) {
+            _parents[rootU] = _parents[rootV];
+            _sizes[rootV] = 0;
+            _sizes[rootU] = sizeU + sizeV;
+        } else {
+            _parents[rootV] = _parents[rootU];
+            _sizes[rootU] = 0;
+            _sizes[rootV] = sizeU + sizeV;
+        }
+        return 0;
     }
-
-    // FIXME
 }

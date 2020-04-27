@@ -18,10 +18,20 @@ public class MST {
      *  original edges, just the original edges themselves.) */
     public static int[][] mst(int V, int[][] E) {
         E = Arrays.copyOf(E, E.length);
-        int numEdgesInResult = 0; // FIXME: how many edges should there be in our MST?
-        int[][] result = new int[numEdgesInResult][];
+        int numEdgesInResult = V - 1; // FIXME: how many edges should there be in our MST?
+        int[][] result = new int[numEdgesInResult][3];
         // FIXME: what other data structures do I need?
         // FIXME: do Kruskal's Algorithm
+        int counter = 0;
+        UnionFind unionFinder = new UnionFind(V);
+        Arrays.sort(E, EDGE_WEIGHT_COMPARATOR);
+        for (int i = 0; i < E.length; i += 1) {
+            if (!unionFinder.samePartition(E[i][0], E[i][1])) {
+                result[counter] = E[i];
+                counter += 1;
+                unionFinder.union(E[i][0], E[i][1]);
+            }
+        }
         return result;
     }
 
